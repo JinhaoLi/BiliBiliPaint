@@ -1,0 +1,79 @@
+{
+  "code": 0,
+  "msg": "success",
+  "message": "success",
+  "data": {
+    "user": {
+      "uid": 106053,
+      "head_url": "https://i1.hdslb.com/bfs/face/095d94fe7360a0b3ae5394c025fd6a5d945966fc.jpg",
+      "name": "库洛自闭怪",
+      "vip": {
+        "vipType": 1,
+        "vipDueDate": 1579536000000,
+        "dueRemark": "",
+        "accessStatus": 0,
+        "vipStatus": 0,
+        "vipStatusWarn": "",
+        "themeType": 0,
+        "label": {
+          "path": ""
+        }
+      },
+      "upload_count": 48
+    },
+    "item": {
+      "biz": 1,
+      "doc_id": 1250260,
+      "poster_uid": 106053,
+      "category": "illustration",
+      "type": 0,
+      "title": "12",
+      "tags": [
+        {
+          "tag": "画友扶持计划",
+          "type": 2,
+          "category": "illustration",
+          "text": "画友扶持计划",
+          "name": "画友扶持计划",
+          "link": "https://www.bilibili.com/blackboard/live/DrawSupport.html"
+        },
+        {
+          "tag": "原创",
+          "type": 3,
+          "category": "illustration",
+          "text": "原创",
+          "name": "原创"
+        }
+      ],
+      "pictures": [
+        {
+          "img_src": "https://i0.hdslb.com/bfs/album/b3fceb02e03798fb3fa847e8d6adadb6cca5547a.jpg",
+          "img_width": 1061,
+          "img_height": 1500,
+          "img_size": 480
+        }
+      ],
+      "source": null,
+      "upload_time": "2017-12-07 17:40:20",
+      "upload_timestamp": 1512639620,
+      "upload_time_text": "2年前",
+      "description": "",
+      "role": null,
+      "settings": {
+        "copy_forbidden": 1
+      },
+      "already_collected": 0,
+      "already_liked": 0,
+      "user_status": 0,
+      "at_control": "",
+      "extension": "",
+      "view_count": 27333,
+      "like_count": 6,
+      "collect_count": 260,
+      "verify_status": 1,
+      "already_voted": 0,
+      "vote_count": 790,
+      "comment_count": 15
+    }
+  }
+}

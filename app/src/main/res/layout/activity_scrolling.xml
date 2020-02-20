@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:id="@+id/coordina"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+
+    tools:context=".activity.MainActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/app_bar"
+
+            android:fitsSystemWindows="true"
+            android:layout_height="100dp"
+            android:layout_width="match_parent"
+            android:theme="@style/NoActionBar">
+
+        <com.google.android.material.appbar.CollapsingToolbarLayout
+
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+
+                android:fitsSystemWindows="true"
+                app:contentScrim="@color/colorAccent"
+
+
+                app:layout_scrollFlags="scroll|exitUntilCollapsed"
+
+                app:title="我是collapsebar的标题">
+
+
+            <RadioGroup
+                    android:layout_width="270dp"
+                    android:layout_gravity="center|bottom"
+                    android:orientation="horizontal"
+                    android:layout_height="match_parent">
+
+
+                <RadioButton
+                        android:text="摄影"
+                        android:button="@null"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp" android:id="@+id/button2" android:layout_weight="1"/>
+                <RadioButton
+                        android:text="插画"
+                        android:button="@null"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:layout_width="match_parent"
+                        android:layout_height="30dp" android:id="@+id/button" android:layout_weight="1"/>
+            </RadioGroup>
+
+            <androidx.appcompat.widget.Toolbar
+                    android:id="@+id/toolbar"
+                    android:layout_width="match_parent"
+
+                    android:layout_height="0dp"
+
+                    android:layout_gravity="top"
+
+                    android:background="#001616F7"
+
+                    app:layout_collapseMode="pin">
+
+
+
+            </androidx.appcompat.widget.Toolbar>
+
+
+        </com.google.android.material.appbar.CollapsingToolbarLayout>
+
+        <com.google.android.material.tabs.TabLayout
+                android:layout_width="match_parent"
+                android:layout_gravity="bottom"
+                android:layout_height="40dp">
+
+
+            <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="最热"/>
+
+            <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="最新"/>
+
+            <com.google.android.material.tabs.TabItem
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="推荐"/>
+        </com.google.android.material.tabs.TabLayout>
+
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+
+            android:id="@+id/n_scroll_view"
+
+            android:layout_width="match_parent"
+
+            android:layout_height="match_parent"
+
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <include layout="@layout/main_fragment"></include>
+    </androidx.core.widget.NestedScrollView>
+
+
+
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>
