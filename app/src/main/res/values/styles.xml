@@ -1,18 +1,84 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+<!--    Theme.AppCompat.Light.NoActionBar-->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/white</item>
+        <item name="android:textColor">?attr/colorPrimaryDark</item>
+        <item name="android:actionBarTabBarStyle">?attr/colorAccent</item>
+        <item name="android:navigationBarColor">?attr/colorPrimary</item>
+        <item name="android:statusBarColor">?attr/colorPrimary</item>
+
+<!--        <item name="tabIconTint">@color/white</item>-->
+<!--        <item name="tabIndicatorColor">@color/green_light</item>-->
+<!--        <item name="tabTextAppearance">@style/MyTabLayoutTextAppearanceInverse</item>-->
+<!--        <item name="tabTextColor">@color/white</item>-->
+<!--        <item name="tabRippleColor">@color/mtrl_tabs_ripple_color</item>-->
+<!--        <item name="tabUnboundedRipple">true</item>-->
+<!--        <item name="actionBarTabStyle">@style/Widget.AppCompat.Light.ActionBar.TabView</item>-->
+<!--        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.Light.ActionBar.TabBar</item>-->
+<!--        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.Light.ActionBar.TabText</item>-->
+<!--        <item name="actionButtonStyle">@style/Widget.AppCompat.Light.ActionButton</item>-->
     </style>
 
-    <style name="NoActionBar" parent="Theme.AppCompat.Light.NoActionBar">
-        <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+    <style name="MyToolbar">
+        <item name="colorControlNormal">?android:attr/textColorPrimaryInverse</item>
     </style>
+
+    <style name="MyTabLayoutTextAppearance" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">       
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/green</item>
+    </style>   
+
+    <style name="MyTabLayoutTextAppearanceInverse" parent="TextAppearance.AppCompat.Widget.ActionBar.Title.Inverse">
+                <item name="android:textSize">15sp</item>
+                <item name="android:textColor">?attr/colorAccent</item> 
+    </style>
+
+    <style name="AppTheme.green">
+        <item name="colorPrimary">@color/green</item>
+        <item name="colorPrimaryDark">@color/green</item>
+        <item name="colorAccent">@color/green_light</item>
+    </style>
+
+    <style name="AppTheme.pink">
+        <item name="colorPrimary">@color/pink</item>
+        <item name="colorPrimaryDark">@color/pink_dark</item>
+        <item name="colorAccent">@color/pink_light</item>
+    </style>
+
+    <style name="AppTheme.purple">
+        <item name="colorPrimary">@color/purple</item>
+        <item name="colorPrimaryDark">@color/purple</item>
+        <item name="colorAccent">@color/purple_dark</item>
+    </style>
+
+    <style name="AppTheme.tea">
+        <item name="colorPrimary">@color/tea</item>
+        <item name="colorPrimaryDark">@color/tea</item>
+        <item name="colorAccent">@color/tea_dark</item>
+    </style>
+
+    <style name="AppTheme.walnut">
+        <item name="colorPrimary">@color/walnut</item>
+        <item name="colorPrimaryDark">@color/walnut</item>
+        <item name="colorAccent">@color/walnut_light</item>
+    </style>
+
+    <style name="AppTheme.seaPine">
+        <item name="colorPrimary">@color/seaPine</item>
+        <item name="colorPrimaryDark">@color/seaPine</item>
+        <item name="colorAccent">@color/seaPine_light</item>
+    </style>
+
+    <style name="AppTheme.seedling">
+        <item name="colorPrimary">@color/seedling</item>
+        <item name="colorPrimaryDark">@color/seedling</item>
+        <item name="colorAccent">@color/seedling_dark</item>
+    </style>
+
+
 
 </resources>

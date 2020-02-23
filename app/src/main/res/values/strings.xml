@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">画友</string>
+    <string name="change_theme">改变主题</string>
+    <string name="apply">应用</string>
+    <string name="dark_mode">黑暗模式</string>
+    <string name="title_theme_color">主题颜色</string>
 </resources>

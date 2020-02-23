@@ -5,13 +5,14 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
+import androidx.fragment.app.FragmentStatePagerAdapter;
 import com.jil.paintf.fragment.MainFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
-    private String[] title ={"推荐","最新","最热"};
+    private String[] title ={"推荐","最新","最热","推荐","最新","最热"};
 
     public MainPagerAdapter(@NonNull FragmentManager fm) {
-        super(fm);
+        super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
     }
 
     @Nullable
@@ -28,6 +29,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return 6;
     }
 }

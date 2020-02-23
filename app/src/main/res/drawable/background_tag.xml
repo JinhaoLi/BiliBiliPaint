@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <!-- 实心 -->
+            <solid android:color="#DFD8D8D8"/>
+            <!-- 渐变 -->
+<!--            <gradient-->
+<!--                    android:startColor="?attr/colorPrimary"-->
+<!--                    android:endColor="?attr/colorAccent"-->
+<!--                    android:angle="180" />-->
+            <!-- 描边 -->
+<!--            <stroke-->
+<!--                    android:width="20dp"-->
+<!--                    android:dashGap="@dimen/cardview_default_elevation"-->
+<!--                    android:color="#dcdcdc" />-->
+            <!-- 圆角 -->
+            <corners
+                    android:radius="50dp" />
+<!--            <padding-->
+<!--                    android:left="10dp"-->
+<!--                    android:top="10dp"-->
+<!--                    android:right="10dp"-->
+<!--                    android:bottom="10dp" />-->
+        </shape>
+    </item>
+
+</selector>

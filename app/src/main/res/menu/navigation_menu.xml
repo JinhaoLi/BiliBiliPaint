@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:showIn="navigation_view">
+    <group android:checkableBehavior="all">
+        <item
+                android:id="@+id/nav_setting"
+                android:icon="@drawable/ic_setting"
+                android:title="设置" />
+
+        <item
+                android:id="@+id/nav_theme"
+                android:icon="@drawable/ic_theme"
+                android:title="更换配色" />
+
+        <item
+                android:id="@+id/nav_history"
+                android:icon="@drawable/ic_share"
+                android:title="历史记录" />
+    </group>
+
+
+
+    <item android:title="关于作者">
+        <menu android:menuCategory="alternative">
+            <item android:id="@+id/nav_bilibili"
+                  android:icon="@drawable/ic_bilibili_line"
+                  android:title="干杯"/>
+
+            <item
+                    android:id="@+id/nav_github"
+                    android:icon="@drawable/ic_share"
+                    android:title="分享" />
+            <item
+                    android:id="@+id/nav_about"
+                    android:icon="@drawable/ic_info"
+                    android:title="关于" />
+
+        </menu>
+    </item>
+
+</menu>

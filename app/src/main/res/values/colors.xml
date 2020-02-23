@@ -2,6 +2,33 @@
 <resources>
     <color name="colorPrimary">#2EA9DF</color>
     <color name="colorPrimaryDark">#2EA9DF</color>
-    <color name="colorAccent">#DC9FB4</color>
+    <color name="colorAccent">#1A87FF</color>
     <color name="colorPrimary_alp">#66505050</color>
+    <color name="white">#ffffff</color>
+
+
+
+
+    <color name="pink">#DC9FB4</color>
+    <color name="pink_light">#FFD9D9</color>
+    <color name="pink_dark">#7B5965</color>
+
+    <color name="green">#268785</color>
+    <color name="green_light">#41e8e4</color>
+
+    <color name="purple">#9b90c2</color>
+    <color name="purple_dark">#44345d</color>
+
+    <color name="tea">#db8e71</color>
+    <color name="tea_dark">#7a4f3f</color>
+
+    <color name="walnut">#947a6d</color>
+    <color name="walnut_light">#f5cab4</color>
+
+    <color name="seaPine">#5b622e</color>
+    <color name="seaPine_light">#b5c35b</color>
+
+    <color name="seedling">#86c166</color>
+    <color name="seedling_dark">#436033</color>
+
 </resources>

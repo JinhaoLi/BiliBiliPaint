@@ -2,6 +2,7 @@ package com.jil.paintf.service;
 
 import com.jil.paintf.repository.DocRepository;
 import com.jil.paintf.repository.DocListRepository;
+import com.jil.paintf.repository.ReplyRepository;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -11,21 +12,83 @@ import retrofit2.http.Query;
  */
 public interface AppApiService {
 
+    /**
+     * 推荐插画漫画
+     * @param page
+     * @param size
+     * @return
+     */
     @GET("/link_draw/v2/Doc/index?type=recommend")
     Observable<DocListRepository> getRecommedIllust(@Query("page_num") int page, @Query("page_size") int size);
 
+    /**
+     * 文档细节
+     * @param doc_id
+     * @return
+     */
     @GET("/link_draw/v1/doc/detail")
     Observable<DocRepository> getIllustDoc(@Query("doc_id") int doc_id);
 
     /**
+     * 最新插画漫画
      * https://api.vc.bilibili.com/link_draw/v2/Doc/list?category=all&type=new&page_num=1&page_size=20
      */
     @GET("/link_draw/v2/Doc/list?category=all&type=new")
     Observable<DocListRepository> getNewIllusts(@Query("page_num") int page, @Query("page_size") int size);
 
     /**
+     * 最热插画漫画
      * https://api.vc.bilibili.com/link_draw/v2/Doc/list?category=all&type=hot&page_num=0&page_size=20
      */
     @GET("/link_draw/v2/Doc/list?category=all&type=hot")
     Observable<DocListRepository> getHotIllusts(@Query("page_num") int page, @Query("page_size") int size);
+
+
+    /**
+     * 推荐摄影
+     * https://api.vc.bilibili.com/link_draw/v2/Photo/index?type=recommend&page_num=0&page_size=45
+     */
+    @GET("/link_draw/v2/Photo/index?type=recommend")
+    Observable<DocListRepository> getRecommedCosplay(@Query("page_num") int page, @Query("page_size") int size);
+
+
+    /**
+     * 最热cos
+     * https://api.vc.bilibili.com/link_draw/v2/Photo/list?category=cos&type=hot&page_num=1&page_size=20
+     */
+    @GET("/link_draw/v2/Photo/list?category=cos&type=hot")
+    Observable<DocListRepository> getHotCosplay(@Query("page_num") int page, @Query("page_size") int size);
+
+    /**
+     * 最新cos
+     * https://api.vc.bilibili.com/link_draw/v2/Photo/list?category=cos&type=new&page_num=0&page_size=20
+     */
+    @GET("/link_draw/v2/Photo/list?category=cos&type=new")
+    Observable<DocListRepository> getNewCosplay(@Query("page_num") int page, @Query("page_size") int size);
+
+    /**
+     * 私人服装模块
+     * https://api.vc.bilibili.com/link_draw/v2/Photo/list?category=sifu&type=hot&page_num=0&page_size=20
+     */
+    @GET("/link_draw/v2/Photo/list?category=sifu")
+    Observable<DocListRepository> getNewPersonalClothing(@Query("type")String type,@Query("page_num") int page, @Query("page_size") int size);
+
+
+    /**
+     * 一级-DOC回复
+     * https://api.bilibili.com/x/v2/reply?jsonp=jsonp&pn=1&type=11&sort=2&oid=56836766
+     *
+     */
+    @GET("/x/v2/reply?jsonp=jsonp&pn=1&type=11&sort=2")
+    Observable<ReplyRepository> getDocReply(@Query("oid")int oid);
+
+    /**
+     * 二级-DOC回复
+     * https://api.bilibili.com/x/v2/reply/reply?jsonp=jsonp&pn=1&type=11&oid=56836766&root=2395830881
+     */
+    @GET("/x/v2/reply/reply?jsonp=jsonp&pn=1&type=11")
+    Observable<ReplyRepository> getDoc2Reply(@Query("oid")int oid,@Query("root")long root);
+
+
+
 }
