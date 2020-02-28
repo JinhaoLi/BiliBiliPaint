@@ -35,7 +35,7 @@ abstract class LazyFragment : Fragment(){
     fun initView(inflater: LayoutInflater, container: ViewGroup?,layoutRes:Int):View?{
         if (rootView == null) {
             isRecovery = false
-            rootView = inflater.inflate(R.layout.fragment_main, container, false)
+            rootView = inflater.inflate(layoutRes, container, false)
         } else {
             isRecovery = true
         }

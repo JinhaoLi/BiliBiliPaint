@@ -37,7 +37,6 @@ public class ThemeUtil {
             return 0xFFD81B60;
         }
         int themeIndex = PreferenceManager.getDefaultSharedPreferences(context).getInt("THEME",0);
-        Logger.d("应用主题："+themeIndex);
         if(themeIndex>THEME.length){
             themeIndex=0;
         }

@@ -30,7 +30,7 @@
                     app:layout_scrollFlags="scroll|snap|enterAlways">
 
                 <com.google.android.material.tabs.TabLayout
-                        android:id="@+id/tablyout"
+                        android:id="@+id/main_tabs"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:tabGravity="center"
@@ -53,7 +53,7 @@
 <!--            app:tabMode="scrollable"-->
             <com.google.android.material.tabs.TabLayout
                     android:layout_width="match_parent"
-                    android:id="@+id/tab"
+                    android:id="@+id/tab_title"
                     app:tabIndicatorHeight="3dp"
                     android:layout_height="40dp"
                     app:tabIndicatorGravity="bottom" app:tabTextAppearance="@style/MyTabLayoutTextAppearanceInverse"
@@ -89,6 +89,13 @@
                 android:layout_width="match_parent"
                 app:layout_behavior="@string/appbar_scrolling_view_behavior"
                 android:layout_height="match_parent" android:id="@+id/viewpager">
+        </androidx.viewpager.widget.ViewPager>
+
+        <androidx.viewpager.widget.ViewPager
+                android:layout_width="match_parent"
+                android:visibility="gone"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                android:layout_height="match_parent" android:id="@+id/viewpager2">
         </androidx.viewpager.widget.ViewPager>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>

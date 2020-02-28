@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Environment
 import android.view.MenuItem
+import android.view.View
 import android.widget.TableLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager.widget.ViewPager
@@ -20,6 +21,7 @@ import java.io.IOException
 
 class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
     var adapter: MainPagerAdapter?=null
+    var adapter2: MainPagerAdapter?=null
     var isIllust:Boolean=true
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,30 +33,39 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         setSupportActionBar(toolbar!!)
         supportActionBar?.setDisplayShowTitleEnabled(false)
 
-        adapter =MainPagerAdapter(supportFragmentManager)
+        adapter =MainPagerAdapter(supportFragmentManager,0)
         viewpager!!.adapter =adapter
         viewpager!!.currentItem=0
 
-        tab!!.setupWithViewPager(viewpager)
+        adapter2 =MainPagerAdapter(supportFragmentManager,1)
+        viewpager2!!.adapter =adapter2
+        viewpager2!!.currentItem=0
 
-        viewpager!!.addOnPageChangeListener(object :ViewPager.OnPageChangeListener{
-            override fun onPageScrollStateChanged(state: Int) {
+        tab_title!!.setupWithViewPager(viewpager)
+
+        main_tabs!!.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(tab: TabLayout.Tab?) {
 
             }
 
-            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
 
             }
 
-            override fun onPageSelected(position: Int) {
-                if(position>=3){
-                    tablyout!!.selectTab(tablyout.getTabAt(1))
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                if(main_tabs!!.selectedTabPosition==0){
+                    viewpager!!.visibility= View.VISIBLE
+                    viewpager2!!.visibility= View.GONE
+                    tab_title!!.setupWithViewPager(viewpager)
                 }else{
-                    tablyout!!.selectTab(tablyout.getTabAt(0))
+                    viewpager2!!.visibility= View.VISIBLE
+                    viewpager!!.visibility= View.GONE
+                    tab_title!!.setupWithViewPager(viewpager2)
                 }
             }
 
         })
+
         nav_view!!.setNavigationItemSelectedListener(this)
 
     }

@@ -1,8 +1,6 @@
 package com.jil.paintf.service;
 
-import com.jil.paintf.repository.DocRepository;
-import com.jil.paintf.repository.DocListRepository;
-import com.jil.paintf.repository.ReplyRepository;
+import com.jil.paintf.repository.*;
 import io.reactivex.Observable;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -79,8 +77,8 @@ public interface AppApiService {
      * https://api.bilibili.com/x/v2/reply?jsonp=jsonp&pn=1&type=11&sort=2&oid=56836766
      *
      */
-    @GET("/x/v2/reply?jsonp=jsonp&pn=1&type=11&sort=2")
-    Observable<ReplyRepository> getDocReply(@Query("oid")int oid);
+    @GET("/x/v2/reply?jsonp=jsonp&type=11&sort=2")
+    Observable<ReplyRepository> getDocReply(@Query("pn")int pn,@Query("oid")int oid);
 
     /**
      * 二级-DOC回复
@@ -89,6 +87,28 @@ public interface AppApiService {
     @GET("/x/v2/reply/reply?jsonp=jsonp&pn=1&type=11")
     Observable<ReplyRepository> getDoc2Reply(@Query("oid")int oid,@Query("root")long root);
 
+
+    /**
+     * 用户上传相簿信息API
+     * https://api.vc.bilibili.com/link_draw/v1/doc/upload_count?uid=21833522
+     */
+    @GET("/link_draw/v1/doc/upload_count")
+    Observable<UserUpLoad> getUserUp(@Query("uid")int uid);
+
+
+    /**
+     * 获取用户相簿
+     * https://api.vc.bilibili.com/link_draw/v1/doc/doc_list?uid=21833522&page_num=0&page_size=30&biz=all
+     */
+    @GET("/link_draw/v1/doc/doc_list")
+    Observable<UserDocListRep> getUserDocList(@Query("uid")int uid,@Query("page_num")int page,@Query("biz")String biz);
+
+    /**
+     * 获取用户详细信息
+     * https://api.bilibili.com/x/space/acc/info?mid=3056970&jsonp=jsonp
+     */
+    @GET("/x/space/acc/info?&jsonp=jsonp")
+    Observable<UserInfo> getUserInfo(@Query("mid")int mid);
 
 
 }

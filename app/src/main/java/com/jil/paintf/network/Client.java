@@ -103,4 +103,16 @@ public class Client {
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build();
     }
+
+    /**
+     * https://api.bilibili.com
+     */
+    public Retrofit getReplyRetrofitAppApi(){
+        return new Retrofit.Builder()
+                .baseUrl("https://api.bilibili.com")
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
+    }
 }

@@ -12,6 +12,7 @@ import com.jil.paintf.adapter.ItemAdapter
 import com.jil.paintf.repository.DataListRetryWithDelay.*
 import com.jil.paintf.repository.Item
 import com.jil.paintf.viewmodel.MainFragmentViewModel
+import com.jil.paintf.viewmodel.MainFragmentViewModel.*
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -142,6 +143,7 @@ class MainFragment: LazyFragment() {
             adapter!!.notifyItemInserted(updataPosition)
         }
         Logger.d("当前数据大小:"+adapter!!.data.size.toString()+"--添加条目："+list.size.toString())
+        if(swiperefresh!!.isRefreshing)
         swiperefresh!!.isRefreshing=false
     }
 

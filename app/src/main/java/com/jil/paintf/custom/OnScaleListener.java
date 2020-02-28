@@ -74,18 +74,28 @@ public class OnScaleListener implements View.OnTouchListener{
         return false;
     }
 
+
+    boolean canDrag =false;
+    float scaleMultiple=1f;
+    float thisPointScale =1f;
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         ImageView imageView= (ImageView) v;
         imageView.setScaleType( ImageView.ScaleType.MATRIX );
+
         switch (event.getAction()& MotionEvent.ACTION_MASK){
             case MotionEvent.ACTION_DOWN:
                 if(isDoubleClick()){
-                    if(isScale)
-                        matrix.postScale(0.33f, 0.33f, event.getX(), event.getY());
-                    else
+                    if(scaleMultiple>6){
+                        //isScale= false;
+                        matrix.postScale(1f/scaleMultiple, 1f/scaleMultiple, event.getX(), event.getY());
+                        scaleMultiple=1;
+                    }else{
+                        //isScale= true;
+                        scaleMultiple*=3;
                         matrix.postScale(3, 3, event.getX(), event.getY());
-                    isScale=!isScale;
+                    }
+                    over=false;
                 }else {
                     matrix.set(imageView.getImageMatrix());
                     saveMatrix.set( matrix );
@@ -107,17 +117,26 @@ public class OnScaleListener implements View.OnTouchListener{
             case MotionEvent.ACTION_UP:
                 if(over)
                 onScalceCallBack.onClick(v);
+                canDrag=false;
+                thisPointScale=1;
                 break;
             case MotionEvent.ACTION_POINTER_UP:
-
                 mode = NONE;
+                scaleMultiple=scaleMultiple*thisPointScale;
                 break;
             // 单指滑动事件
             case MotionEvent.ACTION_MOVE:
                 if (mode == DRAG) {
                     // 是一个手指拖动
-                    matrix.set(saveMatrix);
-                    matrix.postTranslate(event.getX() - startPoint.x, event.getY() - startPoint.y);
+                    float dis =event.getY() - startPoint.y;
+                    if(dis>30f||dis<-30f){
+                        canDrag=true;
+                    }
+                    if(canDrag){
+                        matrix.set(saveMatrix);
+                        matrix.postTranslate(event.getX() - startPoint.x, event.getY() - startPoint.y);
+                    }
+
 
                 } else if (mode == ZOOM) {
                     // 两个手指滑动
@@ -126,10 +145,15 @@ public class OnScaleListener implements View.OnTouchListener{
                     if (newDist > 10f) {
                         matrix.set(saveMatrix);
                         float scale = newDist / oriDis;
-                        matrix.postScale(scale, scale, midPoint.x, midPoint.y);
+                        if(scale>1){
+                            //isScale=true;
+                            thisPointScale=scale;
+                            matrix.postScale(scale, scale, midPoint.x, midPoint.y);
+                        }
                         matrix.postRotate(rotation, midPoint.x, midPoint.y);// 旋轉
                     }
                 }
+                over=false;
                 break;
         }
         imageView.setImageMatrix(matrix);

@@ -73,9 +73,7 @@ class DocDetailAdapter(var docData: DocData, var mContext: Context) : RecyclerVi
     @SuppressLint("CheckResult")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ImageVHolder) {
-            val scale =illusts[position-1].img_width/width.toFloat()
-            val height =illusts[position-1].img_height/scale
-            Glide.with(mContext).load(illusts[position-1].img_src).placeholder(R.color.white).override(width,height.toInt())
+            Glide.with(mContext).load(illusts[position-1].img_src).override(illusts[position-1].img_width,illusts[position].img_height)
                 .into(holder.image)
         }
         if(holder is BlankVHolder){
@@ -85,6 +83,7 @@ class DocDetailAdapter(var docData: DocData, var mContext: Context) : RecyclerVi
             holder.like.text =docData.item.like_count.toString()
             holder.see.text =docData.item.view_count.toString()
             holder.star.text =docData.item.collect_count.toString()
+            holder.imageSize.text=illusts[0].img_width.toString()+"*"+illusts[0].img_height
             holder.displayTags(docData.item.tags as ArrayList<Tag>)
         }
     }
@@ -120,6 +119,7 @@ class DocDetailAdapter(var docData: DocData, var mContext: Context) : RecyclerVi
         val like:TextView=itemView.findViewById(R.id.textView8)
         val star:TextView =itemView.findViewById(R.id.textView9)
         val tags:RecyclerView =itemView.findViewById(R.id.tags)
+        val imageSize:TextView =itemView.findViewById(R.id.textView10)
 
         fun displayTags(list: ArrayList<Tag>){
             val layoutManager =GridLayoutManager(itemView.context,3)
@@ -136,23 +136,8 @@ class DocDetailAdapter(var docData: DocData, var mContext: Context) : RecyclerVi
             tags.layoutManager=layoutManager
             layoutManager.spanSizeLookup=object :GridLayoutManager.SpanSizeLookup(){
                 override fun getSpanSize(position: Int): Int {
-//                    return when(list[position].name.length){
-//                        3->{
-//                            1
-//                        }
-//                        2->{
-//                            1
-//                        }
-//                        1->{
-//                            1
-//                        }
-//                        else->{
-//                            2
-//                        }
-//
-//                    }
                     return list[position].name.length/5
-                   }
+                }
             }
 
         }

@@ -5,13 +5,9 @@ import com.jil.paintf.service.AppApiService;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 
+import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
+
 public class DataListRetryWithDelay implements Function<Observable<Throwable>, Observable<DocListRepository>> {
-    public static final int RI=0;
-    public static final int NI=1;
-    public static final int HI=2;
-    public static final int RC=3;
-    public static final int NC=4;
-    public static final int HC=5;
     private int time;
     private int retry=0;
     private AppApiService appApiService;

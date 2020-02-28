@@ -28,13 +28,6 @@ data class Doc(
     val upload_time: Int
 )
 
-data class Picture(
-    val img_height: Int,
-    val img_size: Int,
-    val img_src: String,
-    val img_width: Int
-)
-
 data class User(
     val head_url: String,
     val name: String,

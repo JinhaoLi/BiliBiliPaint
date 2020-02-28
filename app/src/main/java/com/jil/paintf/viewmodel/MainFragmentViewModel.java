@@ -2,7 +2,6 @@ package com.jil.paintf.viewmodel;
 
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
-import com.jil.paintf.R;
 import com.jil.paintf.repository.Item;
 import com.jil.paintf.repository.DocListRepository;
 import com.jil.paintf.repository.RetrofitRepository;
@@ -11,9 +10,13 @@ import io.reactivex.disposables.Disposable;
 
 import java.util.List;
 
-import static com.jil.paintf.repository.DataListRetryWithDelay.*;
-
 public class MainFragmentViewModel extends ViewModel {
+    public static final int RI=0;
+    public static final int NI=1;
+    public static final int HI=2;
+    public static final int RC=3;
+    public static final int NC=4;
+    public static final int HC=5;
     private static int[] page={0,0,0,0,0,0};
     private static final int SIZE=45;
     RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();

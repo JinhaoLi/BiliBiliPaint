@@ -3,14 +3,22 @@ package com.jil.paintf.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
+import com.jil.paintf.custom.GlideCircleWithBorder;
+import com.jil.paintf.custom.ThemeUtil;
 
 import java.util.ArrayList;
 
 public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<SuperRecyclerAdapter.SuperVHolder> {
     ArrayList<T> data;
+
+    public ArrayList<T> getData() {
+        return data;
+    }
 
     public SuperRecyclerAdapter(ArrayList<T> data) {
         this.data = data;
@@ -45,9 +53,20 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
             TextView textView = (TextView) getView(id);
             textView.setText(str);
         }
+
+        public void setImage(String str,int id){
+            ImageView imageView = (ImageView) getView(id);
+            Glide.with(imageView.getContext()).load(str)
+                    .transform(new GlideCircleWithBorder(2, ThemeUtil.getColorAccent(imageView.getContext())))
+                    .into(imageView);
+        }
     }
 
-    abstract void bindData(@NonNull SuperVHolder holder, int position);
+    public void setData(ArrayList<T> data) {
+        this.data = data;
+    }
 
-    abstract int setLayout();
+    public abstract void bindData(@NonNull SuperVHolder holder, int position);
+
+    public abstract int setLayout();
 }
