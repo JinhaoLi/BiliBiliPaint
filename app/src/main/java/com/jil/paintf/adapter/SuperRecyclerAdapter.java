@@ -59,10 +59,16 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
             textView.setText(str);
         }
 
-        public void setImage(String str,int id){
+        public void setImageIco(String str, int id){
             ImageView imageView = (ImageView) getView(id);
             Glide.with(imageView.getContext()).load(str)
                     .transform(new GlideCircleWithBorder(2, ThemeUtil.getColorAccent(imageView.getContext())))
+                    .into(imageView);
+        }
+
+        public void setImage(String str,int id){
+            ImageView imageView = (ImageView) getView(id);
+            Glide.with(imageView.getContext()).load(str)
                     .into(imageView);
         }
     }

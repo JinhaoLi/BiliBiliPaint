@@ -41,8 +41,8 @@ public class DocViewModel extends ViewModel {
         return data;
     }
 
-    public MutableLiveData<ReplyData> getReplyData(int id,boolean reSetId) {
-        if(reSetId){
+    public MutableLiveData<ReplyData> getReplyData(int id,boolean resetPage) {
+        if(resetPage){
             pn =1;
         }
         if(replyData==null){

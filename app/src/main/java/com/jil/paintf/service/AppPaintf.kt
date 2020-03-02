@@ -12,7 +12,7 @@ class AppPaintf : Application() {
         super.onCreate()
         APP = this
         Logger.addLogAdapter(AndroidLogAdapter())
-        LoadLevel=PreferenceManager.getDefaultSharedPreferences(this).getInt("LoadLevel",1080)
+        LoadLevel=PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 Logger.t(TAG).v("${activity.simpleName}: onActivityCreated")

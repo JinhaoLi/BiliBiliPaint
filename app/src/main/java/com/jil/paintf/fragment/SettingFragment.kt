@@ -1,6 +1,8 @@
 package com.jil.paintf.fragment
 
+import android.app.AlertDialog
 import android.app.Application
+import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -25,7 +27,7 @@ import kotlinx.android.synthetic.main.dialog_input.*
 import kotlinx.android.synthetic.main.fragment_setting.*
 
 class SettingFragment :LazyFragment(){
-
+    var adapter :SuperRecyclerAdapter<SettingItem>?=null
     override fun loadAndObserveData() {
     }
 
@@ -37,49 +39,53 @@ class SettingFragment :LazyFragment(){
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        uid.description=PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt("UID",8888888).toString()
-        recyclerview!!.adapter=object :SuperRecyclerAdapter<SettingItem>(settingList){
-            override fun bindData(holder: SuperVHolder, position: Int) {
-                holder.setText(data[position].name,R.id.textView2)
-                if (data[position].description != null && data[position].description != "") {
-                    holder.setText(data[position].description,R.id.textView)
-                } else {
-                    holder.getView(R.id.textView).visibility = View.GONE
-                }
-                val isSwitch = data[position].itemLayout == R.layout.item_setting_switch_layout
-                val cuView = holder.getView(R.id.textView2)
-                if (isSwitch) {
-                    val sw = cuView as Switch
-                    sw.isChecked = data[position].isSwitchOpen
-                }
-                holder.itemView.setOnClickListener {
+        if(adapter==null){
+            uid.description=PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt("UID",8888888).toString()
+            adapter=object :SuperRecyclerAdapter<SettingItem>(settingList){
+                override fun bindData(holder: SuperVHolder, position: Int) {
+                    holder.setText(data[position].name,R.id.textView2)
+                    if (data[position].description != null && data[position].description != "") {
+                        holder.setText(data[position].description,R.id.textView)
+                    } else {
+                        holder.getView(R.id.textView).visibility = View.GONE
+                    }
+                    val isSwitch = data[position].itemLayout == R.layout.item_setting_switch_layout
+                    val cuView = holder.getView(R.id.textView2)
                     if (isSwitch) {
                         val sw = cuView as Switch
-                        sw.isChecked = !sw.isChecked
-                        data[position].click(sw)
-                    } else {
-                        data[position].click(cuView)
+                        sw.isChecked = data[position].isSwitchOpen
+                    }
+                    holder.itemView.setOnClickListener {
+                        if (isSwitch) {
+                            val sw = cuView as Switch
+                            sw.isChecked = !sw.isChecked
+                            data[position].click(sw)
+                        } else {
+                            data[position].click(cuView)
+                        }
+                    }
+
+                }
+
+                override fun getItemViewType(position: Int): Int {
+                    return data[position].itemLayout
+                }
+
+                override fun setLayout(viewType: Int): Int {
+                    if(viewType==0){
+                        return R.layout.item_setting_normal_layout
+                    }else{
+                        return R.layout.item_setting_switch_layout
                     }
                 }
-
             }
-
-            override fun getItemViewType(position: Int): Int {
-                return data[position].itemLayout
-            }
-
-            override fun setLayout(viewType: Int): Int {
-                if(viewType==0){
-                    return R.layout.item_setting_normal_layout
-                }else{
-                    return R.layout.item_setting_switch_layout
-                }
-            }
+            recyclerview!!.adapter=adapter
+            //设置分隔线
+            //设置分隔线
+            recyclerview.addItemDecoration(RecycleItemDecoration(requireContext(),1))
+            recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
         }
-        //设置分隔线
-        //设置分隔线
-        recyclerview.addItemDecoration(RecycleItemDecoration(requireContext(),1))
-        recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
+
 
     }
 
@@ -94,11 +100,14 @@ class SettingFragment :LazyFragment(){
                     setContentView(R.layout.dialog_input)
                     textView16!!.text="输入UID以设置你的头像"
                     button!!.setOnClickListener {
-                        editText!!.inputType= EditorInfo.TYPE_CLASS_NUMBER
+                        val input =editText!!.text.toString()
+                        if(input.isEmpty()){
+                            return@setOnClickListener
+                        }
                         PreferenceManager.getDefaultSharedPreferences(v.context)
                             .apply {
                                 edit().let {
-                                    it.putInt("UID",editText!!.text.toString().toInt()).apply()
+                                    it.putInt("UID",input.toInt()).apply()
                                 }
                             }
                         ViewModelProvider.AndroidViewModelFactory(AppPaintf.APP as Application)
@@ -123,7 +132,41 @@ class SettingFragment :LazyFragment(){
         @JvmStatic
         val loadLevel =object:SettingItem("图片质量","选择图片质量",2){
             override fun click(v: View?) {
+                val checkItem=when(AppPaintf.LoadLevel){
+                    720->{
+                        0
+                    }
+                    1080->{
+                        1
+                    }
+                    else->{
+                        2
+                    }
+                }
+                val builder =AlertDialog.Builder(v!!.context).setTitle("选择图片质量")
+                    .setSingleChoiceItems(R.array.reply_entries,checkItem) { dialog, which ->
+                        val level: Int = when(which){
 
+                            1->{
+                                1080
+                            }
+                            2->{
+                                5000
+                            }
+                            else->{
+                                720
+                            }
+                        }
+                        PreferenceManager.getDefaultSharedPreferences(v.context)
+                            .apply {
+                                edit().let {
+                                    it.putInt("LOAD_LEVEL",level).apply()
+                                    AppPaintf.LoadLevel=level
+                                }
+                            }
+                        dialog.dismiss()
+                    }
+                builder.create().show()
             }
 
         }

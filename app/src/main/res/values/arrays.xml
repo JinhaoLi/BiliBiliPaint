@@ -109,4 +109,8 @@
         <item>保存头像</item>
         <item>更换头像</item>
     </string-array>
+    <string-array name="data">
+        <item>插画</item>
+        <item>摄影</item>
+    </string-array>
 </resources>

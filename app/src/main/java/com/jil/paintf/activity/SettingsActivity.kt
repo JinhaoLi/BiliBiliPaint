@@ -1,6 +1,7 @@
 package com.jil.paintf.activity
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.preference.PreferenceFragmentCompat
@@ -17,10 +18,13 @@ class SettingsActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
         setContentView(R.layout.settings_activity)
+        setSupportActionBar(toolbar)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         adapter = SettingPagerAdapter(supportFragmentManager)
         settingpager!!.adapter =adapter
         tabs!!.setupWithViewPager(settingpager)
 
     }
+
 
 }

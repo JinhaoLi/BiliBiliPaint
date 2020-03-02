@@ -1,6 +1,5 @@
 package com.jil.paintf.activity
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
@@ -8,6 +7,7 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
@@ -21,29 +21,29 @@ import com.jil.paintf.adapter.ImagePagerAdapter
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ImageSlideTransformer
+import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.viewmodel.DocViewModel
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_doc_detail.*
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
-import java.util.*
 import kotlin.collections.ArrayList
 
 
 class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListener {
+
     var viewModel:DocViewModel? =null
     var adapter:ImagePagerAdapter<String>? =null
-    var lock =false
+    private var lock =false
     var docData:DocData?=null
     var addReply =false
-
+    var replyAdapter:SuperRecyclerAdapter<Reply>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
+
         setContentView(R.layout.activity_doc_detail)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -61,6 +61,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             docData.item.pictures.map {
                 imageArray.add(it.img_src)
             }
+            pager!!.currentItem=0
             if(adapter==null){
                 adapter = ImagePagerAdapter(imageArray)
                 pager!!.adapter =adapter
@@ -69,8 +70,12 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                 adapter!!.ts=imageArray
                 adapter!!.notifyDataSetChanged()
             }
-            pager!!.currentItem=0
+            //重设页码
+
+            //获取评论
+            viewModel!!.getReplyData(docData.item.doc_id,true)
             //================================================================================标题，上传者头像
+            if(!isDestroyed)
             Glide.with(this).load(docData.user.head_url).placeholder(R.drawable.noface)
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this)))
                 .into(imageView5)
@@ -83,12 +88,15 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             textView8.text =docData.item.like_count.toString()
             textView9.text =docData.item.collect_count.toString()
             textView10.text=pic0.img_width.toString()+"*"+pic0.img_height
-            textView12.text =if(docData.item.description=="")"一切尽在不言中" else docData.item.description
+            textView12.text =if(docData.item.description=="")"一切尽在不言中..." else docData.item.description
             textView13.text ="1/"+docData.item.pictures.size
             val layoutManager = LinearLayoutManager(this)
             tags.adapter =object : SuperRecyclerAdapter<Tag>(docData.item.tags as ArrayList<Tag>){
                 override fun bindData(holder: SuperVHolder, position: Int) {
                     holder.setText(data[position].name,R.id.text)
+                    holder.getView(R.id.text).setOnClickListener {
+                        SearchActivity.startSearchActivity(this@DocDetailActivity,data[position].name)
+                    }
                 }
 
                 override fun setLayout(viewType: Int): Int {
@@ -107,13 +115,17 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             adapter!!.download(pager.currentItem,this)
         }
         //下一个插画
-//        floatingActionButton!!.setOnClickListener {
-//            current++
-//            if(current<idArray.size)
-//            viewModel!!.getData(idArray[current])
-//            viewModel!!.getReplyData(idArray[current],true)
-//
-//        }
+        floatingActionButton!!.setOnClickListener {
+            current++
+            if(current>=idArray.size){
+                finish()
+            }else{
+                viewModel!!.getData(idArray[current])
+                viewModel!!.getReplyData(idArray[current],true)
+            }
+
+
+        }
         //分享
         imageView6!!.setOnClickListener{
             val intent =Intent(Intent.ACTION_SEND)
@@ -131,11 +143,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                     }
                     ViewPager.SCROLL_STATE_IDLE->{
                         if (!mIsScrolled ) {
-                            //======================下一个
-                            current++
-                            if(current<idArray.size)
-                                viewModel!!.getData(idArray[current])
-                            //=======================
+
                         }
                         mIsScrolled=true
                     }
@@ -146,13 +154,27 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             }
 
             override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
-
             }
 
             override fun onPageSelected(position: Int) {
+                if(position ==docData!!.item.pictures.size){
+                    pager.currentItem =docData!!.item.pictures.size-1
+                    //======================下一个
+                    current++
+                    if(current>=idArray.size)
+                        finish()
+                    else{
+                        viewModel!!.getData(idArray[current])
+                        if(replyAdapter!=null)
+                        replyAdapter!!.data.clear()
+                    }
+                    //=======================
+                    return
+                }
                 val pic =docData!!.item.pictures[position]
                 textView10.text=pic.img_width.toString()+"*"+pic.img_height
                 textView13.text =(pager.currentItem+1).toString()+"/"+docData!!.item.pictures.size
+
             }
         })
 
@@ -162,7 +184,6 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
         bottomSheetDialog.setContentView(R.layout.dialog_bottom_recyclerview)
         val replyLayoutManager=LinearLayoutManager(this)
         val says =bottomSheetDialog.findViewById<RecyclerView>(R.id.recycler_view)
-        var replyAdapter:SuperRecyclerAdapter<Reply>?=null
         says!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -178,13 +199,15 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             }
         })
         viewModel!!.getReplyData(idArray[current],true).observeForever {
-            if(it==null||it.replies.isEmpty())
+            if(it.replies==null||it.replies.isEmpty()){
                 return@observeForever
+            }
+
             if(replyAdapter==null){
                 replyAdapter=object :SuperRecyclerAdapter<Reply>(it.replies as ArrayList<Reply>){
                     override fun bindData(holder: SuperVHolder, position: Int) {
                         holder.setText(data[position].content.message,android.R.id.text1)
-                        holder.setImage(data[position].member.avatar,android.R.id.icon)
+                        holder.setImageIco(data[position].member.avatar,android.R.id.icon)
                     }
 
                     override fun setLayout(viewType: Int): Int {
@@ -193,6 +216,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
 
 
                 }
+                says.addItemDecoration(RecycleItemDecoration(this,1))
                 says.layoutManager=replyLayoutManager
                 says.adapter=replyAdapter
             }else{
@@ -207,8 +231,12 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             }
         }
         floatingActionButton2.setOnClickListener {
-            viewModel!!.getReplyData(idArray[current],true)
-            bottomSheetDialog.show()
+            if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){
+                Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT).show()
+            }else{
+                bottomSheetDialog.show()
+            }
+
         }
         //============================================================================================评论窗口
 
@@ -244,7 +272,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             floatingActionButton2!!.animate().translationX(floatingActionButton.width + layoutParams.rightMargin.toFloat())
                 .setInterpolator(AccelerateInterpolator()).start()
             floatingActionButton!!.isClickable=false
-            floatingActionButton!!.postDelayed(Runnable {
+            floatingActionButton!!.postDelayed({
                 floatingActionButton!!.visibility=View.INVISIBLE
                 floatingActionButton!!.isClickable=true
             },500)

@@ -13,7 +13,7 @@
         android:layout_height="30dp"
         android:gravity="center_vertical"
         android:text="TextView"
-        android:textColor="?attr/colorAccent"
+        android:textColor="?attr/colorPrimary"
         android:textSize="18sp" />
 
     <TextView
@@ -23,5 +23,5 @@
         android:text="TextView"
         android:textAlignment="viewStart"
         android:textColor="@color/black_alp"
-        android:textSize="10sp" />
+        android:textSize="14sp" />
 </LinearLayout>

@@ -110,5 +110,17 @@ public interface AppApiService {
     @GET("/x/space/acc/info?&jsonp=jsonp")
     Observable<UserInfo> getUserInfo(@Query("mid")int mid);
 
+    /**
+     * 搜索
+     * https://api.bilibili.com/x/web-interface/search/type?context=&search_type=photo&page=1&order=pubdate&keyword=%E9%9B%B7%E5%A7%86&category_id=2&__refresh__=true&highlight=1&single_column=0&jsonp=jsonp&callback=__jp4
+     * 摄影
+     * https://api.bilibili.com/x/web-interface/search/type?context=&search_type=photo&page=1&order=stow&keyword=%E9%9B%B7%E5%A7%86&category_id=2&__refresh__=true&highlight=1&single_column=0&jsonp=jsonp
+     * 画友
+     * https://api.bilibili.com/x/web-interface/search/type?context=&search_type=photo&page=1&order=stow&keyword=%E9%9B%B7%E5%A7%86&category_id=1&__refresh__=true
+     */
+    @GET("/x/web-interface/search/type?context=&search_type=photo&order=stow&highlight=1&single_column=0&jsonp=jsonp&__refresh__=true")
+    Observable<SearchRepository> getSearchData(@Query("page")int page,@Query("keyword")String keyWord,@Query("category_id")int category_id);
+
+
 
 }

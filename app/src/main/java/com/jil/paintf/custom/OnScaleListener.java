@@ -128,7 +128,7 @@ public class OnScaleListener implements View.OnTouchListener{
             case MotionEvent.ACTION_MOVE:
                 if (mode == DRAG) {
                     // 是一个手指拖动
-                    float dis =event.getY() - startPoint.y;
+                    float dis = event.getY() - startPoint.y;
                     if(dis>30f||dis<-30f){
                         canDrag=true;
                     }

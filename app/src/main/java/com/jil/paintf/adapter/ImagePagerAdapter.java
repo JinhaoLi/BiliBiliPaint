@@ -6,16 +6,24 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
+import com.davemorrissey.labs.subscaleview.ImageSource;
+import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.jil.paintf.R;
 import com.jil.paintf.custom.OnScaleListener;
 import com.jil.paintf.service.AppPaintf;
@@ -26,6 +34,7 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
+import org.w3c.dom.Text;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -38,22 +47,31 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     public int width=720;
     public int height=1280;
     private imageClickListener listener;
+    private String loadLevel;
 
     public void setListener(imageClickListener listener) {
         this.listener = listener;
     }
 
-    public ImagePagerAdapter(String path) {
-        ts =new ArrayList<>();
-    }
 
     public ImagePagerAdapter(ArrayList<T> ts) {
         this.ts = ts;
+        switch(AppPaintf.getLoadLevel()){
+            case 1080:
+                loadLevel="@1080w_1e.webp";
+                break;
+            case 5000:
+                loadLevel="";
+                break;
+            default:
+                loadLevel="@720w_1e.webp";
+                break;
+        }
     }
 
     @Override
     public int getCount() {
-        return ts.size();
+        return ts.size()+1;
     }
 
     @Override
@@ -70,21 +88,46 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     @NonNull
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
+        if(position==ts.size()){
+            View v =LayoutInflater.from(container.getContext()).inflate(R.layout.item_viewpager_end,container,false);
+            container.addView(v);
+            return v;
+        }
+
         View v = LayoutInflater.from(container.getContext()).inflate(R.layout.item_doc_illusts_layout,container,false);
-        ImageView imageView =v.findViewById(R.id.imageView);
+        final SubsamplingScaleImageView imageView =v.findViewById(R.id.imageView);
         RoundedCorners roundedCorners= new RoundedCorners(10);
         RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners)
                 .override(width,height);
-        Glide.with(container.getContext()).load(ts.get(position)+"@1080w_1e.webp").apply(requestOptions)
-                .into(imageView);
-        imageView.setOnTouchListener(new OnScaleListener(new OnScaleListener.OnScalceCallBack() {
-            @Override
-            public void onClick(View view) {
-                if(listener!=null)
-                listener.onClick(view);
-            }
 
-        }));
+        Glide.with(container.getContext()).asFile().load(ts.get(position)+loadLevel).apply(requestOptions)
+                .into(new CustomTarget<File>() {
+
+                    @Override
+                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                        imageView.setImage(ImageSource.uri(Uri.fromFile(resource)));
+
+                    }
+
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                    }
+                });
+//        imageView.setOnTouchListener(new OnScaleListener(new OnScaleListener.OnScalceCallBack() {
+//            @Override
+//            public void onClick(View view) {
+//                if(listener!=null)
+//                listener.onClick(view);
+//            }
+//
+//        }));
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                listener.onClick(v);
+            }
+        });
         container.addView(v);
         if(width!=720){
             width=720;
@@ -196,10 +239,6 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
         });
 
         download.subscribeOn( Schedulers.io()).observeOn( AndroidSchedulers.mainThread()).subscribe(observer);
-
-
-
-
 
     }
 

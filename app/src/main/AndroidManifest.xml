@@ -19,6 +19,9 @@
         <activity
                 android:name=".activity.SettingsActivity"
                 android:label="@string/title_activity_settings">
+            <meta-data
+                    android:name="android.support.PARENT_ACTIVITY"
+                    android:value=".activity.MainActivity"/>
         </activity>
         <activity
                 android:name=".activity.UserActivity"
@@ -26,15 +29,17 @@
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activity.DocDetailActivity"/>
-        <activity android:name=".activity.MainActivity">
+        <activity android:name=".activity.MainActivity"
+        android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
-
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
         <activity android:name=".activity.TestAc"/>
         <activity android:name=".activity.ThemeActivity"/>
+        <activity android:name=".activity.SearchActivity">
+        </activity>
     </application>
 
 </manifest>

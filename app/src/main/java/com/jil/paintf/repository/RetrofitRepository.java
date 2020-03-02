@@ -148,4 +148,20 @@ public class RetrofitRepository {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new UserInfoRetry(mid));
     }
+
+    /**
+     * 搜索
+     * @param keyword
+     * @param page
+     * @param categid
+     * @return
+     */
+    public Observable<SearchRepository> getSearchData(final String keyword,final int page,final int categid){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<SearchRepository>>() {
+            @Override
+            public ObservableSource<SearchRepository> apply(Integer integer){
+                return client.getReplyRetrofitAppApi().create(AppApiService.class).getSearchData(page,keyword,categid);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new SearchRetry(page,keyword,categid));
+    }
 }
