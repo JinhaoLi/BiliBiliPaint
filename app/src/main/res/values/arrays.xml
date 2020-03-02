@@ -56,34 +56,36 @@
     </string-array>
     <!-- Reply Preference -->
     <string-array name="reply_entries">
-        <item>Reply</item>
-        <item>Reply to all</item>
+        <item>中图(720p)</item>
+        <item>大图(1080p)</item>
+        <item>原图</item>
     </string-array>
 
     <string-array name="reply_values">
-        <item>reply</item>
-        <item>reply_all</item>
+        <item>720</item>
+        <item>1080</item>
+        <item>5000</item>
     </string-array>
-    <string-array name="modellist" >
-          <item>每日</item>
-          <item>男性</item>
-          <item>女性</item>
-          <item>原创</item>
-          <item>新人</item>
-          <item>每周</item>
-          <item>每月</item>
-          <item>XVIII</item>
+    <string-array name="modellist">
+        <item>每日</item>
+        <item>男性</item>
+        <item>女性</item>
+        <item>原创</item>
+        <item>新人</item>
+        <item>每周</item>
+        <item>每月</item>
+        <item>XVIII</item>
         <item>XVIII_Male</item>
         <item>XVIII_FeMale</item>
-          <item>XVIII_Week</item>
+        <item>XVIII_Week</item>
         <item>XVIII_WeekG</item>
     </string-array>
-    <string-array name="language" >
+    <string-array name="language">
         <item>zh</item>
         <item>en</item>
         <item>zh-rHK</item>
     </string-array>
-    <string-array name="language_values" >
+    <string-array name="language_values">
         <item>0</item>
         <item>1</item>
         <item>2</item>

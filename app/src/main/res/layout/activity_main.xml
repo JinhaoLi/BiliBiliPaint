@@ -56,7 +56,8 @@
                     android:id="@+id/tab_title"
                     app:tabIndicatorHeight="3dp"
                     android:layout_height="40dp"
-                    app:tabIndicatorGravity="bottom" app:tabTextAppearance="@style/MyTabLayoutTextAppearanceInverse"
+                    app:tabIndicatorGravity="bottom"
+                    app:tabTextAppearance="@style/MyTabLayoutTextAppearanceInverse"
             >
                 <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"

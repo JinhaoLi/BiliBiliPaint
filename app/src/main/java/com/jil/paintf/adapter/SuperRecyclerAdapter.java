@@ -27,7 +27,12 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
     @NonNull
     @Override
     public SuperVHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new SuperVHolder(LayoutInflater.from(parent.getContext()).inflate(setLayout(),parent,false));
+        return new SuperVHolder(LayoutInflater.from(parent.getContext()).inflate(setLayout(viewType),parent,false));
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
     }
 
     @Override
@@ -45,7 +50,7 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
             super(itemView);
         }
 
-        private View getView(int id){
+        public View getView(int id){
             return itemView.findViewById(id);
         }
 
@@ -68,5 +73,5 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
 
     public abstract void bindData(@NonNull SuperVHolder holder, int position);
 
-    public abstract int setLayout();
+    public abstract int setLayout(int viewType);
 }

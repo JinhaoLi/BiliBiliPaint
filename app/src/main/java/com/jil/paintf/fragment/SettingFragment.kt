@@ -1,0 +1,151 @@
+package com.jil.paintf.fragment
+
+import android.app.Application
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
+import android.widget.Switch
+import android.widget.TextView
+import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.afollestad.materialdialogs.MaterialDialog
+import com.bumptech.glide.Glide
+import com.jil.paintf.R
+import com.jil.paintf.adapter.SuperRecyclerAdapter
+import com.jil.paintf.custom.GlideCircleWithBorder
+import com.jil.paintf.custom.RecycleItemDecoration
+import com.jil.paintf.custom.SettingItem
+import com.jil.paintf.custom.ThemeUtil
+import com.jil.paintf.service.AppPaintf
+import com.jil.paintf.viewmodel.UserViewModel
+import kotlinx.android.synthetic.main.dialog_input.*
+import kotlinx.android.synthetic.main.fragment_setting.*
+
+class SettingFragment :LazyFragment(){
+
+    override fun loadAndObserveData() {
+    }
+
+
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        return initView(inflater,container,R.layout.fragment_setting)
+    }
+
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        uid.description=PreferenceManager.getDefaultSharedPreferences(requireContext()).getInt("UID",8888888).toString()
+        recyclerview!!.adapter=object :SuperRecyclerAdapter<SettingItem>(settingList){
+            override fun bindData(holder: SuperVHolder, position: Int) {
+                holder.setText(data[position].name,R.id.textView2)
+                if (data[position].description != null && data[position].description != "") {
+                    holder.setText(data[position].description,R.id.textView)
+                } else {
+                    holder.getView(R.id.textView).visibility = View.GONE
+                }
+                val isSwitch = data[position].itemLayout == R.layout.item_setting_switch_layout
+                val cuView = holder.getView(R.id.textView2)
+                if (isSwitch) {
+                    val sw = cuView as Switch
+                    sw.isChecked = data[position].isSwitchOpen
+                }
+                holder.itemView.setOnClickListener {
+                    if (isSwitch) {
+                        val sw = cuView as Switch
+                        sw.isChecked = !sw.isChecked
+                        data[position].click(sw)
+                    } else {
+                        data[position].click(cuView)
+                    }
+                }
+
+            }
+
+            override fun getItemViewType(position: Int): Int {
+                return data[position].itemLayout
+            }
+
+            override fun setLayout(viewType: Int): Int {
+                if(viewType==0){
+                    return R.layout.item_setting_normal_layout
+                }else{
+                    return R.layout.item_setting_switch_layout
+                }
+            }
+        }
+        //设置分隔线
+        //设置分隔线
+        recyclerview.addItemDecoration(RecycleItemDecoration(requireContext(),1))
+        recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
+
+    }
+
+    companion object{
+        @JvmStatic
+        val settingList = arrayListOf<SettingItem>()
+
+        @JvmStatic
+        val uid = object :SettingItem("你的uid","0000000",1){
+            override fun click(v: View?) {
+                MaterialDialog(v!!.context).show {
+                    setContentView(R.layout.dialog_input)
+                    textView16!!.text="输入UID以设置你的头像"
+                    button!!.setOnClickListener {
+                        editText!!.inputType= EditorInfo.TYPE_CLASS_NUMBER
+                        PreferenceManager.getDefaultSharedPreferences(v.context)
+                            .apply {
+                                edit().let {
+                                    it.putInt("UID",editText!!.text.toString().toInt()).apply()
+                                }
+                            }
+                        ViewModelProvider.AndroidViewModelFactory(AppPaintf.APP as Application)
+                            .create(UserViewModel::class.java)
+                            .getUserData(editText!!.text.toString().toInt()).observeForever { userData ->
+                                PreferenceManager.getDefaultSharedPreferences(v.context)
+                                    .apply {
+                                        edit().let {
+                                            it.putString("HEAD",userData.face).apply()
+                                            it.putString("NAME",userData.name).apply()
+                                        }
+                                    }
+                            }
+
+                        dismiss()
+                    }
+
+                }
+            }
+
+        }
+        @JvmStatic
+        val loadLevel =object:SettingItem("图片质量","选择图片质量",2){
+            override fun click(v: View?) {
+
+            }
+
+        }
+
+        @JvmStatic
+        val test =object:SettingItem("测试","测试",false,3){
+            override fun click(v: View?) {
+
+            }
+
+        }
+
+        init {
+            settingList.add(uid)
+            settingList.add(loadLevel)
+            settingList.add(test)
+        }
+
+
+
+        fun newInstance()= SettingFragment()
+    }
+
+
+}

@@ -34,7 +34,7 @@ class ThemeActivity : AppCompatActivity() {
     class ThemeFragment : PreferenceFragmentCompat() {
         override fun onCreatePreferences(savedInstanceState: Bundle?, rootKey: String?) {
             addPreferencesFromResource(R.xml.pre_theme)
-            findPreference<Preference>("dark_mode")!!.setOnPreferenceChangeListener { preference, newValue ->
+            findPreference<Preference>("dark_mode")!!.setOnPreferenceChangeListener { _, newValue ->
                 AppCompatDelegate.setDefaultNightMode(newValue.toString().toInt())
                 APP!!.setTheme(R.style.AppTheme_pink)
                 true

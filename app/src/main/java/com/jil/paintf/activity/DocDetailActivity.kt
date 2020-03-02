@@ -28,6 +28,7 @@ import com.jil.paintf.repository.Tag
 import com.jil.paintf.viewmodel.DocViewModel
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_doc_detail.*
+import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -39,22 +40,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
     var lock =false
     var docData:DocData?=null
     var addReply =false
-    /**
-     * 隐藏导航栏
-     * @param activity
-     * @param show
-     */
-    fun setNavigationBar(activity: Activity, show: Boolean) {
-        val decorView = activity.window.decorView
-        //显示NavigationBar
-        if (!show) {
-            val option = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-            decorView.systemUiVisibility = option
-        } else {
-            val option = View.SYSTEM_UI_FLAG_VISIBLE
-            decorView.systemUiVisibility = option
-        }
-    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
@@ -83,7 +69,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                 adapter!!.ts=imageArray
                 adapter!!.notifyDataSetChanged()
             }
-
+            pager!!.currentItem=0
             //================================================================================标题，上传者头像
             Glide.with(this).load(docData.user.head_url).placeholder(R.drawable.noface)
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this)))
@@ -104,9 +90,11 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                 override fun bindData(holder: SuperVHolder, position: Int) {
                     holder.setText(data[position].name,R.id.text)
                 }
-                override fun setLayout(): Int {
+
+                override fun setLayout(viewType: Int): Int {
                     return R.layout.item_tag
                 }
+
             }
             layoutManager.orientation= RecyclerView.HORIZONTAL
             tags.layoutManager=layoutManager
@@ -147,7 +135,6 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                             current++
                             if(current<idArray.size)
                                 viewModel!!.getData(idArray[current])
-                            viewModel!!.getReplyData(idArray[current],true)
                             //=======================
                         }
                         mIsScrolled=true
@@ -191,7 +178,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             }
         })
         viewModel!!.getReplyData(idArray[current],true).observeForever {
-            if(it.replies.isEmpty())
+            if(it==null||it.replies.isEmpty())
                 return@observeForever
             if(replyAdapter==null){
                 replyAdapter=object :SuperRecyclerAdapter<Reply>(it.replies as ArrayList<Reply>){
@@ -200,9 +187,10 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                         holder.setImage(data[position].member.avatar,android.R.id.icon)
                     }
 
-                    override fun setLayout(): Int {
-                       return android.R.layout.activity_list_item
+                    override fun setLayout(viewType: Int): Int {
+                        return android.R.layout.activity_list_item
                     }
+
 
                 }
                 says.layoutManager=replyLayoutManager
@@ -219,6 +207,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             }
         }
         floatingActionButton2.setOnClickListener {
+            viewModel!!.getReplyData(idArray[current],true)
             bottomSheetDialog.show()
         }
         //============================================================================================评论窗口

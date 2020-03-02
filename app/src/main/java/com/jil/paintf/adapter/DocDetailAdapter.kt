@@ -128,9 +128,10 @@ class DocDetailAdapter(var docData: DocData, var mContext: Context) : RecyclerVi
                     holder.setText(data[position].name,R.id.text)
                 }
 
-                override fun setLayout(): Int {
+                override fun setLayout(viewType: Int): Int {
                     return R.layout.item_tag
                 }
+
 
             }
             tags.layoutManager=layoutManager

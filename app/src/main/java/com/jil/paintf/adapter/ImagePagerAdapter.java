@@ -75,7 +75,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
         RoundedCorners roundedCorners= new RoundedCorners(10);
         RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners)
                 .override(width,height);
-        Glide.with(container.getContext()).load(ts.get(position)).apply(requestOptions)
+        Glide.with(container.getContext()).load(ts.get(position)+"@1080w_1e.webp").apply(requestOptions)
                 .into(imageView);
         imageView.setOnTouchListener(new OnScaleListener(new OnScaleListener.OnScalceCallBack() {
             @Override

@@ -3,6 +3,7 @@ package com.jil.paintf.service
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import androidx.preference.PreferenceManager
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
@@ -11,7 +12,7 @@ class AppPaintf : Application() {
         super.onCreate()
         APP = this
         Logger.addLogAdapter(AndroidLogAdapter())
-
+        LoadLevel=PreferenceManager.getDefaultSharedPreferences(this).getInt("LoadLevel",1080)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 Logger.t(TAG).v("${activity.simpleName}: onActivityCreated")
@@ -75,6 +76,8 @@ class AppPaintf : Application() {
 
 
     companion object {
+        @JvmStatic
+        var LoadLevel=1080
         var APP: AppPaintf? = null
         var theme = 0
         val TAG = "class AppPaintf"

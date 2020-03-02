@@ -1,0 +1,27 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:background="@drawable/button_click_state_back"
+    android:paddingLeft="20dp"
+    android:paddingTop="10dp"
+    android:paddingBottom="5dp">
+
+    <Switch
+            android:id="@+id/textView2"
+            android:clickable="false"
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:text="Switch"
+            android:textColor="?attr/colorPrimary"
+            android:textSize="18sp"/>
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:text="TextView"
+        android:textAlignment="viewStart"
+        android:textColor="@color/black_alp"
+        android:textSize="10sp" />
+</LinearLayout>

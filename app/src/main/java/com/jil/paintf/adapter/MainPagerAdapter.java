@@ -10,7 +10,7 @@ import com.jil.paintf.fragment.MainFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
     private String[] title ={"推荐","最新","最热"};
-    private int type =0;
+    private int type;
 
     public MainPagerAdapter(@NonNull FragmentManager fm,int type) {
         super(fm,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
