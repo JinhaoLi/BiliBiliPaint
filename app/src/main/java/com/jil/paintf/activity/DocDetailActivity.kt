@@ -108,8 +108,8 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             tags.layoutManager=layoutManager
             //==================================================================================喜欢，收藏，支持，tags
         }
-
-        pager!!.setPageTransformer(false, ImageSlideTransformer())
+        //滑动效果
+        //pager!!.setPageTransformer(false, ImageSlideTransformer())
         //下载
         imageButton.setOnClickListener{
             adapter!!.download(pager.currentItem,this)

@@ -1,16 +1,19 @@
 package com.jil.paintf.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.DocDetailActivity.Companion.startDocDetailActivity
 import com.jil.paintf.activity.UserActivity
@@ -111,6 +114,27 @@ class ItemAdapter(private val mContext: Context
 
 
         fun displayImage(){
+            Glide.with(itemView.context).asBitmap().load(imageUrl).placeholder(R.drawable.noface)
+                //.transform(GlideCircleWithBorder(2, ThemeUtil.getColorAccent(image.context)))
+                .into(object :CustomTarget<Bitmap>(){
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        image.setImageBitmap(resource);
+                        val builder =Palette.from(resource);
+                        builder.generate {
+                            //亮、柔和
+                            val lightMutedColor: Int = it!!.getLightMutedColor(ThemeUtil.getColorAccent(itemView.context))
+                            //暗、鲜艳
+                            val darkVibrantColor: Int = it.getDarkVibrantColor(Color.BLACK)
+                            itemView.setBackgroundColor(lightMutedColor)
+                            title.setTextColor(darkVibrantColor)
+                        }
+                    }
+
+                })
 
             icoUrl=icoUrl.let {
                 Glide.with(itemView.context).load(it).placeholder(R.drawable.noface)
@@ -119,10 +143,10 @@ class ItemAdapter(private val mContext: Context
                 null
 
             }
-            imageUrl=imageUrl.let {
-                Glide.with(itemView.context).load(it).placeholder(R.drawable.empty_hint).into(image)
-                null
-            }
+//            imageUrl=imageUrl.let {
+//                Glide.with(itemView.context).load(it).placeholder(R.drawable.empty_hint).into(image)
+//                null
+//            }
         }
     }
 

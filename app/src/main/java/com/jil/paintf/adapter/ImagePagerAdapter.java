@@ -6,6 +6,8 @@ import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
@@ -14,10 +16,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.palette.graphics.Palette;
 import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -39,15 +44,14 @@ import org.w3c.dom.Text;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 
 public class ImagePagerAdapter<T> extends PagerAdapter {
     public ArrayList<T> ts;
-    private String path;
-    public int width=720;
-    public int height=1280;
     private imageClickListener listener;
     private String loadLevel;
+    File pic;
 
     public void setListener(imageClickListener listener) {
         this.listener = listener;
@@ -94,11 +98,10 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
             return v;
         }
 
-        View v = LayoutInflater.from(container.getContext()).inflate(R.layout.item_doc_illusts_layout,container,false);
+        final View v = LayoutInflater.from(container.getContext()).inflate(R.layout.item_doc_illusts_layout,container,false);
         final SubsamplingScaleImageView imageView =v.findViewById(R.id.imageView);
         RoundedCorners roundedCorners= new RoundedCorners(10);
-        RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners)
-                .override(width,height);
+        RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners);
 
         Glide.with(container.getContext()).asFile().load(ts.get(position)+loadLevel).apply(requestOptions)
                 .into(new CustomTarget<File>() {
@@ -106,7 +109,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                     @Override
                     public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
                         imageView.setImage(ImageSource.uri(Uri.fromFile(resource)));
-
+                        pic = resource;
                     }
 
                     @Override
@@ -129,31 +132,53 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
             }
         });
         container.addView(v);
-        if(width!=720){
-            width=720;
-            height=1280;
-        }
         return v;
     }
 
     public void download(final int position, final Context context){
-        new AlertDialog.Builder(context).setTitle("下载图片?").setNegativeButton("下载这张", new DialogInterface.OnClickListener() {
+        new AlertDialog.Builder(context).setTitle("下载图片?").setNegativeButton("保存预览", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    downLoadPic((String) ts.get(position),pic);
+                    Toast.makeText(context,"已保存！",Toast.LENGTH_SHORT).show();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(context,"保存失败！",Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).setPositiveButton("保存原图", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 downLoadPic((String) ts.get(position),context);
-            }
-        }).setPositiveButton("下载全部", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-
             }
         }).create().show();
 
     }
 
+    private void downLoadPic(final String urlStr,File into) throws IOException {
+       File f = new File(Environment.getExternalStorageDirectory(),"Pictures");
+        if(!f.exists())
+            f.mkdir();
+        String[] strs=urlStr.split("/");
+        final File pic =new File(f,strs[strs.length-1]);
+        FileInputStream fi =new FileInputStream(into);
+        FileOutputStream fo =new FileOutputStream(pic);
+        FileChannel fic =fi.getChannel();
+        FileChannel foc =fo.getChannel();
+        foc.transferFrom(fic,0,fic.size());
+        fo.close();
+        fi.close();
+        fic.close();
+        foc.close();
+
+    }
+
     private void downLoadPic(final String urlStr, Context context){
         final ProgressDialog pd1 = new ProgressDialog(context);
+
         Observer<Long> observer =new Observer<Long>() {
+            long picSize;
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -162,7 +187,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                 pd1.setMessage("图片正在下载中,请稍后...");
                 pd1.setCancelable(true);
                 //这里是设置进度条的风格,HORIZONTAL是水平进度条,SPINNER是圆形进度条
-                pd1.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+                pd1.setProgressStyle(ProgressDialog.STYLE_SPINNER);
                 pd1.setIndeterminate(true);
                 //调用show()方法将ProgressDialog显示出来
                 pd1.show();
@@ -170,7 +195,8 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
             @Override
             public void onNext(Long l) {
-                pd1.setMessage("图片正在下载中,请稍后..."+l/1024);
+                pd1.setMessage("图片正在下载中,请稍后..."+l/1024+"Kb");
+                picSize=l;
             }
 
             @Override
@@ -180,7 +206,10 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
             @Override
             public void onComplete() {
-                pd1.dismiss();
+                pd1.setTitle("下载成功");
+                pd1.setProgress(100);
+                pd1.setMessage("图片原图已下载("+picSize/1024+"Kb)");
+                //pd1.dismiss();
             }
         };
 
