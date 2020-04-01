@@ -11,6 +11,7 @@ import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AccelerateInterpolator;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
@@ -93,20 +94,22 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     @Override
     public Object instantiateItem(ViewGroup container, final int position) {
         if(position==ts.size()){
-            View v =LayoutInflater.from(container.getContext()).inflate(R.layout.item_viewpager_end,container,false);
+            final View v =LayoutInflater.from(container.getContext()).inflate(R.layout.item_viewpager_end,container,false);
             TextView up =v.findViewById(R.id.textView18);
             TextView next =v.findViewById(R.id.textView19);
             up.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
+                public void onClick(View view) {
                     upAndNextPagerCallBack.up(v);
+                    v.animate().translationY(v.getHeight()).setInterpolator(new AccelerateInterpolator()).start();
                 }
             });
 
             next.setOnClickListener(new View.OnClickListener() {
                 @Override
-                public void onClick(View v) {
-                    upAndNextPagerCallBack.next(v);
+                public void onClick(View view) {
+                    upAndNextPagerCallBack.next(view);
+                    v.animate().translationX(-v.getWidth()).setInterpolator(new AccelerateInterpolator()).start();
                 }
             });
             container.addView(v);

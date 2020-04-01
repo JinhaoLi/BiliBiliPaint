@@ -7,6 +7,9 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
+import android.widget.ArrayAdapter
+import android.widget.ListPopupWindow
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -70,8 +73,23 @@ class DocDetailActivity : AppCompatActivity(),
                 adapter!!.ts=imageArray
                 adapter!!.notifyDataSetChanged()
             }
-            //重设页码
-
+            //手动选择页码
+            textView13!!.setOnClickListener {
+                //Toast.makeText(it.context, "未实现", Toast.LENGTH_SHORT).show()
+                val listPopupWindow =ListPopupWindow(it.context)
+                val picIndex = arrayListOf<Int>()
+                for (index in 1..imageArray.size){
+                    picIndex.add(index)
+                }
+                listPopupWindow.setAdapter(ArrayAdapter<Int>(it.context, android.R.layout.simple_list_item_1,picIndex))
+                listPopupWindow.setOnItemClickListener { _, _, position, _ ->
+                    pager.currentItem=position
+                    listPopupWindow.dismiss()
+                }
+                listPopupWindow.anchorView=it
+                listPopupWindow.width=200
+                listPopupWindow.show()
+            }
             //获取评论
             viewModel!!.getReplyData(docData.item.doc_id,true)
             //================================================================================标题，上传者头像
@@ -263,6 +281,7 @@ class DocDetailActivity : AppCompatActivity(),
     }
 
     override fun next(view: View?) {
+        //view!!.animate().translationY(view.height.toFloat()).setInterpolator(AccelerateInterpolator()).start()
         current++
         if(current>= idArray!!.size)
             finish()
@@ -274,6 +293,7 @@ class DocDetailActivity : AppCompatActivity(),
     }
 
     override fun up(view: View?) {
+        //view!!.animate().translationY(-view.height.toFloat()).setInterpolator(AccelerateInterpolator()).start()
         current--
         if(current<0)
             finish()
