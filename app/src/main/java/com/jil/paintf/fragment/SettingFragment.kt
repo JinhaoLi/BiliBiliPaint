@@ -10,11 +10,14 @@ import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.widget.Switch
 import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
+import com.jil.dialog.InputDialog
+import com.jil.dialog.Only
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
@@ -96,15 +99,13 @@ class SettingFragment :LazyFragment(){
         @JvmStatic
         val uid = object :SettingItem("你的uid","0000000",1){
             override fun click(v: View?) {
-                MaterialDialog(v!!.context).show {
-                    setContentView(R.layout.dialog_input)
-                    textView16!!.text="输入UID以设置你的头像"
-                    button!!.setOnClickListener {
-                        val input =editText!!.text.toString()
+                val inputDialog =object :InputDialog(v!!.context,hint ="你的uid" ){
+                    override fun inputEnterClick(input: String) {
                         if(input.isEmpty()){
-                            return@setOnClickListener
+                            errInput("<--不能为空-->")
+                            return
                         }
-                        PreferenceManager.getDefaultSharedPreferences(v.context)
+                        PreferenceManager.getDefaultSharedPreferences(v!!.context)
                             .apply {
                                 edit().let {
                                     it.putInt("UID",input.toInt()).apply()
@@ -112,7 +113,7 @@ class SettingFragment :LazyFragment(){
                             }
                         ViewModelProvider.AndroidViewModelFactory(AppPaintf.APP as Application)
                             .create(UserViewModel::class.java)
-                            .getUserData(editText!!.text.toString().toInt()).observeForever { userData ->
+                            .getUserData(input.toInt()).observeForever { userData ->
                                 PreferenceManager.getDefaultSharedPreferences(v.context)
                                     .apply {
                                         edit().let {
@@ -126,6 +127,13 @@ class SettingFragment :LazyFragment(){
                     }
 
                 }
+                inputDialog.applyInputType(Only.number)
+                inputDialog.setIcon(R.mipmap.ic_launcher).setTitle("设置你的uid")
+                inputDialog.buttonBuilder.addButtonToBottom().setButtonName("Action")!!
+                    .setButtonAction(View.OnClickListener { v -> Toast.makeText(v.context, "action", Toast.LENGTH_SHORT).show() })
+
+                inputDialog.hideIcon()
+                inputDialog.show()
             }
 
         }
@@ -173,6 +181,14 @@ class SettingFragment :LazyFragment(){
 
         @JvmStatic
         val test =object:SettingItem("测试","测试",false,3){
+            override fun click(v: View?) {
+
+            }
+
+        }
+
+        @JvmStatic
+        val cookie =object :SettingItem("导入cookie","使用cookie模拟登录状态",4){
             override fun click(v: View?) {
 
             }
