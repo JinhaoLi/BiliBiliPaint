@@ -129,7 +129,8 @@ class ItemAdapter(private val mContext: Context
                             val lightMutedColor: Int = it!!.getLightMutedColor(ThemeUtil.getColorAccent(itemView.context))
                             //暗、鲜艳
                             val darkVibrantColor: Int = it.getDarkVibrantColor(Color.BLACK)
-                            itemView.setBackgroundColor(lightMutedColor)
+                            ico.setBackgroundColor(lightMutedColor)
+                            title.setBackgroundColor(lightMutedColor)
                             title.setTextColor(darkVibrantColor)
                         }
                     }

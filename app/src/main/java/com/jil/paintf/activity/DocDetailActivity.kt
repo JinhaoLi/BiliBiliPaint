@@ -9,7 +9,6 @@ import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,7 +19,6 @@ import com.jil.paintf.R
 import com.jil.paintf.adapter.ImagePagerAdapter
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
-import com.jil.paintf.custom.ImageSlideTransformer
 import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
@@ -29,7 +27,6 @@ import com.jil.paintf.repository.Tag
 import com.jil.paintf.viewmodel.DocViewModel
 import kotlinx.android.synthetic.main.activity_doc_detail.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
-import kotlin.collections.ArrayList
 
 
 class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListener {
@@ -85,7 +82,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             //================================================================================喜欢，收藏，支持，tags
             val pic0 =docData.item.pictures[0]
             textView7.text =docData.item.view_count.toString()
-            textView8.text =docData.item.like_count.toString()
+            textView8.text =docData.item.vote_count.toString()
             textView9.text =docData.item.collect_count.toString()
             textView10.text=pic0.img_width.toString()+"*"+pic0.img_height
             textView12.text =if(docData.item.description=="")"一切尽在不言中..." else docData.item.description
@@ -115,17 +112,17 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             adapter!!.download(pager.currentItem,this)
         }
         //下一个插画
-        floatingActionButton!!.setOnClickListener {
-            current++
-            if(current>=idArray.size){
-                finish()
-            }else{
-                viewModel!!.getData(idArray[current])
-                viewModel!!.getReplyData(idArray[current],true)
-            }
-
-
-        }
+//        floatingActionButton!!.setOnClickListener {
+//            current++
+//            if(current>=idArray.size){
+//                finish()
+//            }else{
+//                viewModel!!.getData(idArray[current])
+//                viewModel!!.getReplyData(idArray[current],true)
+//            }
+//
+//
+//        }
         //分享
         imageView6!!.setOnClickListener{
             val intent =Intent(Intent.ACTION_SEND)
@@ -230,14 +227,14 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                 }
             }
         }
-        floatingActionButton2.setOnClickListener {
-            if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){
-                Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT).show()
-            }else{
-                bottomSheetDialog.show()
-            }
-
-        }
+//        floatingActionButton2.setOnClickListener {
+//            if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){
+//                Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT).show()
+//            }else{
+//                bottomSheetDialog.show()
+//            }
+//
+//        }
         //============================================================================================评论窗口
 
 
@@ -260,35 +257,21 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
      * 隐藏界面
      */
     override fun onClick(view: View?) {
-        if(!floatingActionButton!!.isClickable||lock){
-            return
-        }
-        val layoutParams = floatingActionButton!!.layoutParams as CoordinatorLayout.LayoutParams
-        if(floatingActionButton!!.visibility==View.VISIBLE){
+        hideLayout()
+    }
+
+
+    private fun hideLayout(){
+        if(constraintLayout!!.visibility==View.VISIBLE){
             bottom_layout!!.animate().translationY((bottom_layout.height).toFloat()).setInterpolator(AccelerateInterpolator()).start()
             constraintLayout!!.animate().translationY((-constraintLayout.height).toFloat()).setInterpolator(AccelerateInterpolator()).start()
-            floatingActionButton!!.animate().translationX(floatingActionButton.width + layoutParams.rightMargin.toFloat())
-                .setInterpolator(AccelerateInterpolator()).start()
-            floatingActionButton2!!.animate().translationX(floatingActionButton.width + layoutParams.rightMargin.toFloat())
-                .setInterpolator(AccelerateInterpolator()).start()
-            floatingActionButton!!.isClickable=false
-            floatingActionButton!!.postDelayed({
-                floatingActionButton!!.visibility=View.INVISIBLE
-                floatingActionButton!!.isClickable=true
+            constraintLayout!!.postDelayed({
+                constraintLayout!!.visibility=View.INVISIBLE
             },500)
         }else{
             bottom_layout!!.animate().translationY(0f).setInterpolator(AccelerateInterpolator()).start()
+            constraintLayout!!.visibility=View.VISIBLE
             constraintLayout!!.animate().translationY(0f).setInterpolator(AccelerateInterpolator()).start()
-            floatingActionButton!!.animate().translationX(0f)
-                .setInterpolator(AccelerateInterpolator()).start()
-            floatingActionButton2!!.animate().translationX(0f)
-                .setInterpolator(AccelerateInterpolator()).start()
-            floatingActionButton!!.visibility=View.VISIBLE
-            floatingActionButton!!.isClickable=false
-            floatingActionButton!!.postDelayed(Runnable {
-                floatingActionButton!!.isClickable=true
-            },500)
         }
-
     }
 }
