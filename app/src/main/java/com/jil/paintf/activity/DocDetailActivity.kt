@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.View
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -24,13 +23,16 @@ import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
+import com.jil.paintf.service.AppPaintf
 import com.jil.paintf.viewmodel.DocViewModel
 import kotlinx.android.synthetic.main.activity_doc_detail.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
 
 
-class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListener {
-
+class DocDetailActivity : AppCompatActivity(),
+    ImagePagerAdapter.HideLayoutCallBack,ImagePagerAdapter.UpAndNextPagerCallBack {
+    var current=0
+    var idArray:IntArray?=null
     var viewModel:DocViewModel? =null
     var adapter:ImagePagerAdapter<String>? =null
     private var lock =false
@@ -47,10 +49,10 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
         window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         window.statusBarColor = Color.TRANSPARENT
         val bundle =intent.getBundleExtra("param1")
-        var idArray=bundle!!.getIntArray("intArray")
-        var docId =bundle.getInt("doc_id")
-        var current =idArray!!.indexOf(docId)
-        viewModel =ViewModelProvider.NewInstanceFactory().create(DocViewModel::class.java)
+        idArray=bundle!!.getIntArray("intArray")
+        val docId =bundle.getInt("doc_id")
+        current =idArray!!.indexOf(docId)
+        viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintf.APP!!).create(DocViewModel::class.java)
 
         viewModel!!.getData(docId).observeForever { docData ->
             this.docData=docData
@@ -63,6 +65,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                 adapter = ImagePagerAdapter(imageArray)
                 pager!!.adapter =adapter
                 adapter!!.setListener(this)
+                adapter!!.setUpAndNextPagerCallBack(this)
             }else{
                 adapter!!.ts=imageArray
                 adapter!!.notifyDataSetChanged()
@@ -126,7 +129,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
         //分享
         imageView6!!.setOnClickListener{
             val intent =Intent(Intent.ACTION_SEND)
-            intent.putExtra(Intent.EXTRA_TEXT,"https://h.bilibili.com/"+idArray[current])
+            intent.putExtra(Intent.EXTRA_TEXT,"https://h.bilibili.com/"+idArray!![current])
             intent.type="text/plain"
             startActivity(intent)
         }
@@ -154,20 +157,9 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             }
 
             override fun onPageSelected(position: Int) {
-                if(position ==docData!!.item.pictures.size){
-                    pager.currentItem =docData!!.item.pictures.size-1
-                    //======================下一个
-                    current++
-                    if(current>=idArray.size)
-                        finish()
-                    else{
-                        viewModel!!.getData(idArray[current])
-                        if(replyAdapter!=null)
-                        replyAdapter!!.data.clear()
-                    }
-                    //=======================
+                if(position ==docData!!.item.pictures.size)
                     return
-                }
+
                 val pic =docData!!.item.pictures[position]
                 textView10.text=pic.img_width.toString()+"*"+pic.img_height
                 textView13.text =(pager.currentItem+1).toString()+"/"+docData!!.item.pictures.size
@@ -190,12 +182,12 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
                             replyAdapter!!.data.removeAll(replyAdapter!!.data.subList(0,200))
                         }
                         addReply=true
-                        viewModel!!.getReplyData(idArray[current],false)
+                        viewModel!!.getReplyData(idArray!![current],false)
                     }
                 }
             }
         })
-        viewModel!!.getReplyData(idArray[current],true).observeForever {
+        viewModel!!.getReplyData(idArray!![current],true).observeForever {
             if(it.replies==null||it.replies.isEmpty()){
                 return@observeForever
             }
@@ -256,12 +248,7 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
     /**
      * 隐藏界面
      */
-    override fun onClick(view: View?) {
-        hideLayout()
-    }
-
-
-    private fun hideLayout(){
+    override fun hideLayout(view: View?) {
         if(constraintLayout!!.visibility==View.VISIBLE){
             bottom_layout!!.animate().translationY((bottom_layout.height).toFloat()).setInterpolator(AccelerateInterpolator()).start()
             constraintLayout!!.animate().translationY((-constraintLayout.height).toFloat()).setInterpolator(AccelerateInterpolator()).start()
@@ -272,6 +259,28 @@ class DocDetailActivity : AppCompatActivity(),ImagePagerAdapter.imageClickListen
             bottom_layout!!.animate().translationY(0f).setInterpolator(AccelerateInterpolator()).start()
             constraintLayout!!.visibility=View.VISIBLE
             constraintLayout!!.animate().translationY(0f).setInterpolator(AccelerateInterpolator()).start()
+        }
+    }
+
+    override fun next(view: View?) {
+        current++
+        if(current>= idArray!!.size)
+            finish()
+        else{
+            viewModel!!.getData(idArray!![current])
+            if(replyAdapter!=null)
+                replyAdapter!!.data.clear()
+        }
+    }
+
+    override fun up(view: View?) {
+        current--
+        if(current<0)
+            finish()
+        else{
+            viewModel!!.getData(idArray!![current])
+            if(replyAdapter!=null)
+                replyAdapter!!.data.clear()
         }
     }
 }

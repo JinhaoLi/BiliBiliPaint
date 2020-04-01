@@ -2,27 +2,22 @@ package com.jil.paintf.adapter;
 
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.BitmapFactory;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.palette.graphics.Palette;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
@@ -30,8 +25,8 @@ import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.jil.paintf.R;
-import com.jil.paintf.custom.OnScaleListener;
 import com.jil.paintf.service.AppPaintf;
+import com.jil.paintf.viewmodel.DocViewModel;
 import com.orhanobut.logger.Logger;
 import io.reactivex.*;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -39,7 +34,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.*;
 import org.jetbrains.annotations.NotNull;
-import org.w3c.dom.Text;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -49,11 +43,17 @@ import java.util.ArrayList;
 
 public class ImagePagerAdapter<T> extends PagerAdapter {
     public ArrayList<T> ts;
-    private imageClickListener listener;
+    private HideLayoutCallBack listener;
+    private UpAndNextPagerCallBack upAndNextPagerCallBack;
     private String loadLevel;
     File pic;
 
-    public void setListener(imageClickListener listener) {
+
+    public void setUpAndNextPagerCallBack(UpAndNextPagerCallBack upAndNextPagerCallBack) {
+        this.upAndNextPagerCallBack = upAndNextPagerCallBack;
+    }
+
+    public void setListener(HideLayoutCallBack listener) {
         this.listener = listener;
     }
 
@@ -94,6 +94,21 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     public Object instantiateItem(ViewGroup container, final int position) {
         if(position==ts.size()){
             View v =LayoutInflater.from(container.getContext()).inflate(R.layout.item_viewpager_end,container,false);
+            TextView up =v.findViewById(R.id.textView18);
+            TextView next =v.findViewById(R.id.textView19);
+            up.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    upAndNextPagerCallBack.up(v);
+                }
+            });
+
+            next.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    upAndNextPagerCallBack.next(v);
+                }
+            });
             container.addView(v);
             return v;
         }
@@ -117,18 +132,10 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
                     }
                 });
-//        imageView.setOnTouchListener(new OnScaleListener(new OnScaleListener.OnScalceCallBack() {
-//            @Override
-//            public void onClick(View view) {
-//                if(listener!=null)
-//                listener.onClick(view);
-//            }
-//
-//        }));
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                listener.onClick(v);
+                listener.hideLayout(v);
             }
         });
         container.addView(v);
@@ -271,8 +278,13 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
     }
 
-    public interface imageClickListener {
-       void onClick(View view);
+    public interface HideLayoutCallBack {
+       void hideLayout(View view);
+    }
+
+    public interface UpAndNextPagerCallBack{
+        void up(View view);
+        void next(View view);
     }
 
     @Override
