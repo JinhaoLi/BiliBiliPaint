@@ -59,6 +59,11 @@ class DocDetailActivity : AppCompatActivity(),
 
         viewModel!!.getData(docId).observeForever { docData ->
             this.docData=docData
+            if(docData!=null){
+                imageView5!!.setOnClickListener {
+                    UserActivity.startUserActivity(it.context,docData.user.uid)
+                }
+            }
             val imageArray = arrayListOf<String>()
             docData.item.pictures.map {
                 imageArray.add(it.img_src)
@@ -128,22 +133,12 @@ class DocDetailActivity : AppCompatActivity(),
         }
         //滑动效果
         //pager!!.setPageTransformer(false, ImageSlideTransformer())
+
         //下载
         imageButton.setOnClickListener{
             adapter!!.download(pager.currentItem,this)
         }
-        //下一个插画
-//        floatingActionButton!!.setOnClickListener {
-//            current++
-//            if(current>=idArray.size){
-//                finish()
-//            }else{
-//                viewModel!!.getData(idArray[current])
-//                viewModel!!.getReplyData(idArray[current],true)
-//            }
-//
-//
-//        }
+
         //分享
         imageView6!!.setOnClickListener{
             val intent =Intent(Intent.ACTION_SEND)
@@ -206,7 +201,7 @@ class DocDetailActivity : AppCompatActivity(),
             }
         })
         viewModel!!.getReplyData(idArray!![current],true).observeForever {
-            if(it.replies==null||it.replies.isEmpty()){
+            if(it.replies.isEmpty()){
                 return@observeForever
             }
 
@@ -226,6 +221,7 @@ class DocDetailActivity : AppCompatActivity(),
                 says.addItemDecoration(RecycleItemDecoration(this,1))
                 says.layoutManager=replyLayoutManager
                 says.adapter=replyAdapter
+
             }else{
                 if(addReply){
                     replyAdapter!!.data.addAll(it.replies as ArrayList<Reply>)
@@ -237,14 +233,14 @@ class DocDetailActivity : AppCompatActivity(),
                 }
             }
         }
-//        floatingActionButton2.setOnClickListener {
-//            if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){
-//                Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT).show()
-//            }else{
-//                bottomSheetDialog.show()
-//            }
-//
-//        }
+
+        imageView10!!.setOnClickListener {
+            if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){
+                Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT).show()
+            }else{
+                bottomSheetDialog.show()
+            }
+        }
         //============================================================================================评论窗口
 
 
