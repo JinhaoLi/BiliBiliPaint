@@ -2,28 +2,30 @@ package com.jil.paintf.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
-import com.afollestad.materialdialogs.MaterialDialog
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import com.jil.dialog.InputDialog
+import com.jil.dialog.Only
 import com.jil.paintf.R
 import com.jil.paintf.adapter.MainPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.dialog_input.*
 
 
 class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
@@ -68,14 +70,18 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
 
         ico!!.setOnClickListener {
-            MaterialDialog(this).show {
-                setContentView(R.layout.dialog_input)
-                textView16!!.text="输入UID以设置你的头像"
-                button!!.setOnClickListener {
-                    editText!!.inputType=EditorInfo.TYPE_CLASS_NUMBER
+            val inputDialog = object :InputDialog(this,hint = "<--请输入你的uid-->"){
+                override fun inputEnterClick(input: String) {
+                    if (TextUtils.isEmpty(input)){
+                        errInput("<--不能为空-->")
+                        return
+                    }
+
                     ViewModelProvider.AndroidViewModelFactory(application)
                         .create(UserViewModel::class.java)
-                        .getUserData(editText!!.text.toString().toInt()).observeForever { userData ->
+                        .getUserData(input.toInt()).observe(this@MainActivity, Observer { userData->
+                            Toast.makeText(this@MainActivity, userData.name, Toast.LENGTH_SHORT).show()
+
                             PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
                                 .apply {
                                     edit().let {
@@ -87,12 +93,19 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
                                 .into(ico)
                             header.findViewById<TextView>(R.id.textView3).text=userData.name
-                        }
+                        })
 
                     dismiss()
                 }
 
             }
+            inputDialog.applyInputType(Only.number)
+            inputDialog.setIcon(R.mipmap.ic_launcher).setTitle("设置你的uid")
+            inputDialog.buttonBuilder.addButtonToBottom().setButtonName("Action")!!
+                .setButtonAction(View.OnClickListener { v -> Toast.makeText(v.context, "action", Toast.LENGTH_SHORT).show() })
+
+            inputDialog.hideIcon()
+            inputDialog.show()
         }
 
         main_tabs!!.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
@@ -142,6 +155,9 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
             R.id.nav_setting->{
                 startActivity(Intent(this,SettingsActivity::class.java))
+            }
+            else->{
+
             }
 
         }
