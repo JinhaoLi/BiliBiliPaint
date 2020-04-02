@@ -144,10 +144,6 @@ class ItemAdapter(private val mContext: Context
                 null
 
             }
-//            imageUrl=imageUrl.let {
-//                Glide.with(itemView.context).load(it).placeholder(R.drawable.empty_hint).into(image)
-//                null
-//            }
         }
     }
 
