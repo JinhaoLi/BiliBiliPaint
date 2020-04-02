@@ -10,6 +10,7 @@ public class DocViewModel extends ViewModel {
     RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
     private MutableLiveData<DocData> data;
     private MutableLiveData<ReplyData> replyData;
+    private MutableLiveData<ReplyData> reply2Data;
     int pn=1;
     int maxpn=2;
 
@@ -41,7 +42,35 @@ public class DocViewModel extends ViewModel {
         return data;
     }
 
-    public MutableLiveData<ReplyData> getReplyData(int id,boolean resetPage) {
+    public MutableLiveData<ReplyData> getReply2Data(int oid,long root) {
+        if(reply2Data==null){
+            reply2Data =new MutableLiveData<>();
+        }
+        retrofitRepository.getDocNextReply(oid,root).subscribe(new Observer<ReplyRepository>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(ReplyRepository replyRepository) {
+                reply2Data.postValue(replyRepository.getData());
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+        return reply2Data;
+    }
+
+    public MutableLiveData<ReplyData> getReplyData(int id, boolean resetPage) {
         if(resetPage){
             pn =1;
         }
@@ -57,6 +86,9 @@ public class DocViewModel extends ViewModel {
 
             @Override
             public void onNext(ReplyRepository replyRepository) {
+                if(replyRepository.getData().getReplies().isEmpty()){
+                    return;
+                }
                 replyData.postValue(replyRepository.getData());
                 maxpn=replyRepository.getData().getPage().getCount()/20;
             }

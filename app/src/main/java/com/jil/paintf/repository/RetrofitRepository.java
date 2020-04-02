@@ -7,6 +7,7 @@ import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import okhttp3.ResponseBody;
 
 import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
 
@@ -14,6 +15,7 @@ public class RetrofitRepository {
     private Client client;
     private AppApiService appApiService;
     private DataListRetryWithDelay dataListRetryWithDelay;
+    private String token;
     private static RetrofitRepository retrofitRepository;
     public static RetrofitRepository getInstance(){
         if(retrofitRepository==null){
@@ -95,7 +97,7 @@ public class RetrofitRepository {
     }
 
     /**
-     * 获取评论
+     * 获取初始评论
      * @param pn
      * @param id
      * @return
@@ -105,6 +107,21 @@ public class RetrofitRepository {
             @Override
             public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
                 return client.getReplyRetrofitAppApi().create(AppApiService.class).getDocReply(pn,id);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocReplyRetryWithDelay());
+    }
+
+    /**
+     * 获取次级评论
+     * @param oid
+     * @param root
+     * @return
+     */
+    public Observable<ReplyRepository> getDocNextReply(final int oid,final long root){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyRepository>>() {
+            @Override
+            public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
+                return client.getReplyRetrofitAppApi().create(AppApiService.class).getDoc2Reply(oid,root);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocReplyRetryWithDelay());
     }
