@@ -8,6 +8,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
+import com.jil.paintf.R;
 import com.jil.paintf.custom.GlideCircleWithBorder;
 import com.jil.paintf.custom.ThemeUtil;
 
@@ -27,7 +28,7 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
     @NonNull
     @Override
     public SuperVHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        return new SuperVHolder(LayoutInflater.from(parent.getContext()).inflate(setLayout(viewType),parent,false));
+        return new SuperVHolder(LayoutInflater.from(parent.getContext()).inflate(setLayout(viewType), parent, false));
     }
 
     @Override
@@ -45,7 +46,7 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
         return data.size();
     }
 
-    public  static class SuperVHolder extends RecyclerView.ViewHolder {
+    public static class SuperVHolder extends RecyclerView.ViewHolder {
         public SuperVHolder(@NonNull View itemView) {
             super(itemView);
         }
@@ -61,7 +62,7 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
 
         public void setImageIco(String str, int id){
             ImageView imageView = (ImageView) getView(id);
-            Glide.with(imageView.getContext()).load(str)
+            Glide.with(imageView.getContext()).load(str).placeholder(R.drawable.noface)
                     .transform(new GlideCircleWithBorder(2, ThemeUtil.getColorAccent(imageView.getContext())))
                     .into(imageView);
         }

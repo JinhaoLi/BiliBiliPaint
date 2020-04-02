@@ -4,13 +4,14 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
-import android.widget.ArrayAdapter
-import android.widget.ListPopupWindow
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -28,8 +29,11 @@ import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.service.AppPaintf
 import com.jil.paintf.viewmodel.DocViewModel
+import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_doc_detail.*
+import kotlinx.android.synthetic.main.activity_theme.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
+import kotlinx.android.synthetic.main.item_reply_layout.view.*
 
 
 class DocDetailActivity : AppCompatActivity(),
@@ -200,23 +204,53 @@ class DocDetailActivity : AppCompatActivity(),
                 }
             }
         })
-        viewModel!!.getReplyData(idArray!![current],true).observeForever {
-            if(it.replies.isEmpty()){
+        viewModel!!.getReplyData(idArray!![current],true).observeForever { replyData ->
+            if(replyData.replies.isEmpty()){
                 return@observeForever
             }
 
             if(replyAdapter==null){
-                replyAdapter=object :SuperRecyclerAdapter<Reply>(it.replies as ArrayList<Reply>){
+                if(replyData.replies.isEmpty())
+                    return@observeForever
+                replyAdapter=object :SuperRecyclerAdapter<Reply>(replyData.replies as ArrayList<Reply>){
                     override fun bindData(holder: SuperVHolder, position: Int) {
-                        holder.setText(data[position].content.message,android.R.id.text1)
-                        holder.setImageIco(data[position].member.avatar,android.R.id.icon)
+                        //解决数据错乱
+                        holder.setIsRecyclable(false)
+
+                        val bindData =data[position]
+
+                        val name:TextView=holder.getView(R.id.textView22) as TextView
+                        name.text =bindData.member.uname
+                        name.setTextColor(ThemeUtil.getColorAccent(this@DocDetailActivity))
+
+                        holder.setText(bindData.content.message,R.id.textView20)
+                        holder.setImageIco(bindData.member.avatar,R.id.icon)
+                        if(bindData.replies.isNullOrEmpty())
+                            return
+                        holder.setText("查看"+data[position].replies.size+"条评论",R.id.textView21)
+                        holder.getView(R.id.textView21).setOnClickListener {
+                            val listPopupWindow =ListPopupWindow(it.context)
+                            listPopupWindow.setAdapter(object :ArrayAdapter<Reply>(it.context,R.layout.item_reply_layout,bindData.replies){
+                                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                                    val layout =LayoutInflater.from(this@DocDetailActivity).inflate(R.layout.item_reply_layout,null)
+                                    val user =getItem(position)!!.member.uname
+                                    val nameTextView =layout.findViewById<TextView>(R.id.textView22)
+                                    nameTextView.setTextColor(ThemeUtil.getColorAccent(this@DocDetailActivity))
+                                    val content =layout.findViewById<TextView>(R.id.textView20)
+                                    nameTextView.text = user
+                                    content.text = getItem(position)!!.content.message
+                                    return layout
+                                }
+                            })
+                            listPopupWindow.anchorView =it
+                            listPopupWindow.width=-1
+                            listPopupWindow.show()
+                        }
                     }
 
                     override fun setLayout(viewType: Int): Int {
-                        return android.R.layout.activity_list_item
+                        return R.layout.item_reply_layout
                     }
-
-
                 }
                 says.addItemDecoration(RecycleItemDecoration(this,1))
                 says.layoutManager=replyLayoutManager
@@ -224,11 +258,11 @@ class DocDetailActivity : AppCompatActivity(),
 
             }else{
                 if(addReply){
-                    replyAdapter!!.data.addAll(it.replies as ArrayList<Reply>)
+                    replyAdapter!!.data.addAll(replyData.replies as ArrayList<Reply>)
                     replyAdapter!!.notifyItemInserted(replyAdapter!!.data.size)
                     addReply=false
                 }else{
-                    replyAdapter!!.data=it.replies as ArrayList<Reply>
+                    replyAdapter!!.data=replyData.replies as ArrayList<Reply>
                     replyAdapter!!.notifyDataSetChanged()
                 }
             }
