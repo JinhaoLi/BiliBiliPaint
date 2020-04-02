@@ -42,7 +42,7 @@ public class ThemeUtil {
         }
         switch(themeIndex){
             case 1:
-                return context.getColor(R.color.pink_light);
+                return context.getColor(R.color.pink_dark);
 
             case 2:
                 return context.getColor(R.color.green_light);
