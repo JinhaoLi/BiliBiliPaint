@@ -63,7 +63,7 @@ public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<Super
         public void setImageIco(String str, int id){
             ImageView imageView = (ImageView) getView(id);
             Glide.with(imageView.getContext()).load(str).placeholder(R.drawable.noface)
-                    .transform(new GlideCircleWithBorder(2, ThemeUtil.getColorAccent(imageView.getContext())))
+                    .transform(new GlideCircleWithBorder(1, ThemeUtil.getColorAccent(imageView.getContext())))
                     .into(imageView);
         }
 

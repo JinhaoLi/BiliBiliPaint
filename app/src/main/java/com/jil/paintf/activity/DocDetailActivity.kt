@@ -11,7 +11,6 @@ import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -29,11 +28,8 @@ import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.service.AppPaintf
 import com.jil.paintf.viewmodel.DocViewModel
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.activity_doc_detail.*
-import kotlinx.android.synthetic.main.activity_theme.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
-import kotlinx.android.synthetic.main.item_reply_layout.view.*
 
 
 class DocDetailActivity : AppCompatActivity(),
@@ -45,7 +41,7 @@ class DocDetailActivity : AppCompatActivity(),
     private var lock =false
     var docData:DocData?=null
     var addReply =false
-    var replyAdapter:SuperRecyclerAdapter<Reply>?=null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
@@ -99,6 +95,8 @@ class DocDetailActivity : AppCompatActivity(),
                 listPopupWindow.width=200
                 listPopupWindow.show()
             }
+
+            showReply()
             //获取评论
             viewModel!!.getReplyData(docData.item.doc_id,true)
             //================================================================================标题，上传者头像
@@ -174,9 +172,11 @@ class DocDetailActivity : AppCompatActivity(),
             }
 
             override fun onPageSelected(position: Int) {
-                if(position ==docData!!.item.pictures.size)
+                if(position ==docData!!.item.pictures.size){
+                    imageButton!!.visibility=View.INVISIBLE
                     return
-
+                }
+                imageButton!!.visibility=View.VISIBLE
                 val pic =docData!!.item.pictures[position]
                 textView10.text=pic.img_width.toString()+"*"+pic.img_height
                 textView13.text =(pager.currentItem+1).toString()+"/"+docData!!.item.pictures.size
@@ -184,7 +184,11 @@ class DocDetailActivity : AppCompatActivity(),
             }
         })
 
+    }
+
+    private fun showReply(){
         //============================================================================================评论窗口
+        var replyAdapter:SuperRecyclerAdapter<Reply>?=null
         val bottomSheetDialog =BottomSheetDialog(this)
         bottomSheetDialog.setCancelable(true)
         bottomSheetDialog.setContentView(R.layout.dialog_bottom_recyclerview)
@@ -221,27 +225,40 @@ class DocDetailActivity : AppCompatActivity(),
 
                         val name:TextView=holder.getView(R.id.textView22) as TextView
                         name.text =bindData.member.uname
-                        name.setTextColor(ThemeUtil.getColorAccent(this@DocDetailActivity))
+                        //name.setTextColor(ThemeUtil.getColorAccent(this@DocDetailActivity))
 
                         holder.setText(bindData.content.message,R.id.textView20)
                         holder.setImageIco(bindData.member.avatar,R.id.icon)
                         if(bindData.replies.isNullOrEmpty())
                             return
-                        holder.setText("查看"+data[position].replies.size+"条评论",R.id.textView21)
-                        holder.getView(R.id.textView21).setOnClickListener {
+                        val checkReply =holder.getView(R.id.textView21) as TextView
+                        checkReply.visibility=View.VISIBLE
+                        checkReply.text = "查看"+data[position].replies.size+"条评论"
+                        checkReply.setOnClickListener {
                             val listPopupWindow =ListPopupWindow(it.context)
                             listPopupWindow.setAdapter(object :ArrayAdapter<Reply>(it.context,R.layout.item_reply_layout,bindData.replies){
                                 override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                                     val layout =LayoutInflater.from(this@DocDetailActivity).inflate(R.layout.item_reply_layout,null)
-                                    val user =getItem(position)!!.member.uname
+                                    val data =getItem(position)
+
                                     val nameTextView =layout.findViewById<TextView>(R.id.textView22)
-                                    nameTextView.setTextColor(ThemeUtil.getColorAccent(this@DocDetailActivity))
+                                    nameTextView.text = data!!.member.uname
+
+                                    val headerIcon=layout.findViewById<ImageView>(R.id.icon)
+                                    Glide.with(parent.context).load(data.member.avatar)
+                                        .transform(GlideCircleWithBorder(1, ThemeUtil.getColorAccent(headerIcon.context)))
+                                        .into(headerIcon)
+
                                     val content =layout.findViewById<TextView>(R.id.textView20)
-                                    nameTextView.text = user
-                                    content.text = getItem(position)!!.content.message
+                                    content.text = data.content.message
+
                                     return layout
                                 }
                             })
+
+                            listPopupWindow.setOnItemClickListener { parent, view, position, id ->
+                                listPopupWindow.dismiss()
+                            }
                             listPopupWindow.anchorView =it
                             listPopupWindow.width=-1
                             listPopupWindow.show()
@@ -276,9 +293,6 @@ class DocDetailActivity : AppCompatActivity(),
             }
         }
         //============================================================================================评论窗口
-
-
-
     }
 
     companion object{
@@ -317,8 +331,7 @@ class DocDetailActivity : AppCompatActivity(),
             finish()
         else{
             viewModel!!.getData(idArray!![current])
-            if(replyAdapter!=null)
-                replyAdapter!!.data.clear()
+
         }
     }
 
@@ -329,8 +342,6 @@ class DocDetailActivity : AppCompatActivity(),
             finish()
         else{
             viewModel!!.getData(idArray!![current])
-            if(replyAdapter!=null)
-                replyAdapter!!.data.clear()
         }
     }
 }

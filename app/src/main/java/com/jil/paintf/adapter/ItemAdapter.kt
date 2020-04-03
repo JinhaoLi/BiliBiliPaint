@@ -122,7 +122,7 @@ class ItemAdapter(private val mContext: Context
                     }
 
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
-                        image.setImageBitmap(resource);
+                        image.setImageBitmap(resource)
                         val builder =Palette.from(resource);
                         builder.generate {
                             //亮、柔和

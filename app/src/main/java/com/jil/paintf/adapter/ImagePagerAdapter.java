@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -187,8 +188,9 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     private void downLoadPic(final String urlStr, Context context){
         final ProgressDialog pd1 = new ProgressDialog(context);
 
-        Observer<Long> observer =new Observer<Long>() {
-            long picSize;
+        Observer<Bundle> observer =new Observer<Bundle>() {
+            //单位 kb
+            long picSize= 0L;
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -197,16 +199,20 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                 pd1.setMessage("图片正在下载中,请稍后...");
                 pd1.setCancelable(true);
                 //这里是设置进度条的风格,HORIZONTAL是水平进度条,SPINNER是圆形进度条
-                pd1.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-                pd1.setIndeterminate(true);
+                pd1.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
                 //调用show()方法将ProgressDialog显示出来
                 pd1.show();
             }
 
             @Override
-            public void onNext(Long l) {
-                pd1.setMessage("图片正在下载中,请稍后..."+l/1024+"Kb");
-                picSize=l;
+            public void onNext(Bundle bundle) {
+                if(picSize==0)
+                    picSize=bundle.getLong("pic_size");
+                long isLoad =bundle.getLong("loaded");
+                int percentage= (int) ((isLoad*100)/picSize);
+                pd1.setProgress(percentage);
+                pd1.setMessage(picSize+"/"+isLoad+"Kb");
+
             }
 
             @Override
@@ -218,14 +224,14 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
             public void onComplete() {
                 pd1.setTitle("下载成功");
                 pd1.setProgress(100);
-                pd1.setMessage("图片原图已下载("+picSize/1024+"Kb)");
+                pd1.setMessage("原图已下载(共"+picSize+"Kb)");
                 //pd1.dismiss();
             }
         };
 
-        Observable<Long> download =Observable.create(new ObservableOnSubscribe<Long>() {
+        Observable<Bundle> download =Observable.create(new ObservableOnSubscribe<Bundle>() {
             @Override
-            public void subscribe(final ObservableEmitter<Long> emitter) throws Exception {
+            public void subscribe(final ObservableEmitter<Bundle> emitter) throws Exception {
                 URL url=null;
                 try {
                     url =new URL(urlStr);
@@ -240,10 +246,11 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                     f.mkdir();
                 String[] strs=urlStr.split("/");
                 final File pic =new File(f,strs[strs.length-1]);
-                OkHttpClient.Builder builder =new OkHttpClient.Builder();
+                final OkHttpClient.Builder builder =new OkHttpClient.Builder();
                 Request.Builder rq =new Request.Builder().url(urlStr);
                 Call call =builder.build().newCall(rq.build());
                 call.enqueue(new Callback() {
+                    Bundle bundle=new Bundle();
                     @Override
                     public void onFailure(@NotNull Call call, @NotNull IOException e) {
 
@@ -257,11 +264,15 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                             byte[] bytes =new byte[1024];
                             int len=0;
                             long all_size=0;
+                            bundle.putLong("pic_size",response.body().contentLength()/1024);
+                            bundle.putLong("loaded",0);
+                            emitter.onNext(bundle);
                             while ((len=inputStream.read(bytes))!=-1){
                                 all_size+=len;
                                 fileOutputStream.write(bytes,0,len);
                                 fileOutputStream.flush();
-                                emitter.onNext(all_size);
+                                bundle.putLong("loaded",all_size/1024);
+                                emitter.onNext(bundle);
                             }
                             inputStream.close();
                             fileOutputStream.close();

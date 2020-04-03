@@ -86,6 +86,9 @@ public class DocViewModel extends ViewModel {
 
             @Override
             public void onNext(ReplyRepository replyRepository) {
+                if(replyRepository.getData().getReplies()==null){
+                    return;
+                }
                 if(replyRepository.getData().getReplies().isEmpty()){
                     return;
                 }
