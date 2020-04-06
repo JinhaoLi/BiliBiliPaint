@@ -1,9 +1,11 @@
 package com.jil.paintf.fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -116,9 +118,19 @@ class MainFragment: LazyFragment() {
     }
 
     private fun recommendIllusts(){
-        viewModel.recommendIllustsList.observeForever {
-            refresh(it)
-        }
+//        viewModel.recommendIllustsList.observeForever {
+//            refresh(it)
+//        }
+
+        viewModel.recommendIllustsList.observe(this,
+            Observer<List<Item>> {
+                Logger.d("125-->viewModel.recommendIllustsList.observe(this,\n" +
+                        "            Observer<List<Item>> {\n" +
+                        "                Logger.d(\"\")\n" +
+                        "                refresh(it)\n" +
+                        "            })")
+                refresh(it)
+            })
     }
 
     private fun newIllusts(){

@@ -35,15 +35,6 @@ abstract class InputDialog(context: Context) : BaseDialog(context, layoutId=R.la
     fun errInput(errMsg: String){
         inputEdit!!.hint=errMsg
         inputEdit.setHintTextColor(Color.RED)
-//        val curTranslationX: Float = inputEdit.getTranslationX()
-//        val width: Float = inputEdit.width /10f
-//        val animator = ObjectAnimator.ofFloat(
-//            inputEdit, "translationX", curTranslationX,
-//            width, -width, width, -width, width, -width,
-//            width, -width, width, -width, width,curTranslationX
-//        )
-//        animator.duration = 500
-//        animator.start()
 
         shakeView(inputEdit)
         inputEdit.postDelayed({
