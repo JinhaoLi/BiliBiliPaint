@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -40,7 +41,6 @@ class DocDetailActivity : AppCompatActivity(),
     var adapter:ImagePagerAdapter<String>? =null
     private var lock =false
     var docData:DocData?=null
-    var addReply =false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,7 +98,7 @@ class DocDetailActivity : AppCompatActivity(),
 
             showReply()
             //获取评论
-            viewModel!!.getReplyData(docData.item.doc_id,true)
+            //viewModel!!.getReplyData(docData.item.doc_id,true)
             //================================================================================标题，上传者头像
             if(!isDestroyed)
             Glide.with(this).load(docData.user.head_url).placeholder(R.drawable.noface)
@@ -202,21 +202,16 @@ class DocDetailActivity : AppCompatActivity(),
                         if(replyAdapter!=null&&replyAdapter!!.data.size>600){
                             replyAdapter!!.data.removeAll(replyAdapter!!.data.subList(0,200))
                         }
-                        addReply=true
                         viewModel!!.getReplyData(idArray!![current],false)
                     }
                 }
             }
         })
-        viewModel!!.getReplyData(idArray!![current],true).observeForever { replyData ->
-            if(replyData.replies.isEmpty()){
-                return@observeForever
-            }
-
+        viewModel!!.getReplyData(idArray!![current],true).observe(this, Observer<List<Reply>> { replyData ->
+            if(replyData.isEmpty())
+                return@Observer
             if(replyAdapter==null){
-                if(replyData.replies.isEmpty())
-                    return@observeForever
-                replyAdapter=object :SuperRecyclerAdapter<Reply>(replyData.replies as ArrayList<Reply>){
+                replyAdapter=object :SuperRecyclerAdapter<Reply>(replyData as ArrayList<Reply>){
                     override fun bindData(holder: SuperVHolder, position: Int) {
                         //解决数据错乱
                         holder.setIsRecyclable(false)
@@ -225,7 +220,6 @@ class DocDetailActivity : AppCompatActivity(),
 
                         val name:TextView=holder.getView(R.id.textView22) as TextView
                         name.text =bindData.member.uname
-                        //name.setTextColor(ThemeUtil.getColorAccent(this@DocDetailActivity))
 
                         holder.setText(bindData.content.message,R.id.textView20)
                         holder.setImageIco(bindData.member.avatar,R.id.icon)
@@ -272,22 +266,19 @@ class DocDetailActivity : AppCompatActivity(),
                 says.addItemDecoration(RecycleItemDecoration(this,1))
                 says.layoutManager=replyLayoutManager
                 says.adapter=replyAdapter
-
             }else{
-                if(addReply){
-                    replyAdapter!!.data.addAll(replyData.replies as ArrayList<Reply>)
-                    replyAdapter!!.notifyItemInserted(replyAdapter!!.data.size)
-                    addReply=false
-                }else{
-                    replyAdapter!!.data=replyData.replies as ArrayList<Reply>
-                    replyAdapter!!.notifyDataSetChanged()
-                }
+                val oldSize =replyAdapter!!.data.size
+                replyAdapter!!.data=replyData as ArrayList<Reply>
+                replyAdapter!!.notifyItemInserted(oldSize-20)
             }
-        }
+        })
 
         imageView10!!.setOnClickListener {
             if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){
-                Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT).show()
+                val toast=Toast.makeText(this,"没有评论",Toast.LENGTH_SHORT)
+                toast.show()
+                toast.view.postDelayed({toast.cancel()},1000)
+
             }else{
                 bottomSheetDialog.show()
             }

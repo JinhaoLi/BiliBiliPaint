@@ -1,16 +1,25 @@
 package com.jil.paintf.viewmodel;
 
+import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.jil.paintf.repository.*;
+import com.orhanobut.logger.Logger;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DocViewModel extends ViewModel {
     RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
     private MutableLiveData<DocData> data;
-    private MutableLiveData<ReplyData> replyData;
+
+    //==================================评论相关数据
     private MutableLiveData<ReplyData> reply2Data;
+    private MutableLiveData<List<Reply>> liveReplyData;
+    private List<Reply> replyData =new ArrayList<>();
+    boolean isLoading =false;
     int pn=1;
     int maxpn=2;
 
@@ -70,30 +79,39 @@ public class DocViewModel extends ViewModel {
         return reply2Data;
     }
 
-    public MutableLiveData<ReplyData> getReplyData(int id, boolean resetPage) {
+    public MutableLiveData<List<Reply>> getReplyData(final int id, boolean resetPage) {
         if(resetPage){
+            isLoading=false;
             pn =1;
+            replyData.clear();
         }
-        if(replyData==null){
-            replyData =new MutableLiveData<>();
+        if(liveReplyData ==null){
+            liveReplyData =new MutableLiveData<>();
         }
-        if(pn<=maxpn+1)
+        if(isLoading)
+            return liveReplyData;
+        if(pn!=-1)//-1 代表评论已经全部加载完成
         retrofitRepository.getDocReply(pn,id).subscribe(new Observer<ReplyRepository>() {
             @Override
             public void onSubscribe(Disposable d) {
-
+                isLoading=true;
+                Logger.d("正在加载第"+pn+"页评论！");
             }
 
             @Override
             public void onNext(ReplyRepository replyRepository) {
-                if(replyRepository.getData().getReplies()==null){
+                List<Reply> list =replyRepository.getData().getReplies();
+                if(list==null){
                     return;
                 }
-                if(replyRepository.getData().getReplies().isEmpty()){
-                    return;
-                }
-                replyData.postValue(replyRepository.getData());
-                maxpn=replyRepository.getData().getPage().getCount()/20;
+                replyData.addAll(list);
+                liveReplyData.postValue(replyData);
+                if(replyRepository.getData().getPage().getCount()%20==0)
+                    maxpn=replyRepository.getData().getPage().getCount()/20;
+                else
+                    maxpn=(replyRepository.getData().getPage().getCount()/20)+1;
+
+
             }
 
             @Override
@@ -103,9 +121,18 @@ public class DocViewModel extends ViewModel {
 
             @Override
             public void onComplete() {
-                pn++;
+                isLoading=false;
+                Logger.d("第"+pn+"页评论完成加载！"+"共"+replyData.size()+"条评论！");
+                if(pn!=maxpn){
+                    pn++;
+                    //getReplyData(id,false);
+                }else {
+                    pn=-1;
+                    //liveReplyData.postValue(replyData);
+                    Logger.d("共"+maxpn+"页，加载评论完成！");
+                }
             }
         });
-        return replyData;
+        return liveReplyData;
     }
 }

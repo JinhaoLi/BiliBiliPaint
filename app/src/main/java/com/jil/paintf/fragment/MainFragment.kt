@@ -21,6 +21,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 private const val ARG_PARAM1 = "param1"
 
 class MainFragment: LazyFragment() {
+    //private var verticalViewpager:VerticalViewpager?=null
     private var param1=0
     private lateinit var viewModel: MainFragmentViewModel
     private var adapter: ItemAdapter?=null
