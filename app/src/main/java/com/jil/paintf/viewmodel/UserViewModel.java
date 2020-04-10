@@ -14,7 +14,7 @@ public class UserViewModel extends ViewModel {
     @SuppressLint("UseSparseArrays")
     private static Map<Integer,String> map=new HashMap<>();
     int[] page ={0,0};
-    private MutableLiveData<UserData> userData;
+    private MutableLiveData<UserInfo> userData;
     private MutableLiveData<UserUpLoad> userDoc;
     private RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
     private MutableLiveData<UserDoc> docListData;
@@ -86,7 +86,7 @@ public class UserViewModel extends ViewModel {
         return docListData;
     }
 
-    public MutableLiveData<UserData> getUserData(int mid) {
+    public MutableLiveData<UserInfo> getUserData(int mid) {
         if(userData==null)
             userData=new MutableLiveData<>();
         retrofitRepository.getUserInfo(mid).subscribe(new Observer<UserInfo>() {
@@ -97,7 +97,7 @@ public class UserViewModel extends ViewModel {
 
             @Override
             public void onNext(UserInfo userInfo) {
-                userData.postValue(userInfo.getData());
+                userData.postValue(userInfo);
             }
 
             @Override

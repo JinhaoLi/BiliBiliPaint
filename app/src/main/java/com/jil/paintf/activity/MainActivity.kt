@@ -70,29 +70,36 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
 
         ico!!.setOnClickListener {
-            val inputDialog = object :InputDialog(this,hint = "<--请输入你的uid-->"){
+            val inputDialog = object :InputDialog(this,hint = "请输入你的uid"){
                 override fun inputEnterClick(input: String) {
                     if (TextUtils.isEmpty(input)){
-                        errInput("<--不能为空-->")
+                        errInput("不能为空")
                         return
                     }
-
+                    if(input.toLong()>Int.MAX_VALUE){
+                        errInput("uid长度超限")
+                        return
+                    }
                     ViewModelProvider.AndroidViewModelFactory(application)
                         .create(UserViewModel::class.java)
-                        .getUserData(input.toInt()).observe(this@MainActivity, Observer { userData->
-                            Toast.makeText(this@MainActivity, userData.name, Toast.LENGTH_SHORT).show()
+                        .getUserData(input.toInt()).observe(this@MainActivity, Observer { userInfo->
+                            if(userInfo.code==-404){
+                                Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
+                                return@Observer
+                            }
 
+                            Toast.makeText(this@MainActivity, userInfo!!.data.name, Toast.LENGTH_SHORT).show()
                             PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
                                 .apply {
                                     edit().let {
-                                        it.putString("HEAD",userData.face).apply()
-                                        it.putString("NAME",userData.name).apply()
+                                        it.putString("HEAD",userInfo.data.face).apply()
+                                        it.putString("NAME",userInfo.data.name).apply()
                                     }
                                 }
-                            Glide.with(this@MainActivity).load(userData.face)
+                            Glide.with(this@MainActivity).load(userInfo.data.face)
                                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
                                 .into(ico)
-                            header.findViewById<TextView>(R.id.textView3).text=userData.name
+                            header.findViewById<TextView>(R.id.textView3).text=userInfo.data.name
                         })
 
                     dismiss()

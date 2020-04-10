@@ -102,7 +102,7 @@ class SettingFragment :LazyFragment(){
                 val inputDialog =object :InputDialog(v!!.context,hint ="你的uid" ){
                     override fun inputEnterClick(input: String) {
                         if(input.isEmpty()){
-                            errInput("<--不能为空-->")
+                            errInput("不能为空")
                             return
                         }
                         PreferenceManager.getDefaultSharedPreferences(v!!.context)
@@ -117,8 +117,8 @@ class SettingFragment :LazyFragment(){
                                 PreferenceManager.getDefaultSharedPreferences(v.context)
                                     .apply {
                                         edit().let {
-                                            it.putString("HEAD",userData.face).apply()
-                                            it.putString("NAME",userData.name).apply()
+                                            it.putString("HEAD",userData.data.face).apply()
+                                            it.putString("NAME",userData.data.name).apply()
                                         }
                                     }
                             }
