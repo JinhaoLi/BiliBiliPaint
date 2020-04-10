@@ -2,10 +2,7 @@ package com.jil.paintf.activity
 
 import android.content.Context
 import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
-import android.view.View
-import android.view.WindowManager
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -13,6 +10,7 @@ import com.jil.paintf.R
 import com.jil.paintf.adapter.UserPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
+import com.jil.paintf.service.CorrespondingValue
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_user.*
 
@@ -36,12 +34,13 @@ class UserActivity : AppCompatActivity() {
             tabs!!.setupWithViewPager(viewpager)
         }
         viewModel!!.getUserData(uid).observeForever {
-            user_name.text =it.name
-            textView14.text=it.sign
-            textView15.text="LV"+it.level
-            Glide.with(this).load(it.face)
+            user_name.text =it.data.name
+            textView14.text=it.data.sign
+            textView15.setBackgroundResource(CorrespondingValue.getLvBg(it.data.level))
+            textView15.text="LV "+it.data.level
+            Glide.with(this).load(it.data.face)
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this))).into(imageView11)
-            Glide.with(this).load(it.top_photo).into(user_bac)
+            Glide.with(this).load(it.data.top_photo).into(user_bac)
         }
 
     }
