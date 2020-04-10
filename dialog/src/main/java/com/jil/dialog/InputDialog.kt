@@ -2,6 +2,7 @@ package com.jil.dialog
 
 import android.content.Context
 import android.graphics.Color
+import android.text.Editable
 import android.widget.EditText
 
 abstract class InputDialog(context: Context) : BaseDialog(context, layoutId=R.layout.base_edit) {
@@ -33,7 +34,8 @@ abstract class InputDialog(context: Context) : BaseDialog(context, layoutId=R.la
     }
 
     fun errInput(errMsg: String){
-        inputEdit!!.hint=errMsg
+        inputEdit!!.setText("")
+        inputEdit.hint=errMsg
         inputEdit.setHintTextColor(Color.RED)
 
         shakeView(inputEdit)
