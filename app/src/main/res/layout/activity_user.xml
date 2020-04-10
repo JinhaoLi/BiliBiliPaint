@@ -43,9 +43,14 @@
                                                                android:orientation="horizontal"
                                                                android:layout_gravity="bottom">
                 <TextView
-                        android:text="TextView"
-                        android:textColor="?attr/colorAccent"
+                        android:text="LV 0"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@android:color/white"
                         android:layout_width="wrap_content"
+                        android:paddingStart="2dp"
+                        android:paddingEnd="2dp"
+                        android:textSize="12sp"
+                        android:background="@drawable/level_bg_6"
                         android:layout_height="wrap_content" android:id="@+id/textView15"
                         app:layout_constraintStart_toEndOf="@+id/user_name" app:layout_constraintTop_toTopOf="parent"
                         android:layout_marginStart="8dp"/>
