@@ -1,6 +1,6 @@
 package com.jil.paintf.repository;
 
-import com.jil.paintf.network.Client;
+import com.jil.paintf.network.BaseNetClient;
 import com.jil.paintf.service.AppApiService;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
@@ -14,7 +14,7 @@ public class DocRetryWithDelay implements Function<Observable<Throwable>, Observ
     public DocRetryWithDelay(int time, int id) {
         this.time=time;
         this.id=id;
-        appApiService =new Client().getRetrofitAppApi().create(AppApiService.class);
+        appApiService =new BaseNetClient().getRetrofitAppApi().create(AppApiService.class);
     }
 
     @Override

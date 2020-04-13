@@ -21,12 +21,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Random;
 
-public class Client {
+public class BaseNetClient {
 
     private static OkHttpClient okHttpClient;
     private Gson gson =new GsonBuilder().create();
 
-    public Client() {
+    public BaseNetClient() {
         if(okHttpClient==null){
 
             HttpLoggingInterceptor.Logger logger=new HttpLoggingInterceptor.Logger() {
@@ -41,37 +41,48 @@ public class Client {
                 @NotNull
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
-                    Request request =chain.request();
-                    int radom = (int) (10000000+(Math.random()*99999999));
-                    SimpleDateFormat dateFormat =
-                            new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
-                    String code =dateFormat.format(new Date());
-                    String ra =encode(code);
-                    String cookie="";
-                    if(!ra.equals(""))
-                    cookie ="l=v; _uuid="+ra.substring(0,8)+"-"+ra.substring(9,13)+"-"+ra.substring(14,18)+"-FCA6-"+ra.substring(19,28)+radom+"infoc;" +
-                            "buvid3="+ra.substring(5,13)+"-"+ra.substring(20,24)+"-401B-B81B-"+ra.substring(11,19)+"infoc;LIVE_BUVID=AUTO85156745"+radom/2+";";
-                    Request newRequest =request.newBuilder()
-                            .removeHeader("User-Agent")
-                            .addHeader("User-Agent",
-                                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36")
-                            .addHeader("Accept"," application/json, text/plain, */*")
-                            .addHeader("Accept-Encoding"," gzip, deflate, br")
-                            .addHeader("Referer"," https://h.bilibili.com/")
-                            .addHeader("Origin"," https://h.bilibili.com")
-                            .addHeader("Cookie",cookie)
-                            .addHeader("Host","api.vc.bilibili.com")
-                            .addHeader("Sec-Fetch-Dest", "empty")
-                            .addHeader("Sec-Fetch-Mode", "cors")
-                            .addHeader("Sec-Fetch-Site"," same-site").build();
-
-                    return chain.proceed(newRequest);
+                    /**@changeRequest(Chain)**/
+                    return chain.proceed(chain.request());
                 }
             }).addInterceptor(loggingInterceptor);
             okHttpClient = builder.build();
         }
 
     }
+
+    /**
+     * 修改Request
+     * @param chain
+     * @return
+     * @throws IOException
+     */
+    private Response changeRequest(Interceptor.Chain chain) throws IOException {
+        Request request =chain.request();
+        int radom = (int) (10000000+(Math.random()*99999999));
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+        String code =dateFormat.format(new Date());
+        String ra =encode(code);
+        String cookie="";
+        if(!ra.equals(""))
+            cookie =BaseWebViewClient.cookieStr;
+        Request newRequest =request.newBuilder()
+                .removeHeader("User-Agent")
+                .addHeader("User-Agent",
+                        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.116 Safari/537.36")
+                .addHeader("Accept"," application/json, text/plain, */*")
+                .addHeader("Accept-Encoding"," gzip, deflate, br")
+                .addHeader("Referer"," https://h.bilibili.com/")
+                .addHeader("Origin"," https://h.bilibili.com")
+                .addHeader("Cookie",cookie)
+                .addHeader("Host","api.vc.bilibili.com")
+                .addHeader("Sec-Fetch-Dest", "empty")
+                .addHeader("Sec-Fetch-Mode", "cors")
+                .addHeader("Sec-Fetch-Site"," same-site").build();
+
+        return chain.proceed(newRequest);
+    }
+
 
     private String encode(String text){
         try {
@@ -92,6 +103,15 @@ public class Client {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public Retrofit getAccountAppApi(){
+        return new Retrofit.Builder()
+                .baseUrl("https://account.bilibili.com")
+                .client(okHttpClient)
+                .addConverterFactory(GsonConverterFactory.create(gson))
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+                .build();
     }
 
     public Retrofit getRetrofitAppApi(){

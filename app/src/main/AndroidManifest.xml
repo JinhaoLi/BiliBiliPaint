@@ -16,6 +16,8 @@
             android:supportsRtl="true"
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".activity.LoginActivity">
+        </activity>
         <activity
                 android:name=".activity.SettingsActivity"
                 android:label="@string/title_activity_settings">
@@ -29,10 +31,12 @@
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity android:name=".activity.DocDetailActivity"/>
-        <activity android:name=".activity.MainActivity"
-        android:launchMode="singleTask">
+        <activity
+                android:name=".activity.MainActivity"
+                android:launchMode="singleTask">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
+
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>

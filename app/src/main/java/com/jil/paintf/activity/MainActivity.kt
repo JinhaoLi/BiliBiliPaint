@@ -1,5 +1,6 @@
 package com.jil.paintf.activity
 
+import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.text.TextUtils
@@ -32,7 +33,8 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     var adapter: MainPagerAdapter?=null
     var adapter2: MainPagerAdapter?=null
     var isIllust:Boolean=true
-
+    var ico:ImageView?=null
+    var header:View? =null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //val recreate = savedInstanceState?.getBoolean("isRecreate") ?: false
@@ -52,67 +54,25 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
         tab_title!!.setupWithViewPager(viewpager)
 
-        val header=nav_view!!.getHeaderView(0)
-        val ico =header.findViewById<ImageView>(R.id.imageView3)
+        header=nav_view!!.getHeaderView(0)
+        ico =header!!.findViewById<ImageView>(R.id.imageView3)
         PreferenceManager.getDefaultSharedPreferences(this).apply {
             getString("HEAD","").let {
                 if(it!!.isNotEmpty())
                 Glide.with(this@MainActivity).load(it)
                     .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
-                    .into(ico)
+                    .into(ico!!)
             }
 
             getString("NAME","").let {
                 if(it!!.isNotEmpty())
-                header.findViewById<TextView>(R.id.textView3).text=it
+                header!!.findViewById<TextView>(R.id.textView3).text=it
             }
         }
 
 
         ico!!.setOnClickListener {
-            val inputDialog = object :InputDialog(this,hint = "请输入你的uid"){
-                override fun inputEnterClick(input: String) {
-                    if (TextUtils.isEmpty(input)){
-                        errInput("不能为空")
-                        return
-                    }
-                    if(input.toLong()>Int.MAX_VALUE){
-                        errInput("uid长度超限")
-                        return
-                    }
-                    ViewModelProvider.AndroidViewModelFactory(application)
-                        .create(UserViewModel::class.java)
-                        .getUserData(input.toInt()).observe(this@MainActivity, Observer { userInfo->
-                            if(userInfo.code==-404){
-                                Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
-                                return@Observer
-                            }
-
-                            Toast.makeText(this@MainActivity, userInfo!!.data.name, Toast.LENGTH_SHORT).show()
-                            PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-                                .apply {
-                                    edit().let {
-                                        it.putString("HEAD",userInfo.data.face).apply()
-                                        it.putString("NAME",userInfo.data.name).apply()
-                                    }
-                                }
-                            Glide.with(this@MainActivity).load(userInfo.data.face)
-                                .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
-                                .into(ico)
-                            header.findViewById<TextView>(R.id.textView3).text=userInfo.data.name
-                        })
-
-                    dismiss()
-                }
-
-            }
-            inputDialog.applyInputType(Only.number)
-            inputDialog.setIcon(R.mipmap.ic_launcher).setTitle("设置你的uid")
-            inputDialog.buttonBuilder.addButtonToBottom().setButtonName("Action")!!
-                .setButtonAction(View.OnClickListener { v -> Toast.makeText(v.context, "action", Toast.LENGTH_SHORT).show() })
-
-            inputDialog.hideIcon()
-            inputDialog.show()
+            startActivityForResult(Intent(this,LoginActivity::class.java),3)
         }
 
         main_tabs!!.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
@@ -150,6 +110,38 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         toggle.syncState()
         drawer_layout.addDrawerListener(toggle)
 
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(requestCode==3){
+            if(resultCode==Activity.RESULT_OK&&data!=null){
+                val input =data.getIntExtra("uid",-1)
+                if(input==-1)
+                    return
+                ViewModelProvider.AndroidViewModelFactory(application)
+                    .create(UserViewModel::class.java)
+                    .getUserData(input).observe(this@MainActivity, Observer { userInfo->
+                        if(userInfo.code==-404){
+                            Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
+                            return@Observer
+                        }
+
+                        Toast.makeText(this@MainActivity, userInfo!!.data.name, Toast.LENGTH_SHORT).show()
+                        PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                            .apply {
+                                edit().let {
+                                    it.putString("HEAD",userInfo.data.face).apply()
+                                    it.putString("NAME",userInfo.data.name).apply()
+                                }
+                            }
+                        Glide.with(this@MainActivity).load(userInfo.data.face)
+                            .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
+                            .into(ico!!)
+                        header!!.findViewById<TextView>(R.id.textView3).text=userInfo.data.name
+                    })
+            }
+        }
+        super.onActivityResult(requestCode, resultCode, data)
     }
 
 
