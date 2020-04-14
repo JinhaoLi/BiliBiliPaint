@@ -2,13 +2,20 @@ package com.jil.paintf.service;
 
 import com.jil.paintf.repository.*;
 import io.reactivex.Observable;
-import retrofit2.http.GET;
-import retrofit2.http.Query;
+import okhttp3.ResponseBody;
+import retrofit2.http.*;
 
 /**
  * API
  */
 public interface AppApiService {
+
+    /**
+     *  退出登录
+     * @return
+     */
+    @GET("/login?act=exit")
+    Observable<ResponseBody> exitLogin();
 
     /**
      * 推荐插画漫画
@@ -120,6 +127,18 @@ public interface AppApiService {
      */
     @GET("/x/web-interface/search/type?context=&search_type=photo&order=stow&highlight=1&single_column=0&jsonp=jsonp&__refresh__=true")
     Observable<SearchRepository> getSearchData(@Query("page")int page,@Query("keyword")String keyWord,@Query("category_id")int category_id);
+
+
+    /**
+     * 插画点赞功能
+     * https://api.vc.bilibili.com/link_draw/v2/Vote/operate
+     * @param type 1:点赞;2:取消点赞
+     */
+    @FormUrlEncoded
+    @POST("/link_draw/v2/Vote/operate")
+    Observable<ResponseBody> voteDocWithDocId(@Field("doc_id")int doc_id,@Field("csrf_token")String csrf_token,@Field("type")int type );
+
+
 
 
 

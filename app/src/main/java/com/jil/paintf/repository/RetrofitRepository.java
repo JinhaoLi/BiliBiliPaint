@@ -1,6 +1,6 @@
 package com.jil.paintf.repository;
 
-import com.jil.paintf.network.Client;
+import com.jil.paintf.network.BaseNetClient;
 import com.jil.paintf.service.AppApiService;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
@@ -12,7 +12,7 @@ import okhttp3.ResponseBody;
 import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
 
 public class RetrofitRepository {
-    private Client client;
+    private BaseNetClient client;
     private AppApiService appApiService;
     private DataListRetryWithDelay dataListRetryWithDelay;
     private String token;
@@ -29,7 +29,7 @@ public class RetrofitRepository {
     }
 
     private RetrofitRepository() {
-        client =new Client();
+        client =new BaseNetClient();
         appApiService =client.getRetrofitAppApi().create(AppApiService.class);
     }
 
@@ -180,5 +180,23 @@ public class RetrofitRepository {
                 return client.getReplyRetrofitAppApi().create(AppApiService.class).getSearchData(page,keyword,categid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new SearchRetry(page,keyword,categid));
+    }
+
+    public Observable<ResponseBody> postVote(final int id, final int type){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
+                return appApiService.voteDocWithDocId(id,"ssssssdadw",type);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ResponseBody> exitLogin() {
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
+                return appApiService.exitLogin();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(5000);
     }
 }
