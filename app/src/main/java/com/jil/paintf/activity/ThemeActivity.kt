@@ -27,7 +27,7 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.jil.paintf.R
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
-import com.jil.paintf.service.AppPaintF.Companion.APP
+import com.jil.paintf.service.AppPaintF.Companion.instance
 import kotlinx.android.synthetic.main.activity_theme.*
 
 class ThemeActivity : AppCompatActivity() {
@@ -36,7 +36,7 @@ class ThemeActivity : AppCompatActivity() {
             addPreferencesFromResource(R.xml.pre_theme)
             findPreference<Preference>("dark_mode")!!.setOnPreferenceChangeListener { _, newValue ->
                 AppCompatDelegate.setDefaultNightMode(newValue.toString().toInt())
-                APP!!.setTheme(R.style.AppTheme_pink)
+                instance!!.setTheme(R.style.AppTheme_pink)
                 true
             }
 

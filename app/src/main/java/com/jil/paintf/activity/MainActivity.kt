@@ -25,6 +25,7 @@ import com.jil.paintf.R
 import com.jil.paintf.adapter.MainPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
+import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -57,17 +58,17 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         header=nav_view!!.getHeaderView(0)
         ico =header!!.findViewById<ImageView>(R.id.imageView3)
         PreferenceManager.getDefaultSharedPreferences(this).apply {
-            getString("HEAD","").let {
-                if(it!!.isNotEmpty())
-                Glide.with(this@MainActivity).load(it)
-                    .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
-                    .into(ico!!)
+            val icoUrl = getString("HEAD","")
+            val name =getString("NAME","")
+            if(AppPaintF.instance.cookie==null){
+                changHeaderView()
+                return@apply
+            }
+            if(!icoUrl.isNullOrEmpty()&&!name.isNullOrEmpty()){
+                changHeaderView(icoUrl,name)
             }
 
-            getString("NAME","").let {
-                if(it!!.isNotEmpty())
-                header!!.findViewById<TextView>(R.id.textView3).text=it
-            }
+
         }
 
 
@@ -115,9 +116,12 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode==3){
             if(resultCode==Activity.RESULT_OK&&data!=null){
-                val input =data.getIntExtra("uid",-1)
-                if(input==-1)
+                val input =AppPaintF.instance.cookie?.DedeUserID
+                if(input==null){
+                    changHeaderView()
                     return
+                }
+
                 ViewModelProvider.AndroidViewModelFactory(application)
                     .create(UserViewModel::class.java)
                     .getUserData(input).observe(this@MainActivity, Observer { userInfo->
@@ -134,14 +138,23 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                                     it.putString("NAME",userInfo.data.name).apply()
                                 }
                             }
-                        Glide.with(this@MainActivity).load(userInfo.data.face)
-                            .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
-                            .into(ico!!)
-                        header!!.findViewById<TextView>(R.id.textView3).text=userInfo.data.name
+                        changHeaderView(userInfo.data.face,userInfo.data.name)
                     })
             }
         }
         super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    /**
+     * 左滑
+     * default icoUrl = https://static.hdslb.com/images/akari.jpg
+     * default name = 未登录
+     */
+    private fun changHeaderView(icoUrl: String="https://static.hdslb.com/images/akari.jpg", name: String="未登录"): Unit {
+        Glide.with(this@MainActivity).load(icoUrl)
+            .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
+            .into(ico!!)
+        header!!.findViewById<TextView>(R.id.textView3).text=name
     }
 
 

@@ -55,7 +55,7 @@ class DocDetailActivity : AppCompatActivity(),
         idArray=bundle!!.getIntArray("intArray")
         val docId =bundle.getInt("doc_id")
         current =idArray!!.indexOf(docId)
-        viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.APP!!).create(DocViewModel::class.java)
+        viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.instance!!).create(DocViewModel::class.java)
 
         viewModel!!.getData(docId).observeForever { docData ->
             this.docData=docData

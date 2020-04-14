@@ -41,11 +41,11 @@ public class BaseNetClient {
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
                     /**@changeRequest(Chain)**/
-                    if(AppPaintF.getCookieStr().equals("null"))
+                    if(AppPaintF.instance.getCookie()==null)
                         return chain.proceed(chain.request());
                     else
                         return chain.proceed(chain.request().newBuilder()
-                        .addHeader("Cookie", AppPaintF.getCookieStr())
+                        .addHeader("Cookie", AppPaintF.instance.getCookie().toString())
                                 .build());
                 }
             }).addInterceptor(loggingInterceptor);
@@ -69,7 +69,7 @@ public class BaseNetClient {
         String ra =encode(code);
         String cookie="";
         if(!ra.equals(""))
-            cookie = AppPaintF.getCookieStr();
+            cookie = AppPaintF.instance.getCookie().toString();
         Request newRequest =request.newBuilder()
                 .removeHeader("User-Agent")
                 .addHeader("User-Agent",
