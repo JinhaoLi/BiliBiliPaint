@@ -4,6 +4,7 @@ import android.util.Log;
 import com.bumptech.glide.RequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.jil.paintf.service.AppPaintf;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -42,7 +43,12 @@ public class BaseNetClient {
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
                     /**@changeRequest(Chain)**/
-                    return chain.proceed(chain.request());
+                    if(AppPaintf.getCookieStr().equals("null"))
+                        return chain.proceed(chain.request());
+                    else
+                        return chain.proceed(chain.request().newBuilder()
+                        .addHeader("Cookie",AppPaintf.getCookieStr())
+                                .build());
                 }
             }).addInterceptor(loggingInterceptor);
             okHttpClient = builder.build();
@@ -65,7 +71,7 @@ public class BaseNetClient {
         String ra =encode(code);
         String cookie="";
         if(!ra.equals(""))
-            cookie =BaseWebViewClient.cookieStr;
+            cookie =AppPaintf.getCookieStr();
         Request newRequest =request.newBuilder()
                 .removeHeader("User-Agent")
                 .addHeader("User-Agent",
