@@ -27,7 +27,7 @@ import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
-import com.jil.paintf.service.AppPaintf
+import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocViewModel
 import kotlinx.android.synthetic.main.activity_doc_detail.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
@@ -55,7 +55,7 @@ class DocDetailActivity : AppCompatActivity(),
         idArray=bundle!!.getIntArray("intArray")
         val docId =bundle.getInt("doc_id")
         current =idArray!!.indexOf(docId)
-        viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintf.APP!!).create(DocViewModel::class.java)
+        viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.APP!!).create(DocViewModel::class.java)
 
         viewModel!!.getData(docId).observeForever { docData ->
             this.docData=docData

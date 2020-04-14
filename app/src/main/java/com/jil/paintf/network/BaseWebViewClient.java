@@ -9,7 +9,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
 import androidx.preference.PreferenceManager;
-import com.jil.paintf.service.AppPaintf;
+import com.jil.paintf.service.AppPaintF;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,7 +32,7 @@ public class BaseWebViewClient extends WebViewClient {
         super.onPageStarted(view, url, favicon);
         Log.i("页面开始加载->",url);
         CookieManager cookieManager =CookieManager.getInstance();
-        cookieManager.setCookie(url,AppPaintf.getCookieStr());
+        cookieManager.setCookie(url, AppPaintF.getCookieStr());
     }
 
     @Override
@@ -43,7 +43,7 @@ public class BaseWebViewClient extends WebViewClient {
             /** 登录完成跳转至此**/
             CookieManager cookieManager =CookieManager.getInstance();
             String cookieStr =cookieManager.getCookie(url);
-            AppPaintf.setCookieStr(cookieStr);
+            AppPaintF.setCookieStr(cookieStr);
             PreferenceManager.getDefaultSharedPreferences(mContext).edit().putString("cookie",cookieStr).apply();
             Toast.makeText(mContext,"已登录",Toast.LENGTH_SHORT).show();
             view.loadUrl("https://m.bilibili.com/space/");
@@ -66,7 +66,7 @@ public class BaseWebViewClient extends WebViewClient {
             /**退出登录**/
             PreferenceManager.getDefaultSharedPreferences(mContext).edit().putInt("uid",-1).apply();
             PreferenceManager.getDefaultSharedPreferences(mContext).edit().putString("cookie","null").apply();
-            AppPaintf.setCookieStr("null");
+            AppPaintF.setCookieStr("null");
             view.loadUrl("https://passport.bilibili.com/login");
         }
 

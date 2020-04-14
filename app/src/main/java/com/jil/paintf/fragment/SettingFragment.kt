@@ -2,31 +2,23 @@ package com.jil.paintf.fragment
 
 import android.app.AlertDialog
 import android.app.Application
-import android.content.DialogInterface
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.EditorInfo
 import android.widget.Switch
-import android.widget.TextView
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.afollestad.materialdialogs.MaterialDialog
-import com.bumptech.glide.Glide
 import com.jil.dialog.InputDialog
 import com.jil.dialog.Only
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
-import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.SettingItem
-import com.jil.paintf.custom.ThemeUtil
-import com.jil.paintf.service.AppPaintf
+import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.UserViewModel
-import kotlinx.android.synthetic.main.dialog_input.*
 import kotlinx.android.synthetic.main.fragment_setting.*
 
 class SettingFragment :LazyFragment(){
@@ -111,7 +103,7 @@ class SettingFragment :LazyFragment(){
                                     it.putInt("UID",input.toInt()).apply()
                                 }
                             }
-                        ViewModelProvider.AndroidViewModelFactory(AppPaintf.APP as Application)
+                        ViewModelProvider.AndroidViewModelFactory(AppPaintF.APP as Application)
                             .create(UserViewModel::class.java)
                             .getUserData(input.toInt()).observeForever { userData ->
                                 PreferenceManager.getDefaultSharedPreferences(v.context)
@@ -140,7 +132,7 @@ class SettingFragment :LazyFragment(){
         @JvmStatic
         val loadLevel =object:SettingItem("图片质量","选择图片质量",2){
             override fun click(v: View?) {
-                val checkItem=when(AppPaintf.LoadLevel){
+                val checkItem=when(AppPaintF.LoadLevel){
                     720->{
                         0
                     }
@@ -169,7 +161,7 @@ class SettingFragment :LazyFragment(){
                             .apply {
                                 edit().let {
                                     it.putInt("LOAD_LEVEL",level).apply()
-                                    AppPaintf.LoadLevel=level
+                                    AppPaintF.LoadLevel=level
                                 }
                             }
                         dialog.dismiss()

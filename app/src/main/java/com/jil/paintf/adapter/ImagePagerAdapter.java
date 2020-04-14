@@ -17,7 +17,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.lifecycle.ViewModelProvider;
 import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
@@ -27,8 +26,7 @@ import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.jil.paintf.R;
-import com.jil.paintf.service.AppPaintf;
-import com.jil.paintf.viewmodel.DocViewModel;
+import com.jil.paintf.service.AppPaintF;
 import com.orhanobut.logger.Logger;
 import io.reactivex.*;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -62,7 +60,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
     public ImagePagerAdapter(ArrayList<T> ts) {
         this.ts = ts;
-        switch(AppPaintf.getLoadLevel()){
+        switch(AppPaintF.getLoadLevel()){
             case 1080:
                 loadLevel="@1080w_1e.webp";
                 break;

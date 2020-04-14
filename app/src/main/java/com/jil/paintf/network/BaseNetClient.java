@@ -1,10 +1,9 @@
 package com.jil.paintf.network;
 
 import android.util.Log;
-import com.bumptech.glide.RequestBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.jil.paintf.service.AppPaintf;
+import com.jil.paintf.service.AppPaintF;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -20,7 +19,6 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Random;
 
 public class BaseNetClient {
 
@@ -43,11 +41,11 @@ public class BaseNetClient {
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
                     /**@changeRequest(Chain)**/
-                    if(AppPaintf.getCookieStr().equals("null"))
+                    if(AppPaintF.getCookieStr().equals("null"))
                         return chain.proceed(chain.request());
                     else
                         return chain.proceed(chain.request().newBuilder()
-                        .addHeader("Cookie",AppPaintf.getCookieStr())
+                        .addHeader("Cookie", AppPaintF.getCookieStr())
                                 .build());
                 }
             }).addInterceptor(loggingInterceptor);
@@ -71,7 +69,7 @@ public class BaseNetClient {
         String ra =encode(code);
         String cookie="";
         if(!ra.equals(""))
-            cookie =AppPaintf.getCookieStr();
+            cookie = AppPaintF.getCookieStr();
         Request newRequest =request.newBuilder()
                 .removeHeader("User-Agent")
                 .addHeader("User-Agent",

@@ -26,8 +26,8 @@ import com.afollestad.materialdialogs.callbacks.onDismiss
 import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.jil.paintf.R
 import com.jil.paintf.custom.ThemeUtil
-import com.jil.paintf.service.AppPaintf
-import com.jil.paintf.service.AppPaintf.Companion.APP
+import com.jil.paintf.service.AppPaintF
+import com.jil.paintf.service.AppPaintF.Companion.APP
 import kotlinx.android.synthetic.main.activity_theme.*
 
 class ThemeActivity : AppCompatActivity() {
@@ -70,7 +70,7 @@ class ThemeActivity : AppCompatActivity() {
                                     .apply { putInt("THEME", index)}
 
                                 action = {
-                                    AppPaintf.ActivityCollector.recreate()
+                                    AppPaintF.ActivityCollector.recreate()
                                 }
                             }
                             onDismiss { action?.invoke() }

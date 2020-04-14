@@ -7,12 +7,13 @@ import androidx.preference.PreferenceManager
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 
-class AppPaintf : Application() {
+class AppPaintF : Application() {
     override fun onCreate() {
         super.onCreate()
         APP = this
         Logger.addLogAdapter(AndroidLogAdapter())
-        LoadLevel=PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
+        cookieStr =PreferenceManager.getDefaultSharedPreferences(this).getString("cookie","null")!!
+        LoadLevel =PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {
                 Logger.t(TAG).v("${activity.simpleName}: onActivityCreated")
@@ -73,13 +74,15 @@ class AppPaintf : Application() {
         }
     }
 
-
-
     companion object {
         @JvmStatic
         var LoadLevel=1080
-        var APP: AppPaintf? = null
-        var theme = 0
-        val TAG = "class AppPaintf"
+        @JvmStatic
+        var APP: AppPaintF? = null
+        @JvmStatic
+        var token ="null"
+        const val TAG = "AppPaintF"
+        @JvmStatic
+        var cookieStr = "null"
     }
 }
