@@ -121,7 +121,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                     changHeaderView()
                     return
                 }
-
                 ViewModelProvider.AndroidViewModelFactory(application)
                     .create(UserViewModel::class.java)
                     .getUserData(input).observe(this@MainActivity, Observer { userInfo->
@@ -140,6 +139,9 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                             }
                         changHeaderView(userInfo.data.face,userInfo.data.name)
                     })
+            }
+            if(resultCode==Activity.RESULT_CANCELED){
+                changHeaderView()
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

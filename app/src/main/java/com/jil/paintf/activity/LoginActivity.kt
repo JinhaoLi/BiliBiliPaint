@@ -16,6 +16,7 @@ import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
     private var client:BaseWebViewClient?=null
+    private var change =false
     private var isLogin=false
     @SuppressLint("SetJavaScriptEnabled")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +25,20 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar4)
         client=BaseWebViewClient(this)
+        client!!.setStateChange(object :BaseWebViewClient.StateChange{
+            override fun loginExit() {
+                val data =Intent()
+                setResult(Activity.RESULT_CANCELED,data)
+                finish()
+            }
 
+            override fun isLogin() {
+                val data =Intent()
+                setResult(Activity.RESULT_OK,data)
+                finish()
+            }
+
+        })
         web_view.webViewClient =client
         web_view.settings.javaScriptEnabled =true
         if(AppPaintF.instance.cookie==null){
@@ -52,19 +66,4 @@ class LoginActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onBackPressed() {
-        val data =Intent(this,MainActivity::class.java)
-        if(isLogin){
-            finish()
-            return
-        }
-        if(client!=null){
-            data.putExtra("uid",client?.uid)
-            setResult(Activity.RESULT_OK,data)
-
-        }
-        finish()
-
-
-    }
 }
