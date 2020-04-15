@@ -65,7 +65,7 @@ public class NetCookie {
     @NonNull
     @Override
     public String toString() {
-        return "_uuid="+_uuid+";"+
+        return "l=v; _uuid="+_uuid+";"+
                 " sid="+sid+";"+
                 " buvid3="+buvid3+";"+
                 " DedeUserID="+DedeUserID+";"+

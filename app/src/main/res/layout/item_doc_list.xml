@@ -42,15 +42,21 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/imageView"
                 app:layout_constraintVertical_bias="0.0"
-                app:layout_constraintStart_toEndOf="@+id/imageView2" app:layout_constraintEnd_toEndOf="parent"/>
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintEnd_toStartOf="@+id/vote_ico"/>
         <TextView
-                android:text="1"
-                android:paddingTop="5dp"
-                android:paddingRight="5dp"
-                android:background="@color/colorPrimary_alp"
+                android:text="10P"
+                android:padding="2dp"
+                android:background="@drawable/pic_count_tag_bg"
                 android:textColor="@android:color/white"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" android:id="@+id/textView2"
-                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"/>
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" android:layout_marginEnd="8dp"/>
+        <ImageView
+                android:layout_width="40dp"
+                android:src="@drawable/ic_no_voted"
+                android:layout_height="40dp" android:id="@+id/vote_ico"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.cardview.widget.CardView>

@@ -60,7 +60,7 @@ class MainFragment: LazyFragment() {
         Logger.d(arguments?.getInt(ARG_PARAM1).toString()+"onActivityCreated()")
         if (adapter==null){
             viewModel =ViewModelProvider.AndroidViewModelFactory(activity!!.application).create(MainFragmentViewModel::class.java)
-            adapter = ItemAdapter(context!!)
+            adapter = ItemAdapter(requireActivity())
             val manager = GridLayoutManager(context,2)
             recyclerview!!.layoutManager=manager
             recyclerview!!.adapter =adapter

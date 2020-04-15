@@ -2,6 +2,7 @@ package com.jil.paintf.repository;
 
 import com.jil.paintf.network.BaseNetClient;
 import com.jil.paintf.service.AppApiService;
+import com.jil.paintf.service.AppPaintF;
 import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -182,11 +183,18 @@ public class RetrofitRepository {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new SearchRetry(page,keyword,categid));
     }
 
-    public Observable<ResponseBody> postVote(final int id, final int type){
-        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+    /**
+     * 发起请求前务必检查AppPaintF.getInstance().getCookie()是否为null
+     * @param id
+     * @param type
+     * @return
+     */
+    public Observable<OperateResult> postVote(final int id, final int type){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<OperateResult>>() {
             @Override
-            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
-                return appApiService.voteDocWithDocId(id,"ssssssdadw",type);
+            public ObservableSource<OperateResult> apply(Integer integer) throws Exception {
+                assert AppPaintF.getInstance().getCookie()!=null;
+                return appApiService.postVoteDoc(id, AppPaintF.getInstance().getCookie().bili_jct,type);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }

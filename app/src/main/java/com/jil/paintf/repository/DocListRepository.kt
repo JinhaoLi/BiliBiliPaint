@@ -19,7 +19,7 @@ data class Item(
 
 data class Doc(
     val already_liked: Int,
-    val already_voted: Int,
+    var already_voted: Int,
     val category: String,
     val doc_id: Int,
     val pictures: List<Picture>,

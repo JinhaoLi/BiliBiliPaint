@@ -45,6 +45,7 @@ public class BaseNetClient {
                         return chain.proceed(chain.request());
                     else
                         return chain.proceed(chain.request().newBuilder()
+                                .addHeader("Sec-Fetch-Site","same-site")
                         .addHeader("Cookie", AppPaintF.instance.getCookie().toString())
                                 .build());
                 }

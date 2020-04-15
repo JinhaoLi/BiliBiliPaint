@@ -136,7 +136,7 @@ public interface AppApiService {
      */
     @FormUrlEncoded
     @POST("/link_draw/v2/Vote/operate")
-    Observable<ResponseBody> voteDocWithDocId(@Field("doc_id")int doc_id,@Field("csrf_token")String csrf_token,@Field("type")int type );
+    Observable<OperateResult> postVoteDoc(@Field("doc_id")int doc_id, @Field("csrf_token")String csrf_token, @Field("type")int type );
 
 
 

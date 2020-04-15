@@ -7,8 +7,15 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,10 +27,14 @@ import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Item
+import com.jil.paintf.repository.RetrofitRepository
+import com.jil.paintf.service.AppPaintF
+import com.jil.paintf.viewmodel.DocOperateModel
 
 class ItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val data=arrayListOf<Item>()
+    private val viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.instance).create(DocOperateModel::class.java)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             ITEM_TYPE.ITEM_TYPE_DATA.ordinal->ItemVHolder(
@@ -51,7 +62,15 @@ class ItemAdapter(private val mContext: Context
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+
+
         if (holder is ItemVHolder) {
+            holder.setIsRecyclable(false)
+            if(data[position].item.already_voted==0){
+                holder.voteIco.setImageResource(R.drawable.ic_no_voted)
+            }else{
+                holder.voteIco.setImageResource(R.drawable.ic_already_voted)
+            }
             holder.imageUrl=data[position].item.pictures[0].img_src + "@512w_384h_1e.webp"
             holder.icoUrl=data[position].user.head_url+"@32w_32h.webp"
             holder.displayImage()
@@ -60,7 +79,40 @@ class ItemAdapter(private val mContext: Context
                 holder.count.visibility=View.GONE
             }else{
                 holder.count.visibility=View.VISIBLE
-                holder.count.text = data[position].item.pictures.size.toString()
+                holder.count.text = data[position].item.pictures.size.toString()+"p"
+            }
+
+//            if(data[position].item.already_voted==1){
+//                holder.voteIco.setBackgroundResource(R.drawable.ic_already_voted)
+//            }
+
+            holder.voteIco.setOnClickListener {
+                if(AppPaintF.instance.cookie==null){
+                    Toast.makeText(mContext, "你还没有登录！", Toast.LENGTH_SHORT).show()
+                    return@setOnClickListener
+                }
+                var type =1
+                if(data[position].item.already_voted==0)
+                    type=1
+                if(data[position].item.already_voted==1)
+                    type=2
+
+                viewModel.doAction(data[position].item.doc_id,type).observe(mContext as LifecycleOwner, Observer {
+
+                    if(it.data.type==1){
+                        data[position].item.already_voted=1
+                        holder.voteIco.setImageResource(R.drawable.ic_already_voted)
+                    }else if(it.code==110022){
+                        Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+                    }else if(it.data.type==2){
+                        data[position].item.already_voted=0
+                        holder.voteIco.setImageResource(R.drawable.ic_no_voted)
+                    }
+
+                    viewModel.data.removeObservers(mContext as LifecycleOwner)
+                })
+                //点赞按钮
+
             }
 
             holder.image.setOnClickListener { v ->
@@ -111,6 +163,7 @@ class ItemAdapter(private val mContext: Context
         var image: ImageView = itemView.findViewById(R.id.imageView)
         var title: TextView = itemView.findViewById(R.id.textView)
         var count: TextView = itemView.findViewById(R.id.textView2)
+        var voteIco:ImageView =itemView.findViewById(R.id.vote_ico)
 
 
         fun displayImage(){
@@ -132,6 +185,8 @@ class ItemAdapter(private val mContext: Context
                             ico.setBackgroundColor(lightMutedColor)
                             title.setBackgroundColor(lightMutedColor)
                             title.setTextColor(darkVibrantColor)
+                            voteIco.setBackgroundColor(lightMutedColor)
+
                         }
                     }
 
