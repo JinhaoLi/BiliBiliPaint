@@ -193,8 +193,8 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<OperateResult>>() {
             @Override
             public ObservableSource<OperateResult> apply(Integer integer) throws Exception {
-                assert AppPaintF.getInstance().getCookie()!=null;
-                return appApiService.postVoteDoc(id, AppPaintF.getInstance().getCookie().bili_jct,type);
+                assert AppPaintF.instance.getCookie()!=null;
+                return appApiService.postVoteDoc(id, AppPaintF.instance.getCookie().bili_jct,type);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }

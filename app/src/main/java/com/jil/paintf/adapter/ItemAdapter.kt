@@ -30,6 +30,7 @@ import com.jil.paintf.repository.Item
 import com.jil.paintf.repository.RetrofitRepository
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
+import com.orhanobut.logger.Logger
 
 class ItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -98,7 +99,7 @@ class ItemAdapter(private val mContext: Context
                     type=2
 
                 viewModel.doAction(data[position].item.doc_id,type).observe(mContext as LifecycleOwner, Observer {
-
+                    //点赞按钮
                     if(it.data.type==1){
                         data[position].item.already_voted=1
                         holder.voteIco.setImageResource(R.drawable.ic_already_voted)
@@ -108,10 +109,18 @@ class ItemAdapter(private val mContext: Context
                         data[position].item.already_voted=0
                         holder.voteIco.setImageResource(R.drawable.ic_no_voted)
                     }
+                    /**
+                     * 不理解！！！ post请求取消点赞时，会返回两次结果
+                     * 通过对比发现！
+                     * b站对已经点过赞的->先返回操作之前的状态->再进行操作之后的状态
+                     * 这里进行判断，只有得到正确的结果后才移除观察者
+                     */
+                    if(it.data.type==type){
+                        viewModel.data.removeObservers(mContext as LifecycleOwner)
+                    }
 
-                    viewModel.data.removeObservers(mContext as LifecycleOwner)
                 })
-                //点赞按钮
+
 
             }
 
