@@ -92,11 +92,14 @@ class UserFragment:LazyFragment(){
 
 
     private fun refresh(items: List<DocX>) {
-        if(items.isEmpty()){
+        if(items.isNullOrEmpty()){
             adapter!!.status="已经没有了..."
+            adapter!!.notifyItemChanged(adapter!!.data.size)
+        }else{
+            adapter!!.data.addAll(items)
+            adapter!!.notifyDataSetChanged()
         }
-        adapter!!.data.addAll(items)
-        adapter!!.notifyDataSetChanged()
+
     }
 
 

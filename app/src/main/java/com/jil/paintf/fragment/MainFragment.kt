@@ -83,7 +83,7 @@ class MainFragment: LazyFragment() {
                             if(adapter!=null&&adapter!!.data.size>600){
                                 adapter!!.data.removeAll(adapter!!.data.subList(0,200))
                             }
-                            //loadAndObserveData()
+                            adapter!!.status="正在加载..."
                             viewModel.refresh(param1)
                         }
                     }
@@ -147,6 +147,14 @@ class MainFragment: LazyFragment() {
     }
 
     private fun refresh(list: List<Item>){
+        if(swiperefresh!!.isRefreshing)
+            swiperefresh!!.isRefreshing=false
+        Logger.d("当前数据大小:"+adapter!!.data.size.toString()+"--添加条目："+list.size.toString())
+        if(list.isNullOrEmpty()){
+            adapter!!.status="已经没有了..."
+            adapter!!.notifyItemChanged(adapter!!.data.size)
+            return
+        }
         if(addAtStart) {
             adapter!!.data.addAll(0, list)
             adapter!!.notifyItemRangeChanged(0,list.size)
@@ -155,9 +163,7 @@ class MainFragment: LazyFragment() {
             adapter!!.data.addAll(list)
             adapter!!.notifyItemInserted(updataPosition)
         }
-        Logger.d("当前数据大小:"+adapter!!.data.size.toString()+"--添加条目："+list.size.toString())
-        if(swiperefresh!!.isRefreshing)
-        swiperefresh!!.isRefreshing=false
+
     }
 
     override fun loadAndObserveData() {

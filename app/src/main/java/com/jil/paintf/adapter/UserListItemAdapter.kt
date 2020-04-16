@@ -1,23 +1,24 @@
 package com.jil.paintf.adapter
 
 import android.content.Context
-import android.content.Intent
-import android.content.res.Resources
+import android.graphics.Bitmap
+import android.graphics.Color
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import android.widget.TextView
+import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.DocDetailActivity.Companion.startDocDetailActivity
-import com.jil.paintf.activity.UserActivity
-import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocX
-import com.jil.paintf.repository.Item
 
 class UserListItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -27,13 +28,13 @@ class UserListItemAdapter(private val mContext: Context
         return when(viewType){
             ITEM_TYPE.ITEM_TYPE_DATA.ordinal->ItemVHolder(
                 LayoutInflater.from(mContext).inflate(
-                    R.layout.item_user_doc_list,
+                    R.layout.item_doc_list_no_header_ico,
                     parent,
                     false
                 )
             )
             else->BottomViewHolder(LayoutInflater.from(mContext).inflate(
-                android.R.layout.simple_list_item_1,
+                R.layout.item_recycleview_loading,
                 parent,
                 false
             ))
@@ -42,11 +43,8 @@ class UserListItemAdapter(private val mContext: Context
 
     //底部 ViewHolder
     class BottomViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
-        var textView:TextView?=null
-        init {
-            textView=itemView.findViewById(android.R.id.text1)
-            textView!!.gravity=TextView.TEXT_ALIGNMENT_CENTER
-        }
+        val textView:TextView=itemView.findViewById(R.id.textView23)
+        val progressBar =itemView.findViewById<ProgressBar>(R.id.progressBar)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -74,7 +72,12 @@ class UserListItemAdapter(private val mContext: Context
         }
 
         if(holder is BottomViewHolder){
-            holder.textView!!.text=status
+            holder.textView.text=status
+            if(status == "正在加载..."){
+                holder.progressBar.visibility=View.VISIBLE
+            }else{
+                holder.progressBar.visibility=View.GONE
+            }
         }
     }
 
@@ -106,13 +109,30 @@ class UserListItemAdapter(private val mContext: Context
         var image: ImageView = itemView.findViewById(R.id.imageView)
         var title: TextView = itemView.findViewById(R.id.textView)
         var count: TextView = itemView.findViewById(R.id.textView2)
-
+        var voteIco:ImageView =itemView.findViewById(R.id.vote_ico)
 
         fun displayImage(){
-            imageUrl=imageUrl.let {
-                Glide.with(itemView.context).load(it).placeholder(R.drawable.empty_hint).into(image)
-                null
-            }
+            Glide.with(itemView.context).asBitmap().load(imageUrl)
+                .into(object : CustomTarget<Bitmap>(){
+                    override fun onLoadCleared(placeholder: Drawable?) {
+
+                    }
+
+                    override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
+                        image.setImageBitmap(resource)
+                        val builder = Palette.from(resource);
+                        builder.generate {
+                            //亮、柔和
+                            val lightMutedColor: Int = it!!.getLightMutedColor(ThemeUtil.getColorAccent(itemView.context))
+                            //暗、鲜艳
+                            val darkVibrantColor: Int = it.getDarkVibrantColor(Color.BLACK)
+                            title.setBackgroundColor(lightMutedColor)
+                            title.setTextColor(darkVibrantColor)
+
+                        }
+                    }
+
+                })
         }
     }
 

@@ -115,12 +115,17 @@ class SearchActivity :AppCompatActivity(){
         viewModel!!.nextPage(keyword,pageCount,category)
     }
 
-    fun refresh(list: ArrayList<Result>){
+    private fun refresh(list: ArrayList<Result>){
         if(adapter==null){
             adapter = SearchItemAdapter(this)
         }
-        adapter!!.data.addAll(list)
-        adapter!!.notifyItemInserted(adapter!!.data.size)
+        if(list.isNullOrEmpty()){
+            adapter!!.status="已经没有了..."
+            adapter!!.notifyItemChanged(adapter!!.data.size)
+        }else{
+            adapter!!.data.addAll(list)
+            adapter!!.notifyItemInserted(adapter!!.data.size)
+        }
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

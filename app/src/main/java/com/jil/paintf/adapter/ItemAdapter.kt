@@ -7,10 +7,7 @@ import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -35,6 +32,7 @@ import com.orhanobut.logger.Logger
 class ItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     val data=arrayListOf<Item>()
+    var status ="正在加载..."
     private val viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.instance).create(DocOperateModel::class.java)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
@@ -46,7 +44,7 @@ class ItemAdapter(private val mContext: Context
                 )
             )
             else->BottomViewHolder(LayoutInflater.from(mContext).inflate(
-                android.R.layout.simple_list_item_1,
+                R.layout.item_recycleview_loading,
                 parent,
                 false
             ))
@@ -55,11 +53,8 @@ class ItemAdapter(private val mContext: Context
 
     //底部 ViewHolder
     class BottomViewHolder(itemView: View):RecyclerView.ViewHolder(itemView) {
-        var textView:TextView?=null
-        init {
-            textView=itemView.findViewById(android.R.id.text1)
-            textView!!.gravity=TextView.TEXT_ALIGNMENT_CENTER
-        }
+        val textView:TextView=itemView.findViewById(R.id.textView23)
+        val progressBar: ProgressBar =itemView.findViewById(R.id.progressBar)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -138,7 +133,12 @@ class ItemAdapter(private val mContext: Context
         }
 
         if(holder is BottomViewHolder){
-            holder.textView!!.text="正在加载..."
+            holder.textView.text=status
+            if(status == "正在加载..."){
+                holder.progressBar.visibility=View.VISIBLE
+            }else{
+                holder.progressBar.visibility=View.GONE
+            }
         }
     }
 
@@ -176,8 +176,7 @@ class ItemAdapter(private val mContext: Context
 
 
         fun displayImage(){
-            Glide.with(itemView.context).asBitmap().load(imageUrl).placeholder(R.drawable.noface)
-                //.transform(GlideCircleWithBorder(2, ThemeUtil.getColorAccent(image.context)))
+            Glide.with(itemView.context).asBitmap().load(imageUrl)
                 .into(object :CustomTarget<Bitmap>(){
                     override fun onLoadCleared(placeholder: Drawable?) {
 
