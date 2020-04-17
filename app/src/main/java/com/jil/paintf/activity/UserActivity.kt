@@ -3,6 +3,7 @@ package com.jil.paintf.activity
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
@@ -21,6 +22,19 @@ class UserActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
         setContentView(R.layout.activity_user)
+        setSupportActionBar(toolbar)
+        title=""
+        checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
+            if(isChecked){
+                buttonView.text="已关注"
+                //进行关注
+
+            }else{
+                buttonView.text="关注"
+                //取消关注
+            }
+
+        }
         val uid =intent.getIntExtra("uid",0)
         viewModel=ViewModelProvider.AndroidViewModelFactory(application!!).create(UserViewModel::class.java)
         viewModel!!.getUserDoc(uid).observeForever {
@@ -35,14 +49,22 @@ class UserActivity : AppCompatActivity() {
         }
         viewModel!!.getUserData(uid).observeForever {
             user_name.text =it.data.name
+            //coll_toolbar__layout.title = it.data.name
             textView14.text=it.data.sign
             textView15.setBackgroundResource(CorrespondingValue.getLvBg(it.data.level))
             textView15.text="LV "+it.data.level
+            checkbox.isChecked=it.data.is_followed
             Glide.with(this).load(it.data.face)
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this))).into(imageView11)
             Glide.with(this).load(it.data.top_photo).into(user_bac)
         }
 
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu!!.add(1,1,1,"加入黑名单")
+        menu.add(1,1,1,"移除黑名单")
+        return super.onCreateOptionsMenu(menu)
     }
 
     companion object{

@@ -18,6 +18,26 @@ public interface AppApiService {
     Observable<ResponseBody> exitLogin();
 
     /**
+     * 将用户 加入/移除 黑名单
+     * fid=296427498
+     * &act=5 //5->加入黑名单  6->移除黑名单
+     * &re_src=11
+     * &jsonp=jsonp
+     * &csrf=c0efc5ac59ec2b29668af384d22889ad
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("https://api.bilibili.com/x/relation/modify")
+    Observable<ResponseBody> joinBlackList(@Field("fid")int fid,@Field("act")int act,@Field("re_src")int re_src,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
+
+    /**
+     * 获取黑名单列表
+     * @param pn 页码
+     * @return
+     */
+    @GET("https://api.bilibili.com/x/relation/blacks?re_version=0&pn=1&ps=20&jsonp=jsonp")
+    Observable<BlackListRepository> getBlackList(@Query("pn")int pn);
+    /**
      * 推荐插画漫画
      * @param page
      * @param size
