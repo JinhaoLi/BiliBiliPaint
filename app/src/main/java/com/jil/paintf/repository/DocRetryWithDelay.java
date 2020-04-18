@@ -14,7 +14,7 @@ public class DocRetryWithDelay implements Function<Observable<Throwable>, Observ
     public DocRetryWithDelay(int time, int id) {
         this.time=time;
         this.id=id;
-        appApiService =new BaseNetClient().getRetrofitAppApi().create(AppApiService.class);
+        appApiService =new BaseNetClient().getApiVcBiliClient().create(AppApiService.class);
     }
 
     @Override

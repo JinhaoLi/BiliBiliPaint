@@ -9,6 +9,16 @@ import retrofit2.http.*;
  * API
  */
 public interface AppApiService {
+    /**
+     * * 5->加入黑名单
+     * * 6->移除黑名单
+     * * 2->取消关注
+     * * 1->关注
+     */
+    int JOIN_BLACK_LIST = 5;
+    int REMOVE_BLACK_LIST = 6;
+    int REMOVE_ATTENTION_LIST = 2;
+    int JOIN_ATTENTION_LIST = 1;
 
     /**
      *  退出登录
@@ -20,7 +30,11 @@ public interface AppApiService {
     /**
      * 将用户 加入/移除 黑名单
      * fid=296427498
-     * &act=5 //5->加入黑名单  6->移除黑名单
+     * &act=5 //
+     * 5->加入黑名单
+     * 6->移除黑名单
+     * 2->取消关注
+     * 1->关注
      * &re_src=11
      * &jsonp=jsonp
      * &csrf=c0efc5ac59ec2b29668af384d22889ad
@@ -28,7 +42,7 @@ public interface AppApiService {
      */
     @FormUrlEncoded
     @POST("https://api.bilibili.com/x/relation/modify")
-    Observable<ResponseBody> joinBlackList(@Field("fid")int fid,@Field("act")int act,@Field("re_src")int re_src,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
+    Observable<UserOperateResult> postUserOperate(@Field("fid")int fid,@Field("act")int act,@Field("re_src")int re_src,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
 
     /**
      * 获取黑名单列表
@@ -120,7 +134,7 @@ public interface AppApiService {
      * https://api.vc.bilibili.com/link_draw/v1/doc/upload_count?uid=21833522
      */
     @GET("/link_draw/v1/doc/upload_count")
-    Observable<UserUpLoad> getUserUp(@Query("uid")int uid);
+    Observable<UserUpLoadInfo> getUserUp(@Query("uid")int uid);
 
 
     /**

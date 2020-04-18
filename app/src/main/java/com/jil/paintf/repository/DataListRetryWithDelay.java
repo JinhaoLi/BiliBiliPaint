@@ -20,7 +20,7 @@ public class DataListRetryWithDelay implements Function<Observable<Throwable>, O
         this.page=page;
         this.size=size;
         this.type=type;
-        appApiService =new BaseNetClient().getRetrofitAppApi().create(AppApiService.class);
+        appApiService =new BaseNetClient().getApiVcBiliClient().create(AppApiService.class);
     }
 
     @Override

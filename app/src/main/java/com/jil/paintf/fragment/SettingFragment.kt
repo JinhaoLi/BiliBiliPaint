@@ -105,7 +105,7 @@ class SettingFragment :LazyFragment(){
                             }
                         ViewModelProvider.AndroidViewModelFactory(AppPaintF.instance as Application)
                             .create(UserViewModel::class.java)
-                            .getUserData(input.toInt()).observeForever { userData ->
+                            .getUserInfo(input.toInt()).observeForever { userData ->
                                 PreferenceManager.getDefaultSharedPreferences(v.context)
                                     .apply {
                                         edit().let {

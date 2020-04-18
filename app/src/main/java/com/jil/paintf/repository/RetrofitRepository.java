@@ -15,8 +15,6 @@ import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
 public class RetrofitRepository {
     private BaseNetClient client;
     private AppApiService appApiService;
-    private DataListRetryWithDelay dataListRetryWithDelay;
-    private String token;
     private static RetrofitRepository retrofitRepository;
     public static RetrofitRepository getInstance(){
         if(retrofitRepository==null){
@@ -31,7 +29,7 @@ public class RetrofitRepository {
 
     private RetrofitRepository() {
         client =new BaseNetClient();
-        appApiService =client.getRetrofitAppApi().create(AppApiService.class);
+        appApiService =client.getApiVcBiliClient().create(AppApiService.class);
     }
 
     public Observable<DocListRepository> getRecommend(final int page, final int size){
@@ -107,7 +105,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyRepository>>() {
             @Override
             public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
-                return client.getReplyRetrofitAppApi().create(AppApiService.class).getDocReply(pn,id);
+                return client.getApiBiliClient().create(AppApiService.class).getDocReply(pn,id);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocReplyRetryWithDelay());
     }
@@ -122,7 +120,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyRepository>>() {
             @Override
             public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
-                return client.getReplyRetrofitAppApi().create(AppApiService.class).getDoc2Reply(oid,root);
+                return client.getApiBiliClient().create(AppApiService.class).getDoc2Reply(oid,root);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocReplyRetryWithDelay());
     }
@@ -132,10 +130,10 @@ public class RetrofitRepository {
      * @param uid
      * @return
      */
-    public Observable<UserUpLoad> getUserUpLoad(final int uid){
-        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UserUpLoad>>() {
+    public Observable<UserUpLoadInfo> getUserUpLoad(final int uid){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UserUpLoadInfo>>() {
             @Override
-            public ObservableSource<UserUpLoad> apply(Integer integer) throws Exception {
+            public ObservableSource<UserUpLoadInfo> apply(Integer integer) throws Exception {
                 return appApiService.getUserUp(uid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new UserUpLoadRetry(uid));
@@ -162,7 +160,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UserInfo>>() {
             @Override
             public ObservableSource<UserInfo> apply(Integer integer) throws Exception {
-                return client.getReplyRetrofitAppApi().create(AppApiService.class).getUserInfo(mid);
+                return client.getApiBiliClient().create(AppApiService.class).getUserInfo(mid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new UserInfoRetry(mid));
     }
@@ -178,12 +176,13 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<SearchRepository>>() {
             @Override
             public ObservableSource<SearchRepository> apply(Integer integer){
-                return client.getReplyRetrofitAppApi().create(AppApiService.class).getSearchData(page,keyword,categid);
+                return client.getApiBiliClient().create(AppApiService.class).getSearchData(page,keyword,categid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new SearchRetry(page,keyword,categid));
     }
 
     /**
+     * 点赞
      * 发起请求前务必检查AppPaintF.getInstance().getCookie()是否为null
      * @param id
      * @param type
@@ -196,15 +195,30 @@ public class RetrofitRepository {
                 assert AppPaintF.instance.getCookie()!=null;
                 return appApiService.postVoteDoc(id, AppPaintF.instance.getCookie().bili_jct,type);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
 
+    /***
+     * 退出登录
+     * @return
+     */
     public Observable<ResponseBody> exitLogin() {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
             @Override
             public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
                 return appApiService.exitLogin();
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(5000);
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
+    }
+
+    public Observable<UserOperateResult> userOperate(int uid,final int act){
+        return Observable.just(uid).flatMap(new Function<Integer, ObservableSource<UserOperateResult>>() {
+            @Override
+            public ObservableSource<UserOperateResult> apply(Integer integer) throws Exception {
+                assert AppPaintF.instance.getCookie()!=null;
+                return client.getApiBiliClient().create(AppApiService.class).postUserOperate(integer,act,
+                        11,"jsonp",AppPaintF.instance.getCookie().bili_jct);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
 }

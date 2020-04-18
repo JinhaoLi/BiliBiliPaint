@@ -4,13 +4,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.jil.paintf.R
 import com.jil.paintf.adapter.UserPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
+import com.jil.paintf.repository.UserOperateResult
 import com.jil.paintf.service.CorrespondingValue
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_user.*
@@ -24,20 +27,36 @@ class UserActivity : AppCompatActivity() {
         setContentView(R.layout.activity_user)
         setSupportActionBar(toolbar)
         title=""
+        val uid =intent.getIntExtra("uid",0)
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(isChecked){
-                buttonView.text="已关注"
-                //进行关注
 
+            if(isChecked){
+                viewModel!!.joinAttentionList(uid)
             }else{
-                buttonView.text="关注"
-                //取消关注
+                viewModel!!.removeAttentionList(uid)
             }
+            viewModel!!.mutableOpResult.observe(this, Observer<UserOperateResult> {
+                viewModel!!.mutableOpResult.removeObservers(this)
+                if (it.ttl==1&& it.code==0){
+                    if(isChecked){
+                        buttonView.text="已关注"
+                    }else{
+                        buttonView.text="关注"
+                    }
+                }else{
+                    checkbox.isChecked=!isChecked
+                    Toast.makeText(this, "操作失败", Toast.LENGTH_SHORT).show()
+
+                }
+
+            })
+
 
         }
-        val uid =intent.getIntExtra("uid",0)
+
+
         viewModel=ViewModelProvider.AndroidViewModelFactory(application!!).create(UserViewModel::class.java)
-        viewModel!!.getUserDoc(uid).observeForever {
+        viewModel!!.getUserUpLoadInfo(uid).observeForever {
             var intArray  =IntArray(3)
             intArray[0] =it.data.all_count
             intArray[1] =it.data.draw_count
@@ -47,7 +66,7 @@ class UserActivity : AppCompatActivity() {
             viewpager!!.currentItem=0
             tabs!!.setupWithViewPager(viewpager)
         }
-        viewModel!!.getUserData(uid).observeForever {
+        viewModel!!.getUserInfo(uid).observeForever {
             user_name.text =it.data.name
             //coll_toolbar__layout.title = it.data.name
             textView14.text=it.data.sign
@@ -58,6 +77,8 @@ class UserActivity : AppCompatActivity() {
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this))).into(imageView11)
             Glide.with(this).load(it.data.top_photo).into(user_bac)
         }
+
+
 
     }
 

@@ -110,7 +110,12 @@ public class BaseNetClient {
         return "";
     }
 
-    public Retrofit getAccountAppApi(){
+    /**
+     *
+     * https://account.bilibili.com
+     * @return
+     */
+    public Retrofit getAccountBiliClient(){
         return new Retrofit.Builder()
                 .baseUrl("https://account.bilibili.com")
                 .client(okHttpClient)
@@ -119,8 +124,11 @@ public class BaseNetClient {
                 .build();
     }
 
-    public Retrofit getRetrofitAppApi(){
-
+    /**
+     * https://api.vc.bilibili.com
+     * @return
+     */
+    public Retrofit getApiVcBiliClient(){
         return new Retrofit.Builder()
                 .baseUrl("https://api.vc.bilibili.com")
                 .client(okHttpClient)
@@ -132,7 +140,7 @@ public class BaseNetClient {
     /**
      * https://api.bilibili.com
      */
-    public Retrofit getReplyRetrofitAppApi(){
+    public Retrofit getApiBiliClient(){
         return new Retrofit.Builder()
                 .baseUrl("https://api.bilibili.com")
                 .client(okHttpClient)

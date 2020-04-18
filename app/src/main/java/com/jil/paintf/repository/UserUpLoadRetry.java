@@ -4,7 +4,7 @@ import io.reactivex.Observable;
 import io.reactivex.ObservableSource;
 import io.reactivex.functions.Function;
 
-public class UserUpLoadRetry implements Function<Observable<Throwable>, ObservableSource<UserUpLoad>> {
+public class UserUpLoadRetry implements Function<Observable<Throwable>, ObservableSource<UserUpLoadInfo>> {
     private int uid;
     public static int retry =3;
     private RetrofitRepository retrofitRepository=RetrofitRepository.getInstance();
@@ -13,10 +13,10 @@ public class UserUpLoadRetry implements Function<Observable<Throwable>, Observab
     }
 
     @Override
-    public ObservableSource<UserUpLoad> apply(Observable<Throwable> throwableObservable) throws Exception {
-        return throwableObservable.flatMap(new Function<Throwable, ObservableSource<UserUpLoad>>() {
+    public ObservableSource<UserUpLoadInfo> apply(Observable<Throwable> throwableObservable) throws Exception {
+        return throwableObservable.flatMap(new Function<Throwable, ObservableSource<UserUpLoadInfo>>() {
             @Override
-            public ObservableSource<UserUpLoad> apply(Throwable throwable) throws Exception {
+            public ObservableSource<UserUpLoadInfo> apply(Throwable throwable) throws Exception {
                 if(retry>=0){
                     retry--;
                     return retrofitRepository.getUserUpLoad(uid);

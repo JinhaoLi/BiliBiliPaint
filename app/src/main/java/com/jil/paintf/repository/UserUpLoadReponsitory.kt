@@ -1,6 +1,6 @@
 package com.jil.paintf.repository
 
-data class UserUpLoad(
+data class UserUpLoadInfo(
     val code: Int,
     val `data`: upLoadCount,
     val message: String,

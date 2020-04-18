@@ -3,7 +3,6 @@ package com.jil.paintf.activity
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.TextUtils
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
@@ -19,8 +18,6 @@ import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
-import com.jil.dialog.InputDialog
-import com.jil.dialog.Only
 import com.jil.paintf.R
 import com.jil.paintf.adapter.MainPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
@@ -123,7 +120,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                 }
                 ViewModelProvider.AndroidViewModelFactory(application)
                     .create(UserViewModel::class.java)
-                    .getUserData(input).observe(this@MainActivity, Observer { userInfo->
+                    .getUserInfo(input).observe(this@MainActivity, Observer { userInfo->
                         if(userInfo.code==-404){
                             Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
                             return@Observer
