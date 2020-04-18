@@ -14,6 +14,7 @@ import com.jil.paintf.adapter.UserPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.UserOperateResult
+import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.service.CorrespondingValue
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_user.*
@@ -29,7 +30,10 @@ class UserActivity : AppCompatActivity() {
         title=""
         val uid =intent.getIntExtra("uid",0)
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-
+            if(AppPaintF.instance.cookie==null){
+                Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
+                return@setOnCheckedChangeListener
+            }
             if(isChecked){
                 viewModel!!.joinAttentionList(uid)
             }else{
