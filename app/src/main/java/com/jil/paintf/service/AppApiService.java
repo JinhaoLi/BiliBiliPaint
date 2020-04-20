@@ -27,6 +27,8 @@ public interface AppApiService {
     @GET("/login?act=exit")
     Observable<ResponseBody> exitLogin();
 
+
+
     /**
      * 将用户 加入/移除 黑名单
      * fid=296427498
@@ -49,7 +51,7 @@ public interface AppApiService {
      * @param pn 页码
      * @return
      */
-    @GET("https://api.bilibili.com/x/relation/blacks?re_version=0&pn=1&ps=20&jsonp=jsonp")
+    @GET("https://api.bilibili.com/x/relation/blacks?re_version=0&ps=20&jsonp=jsonp")
     Observable<BlackListRepository> getBlackList(@Query("pn")int pn);
     /**
      * 推荐插画漫画

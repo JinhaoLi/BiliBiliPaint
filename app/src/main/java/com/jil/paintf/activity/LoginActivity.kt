@@ -28,7 +28,7 @@ class LoginActivity : AppCompatActivity() {
         client!!.setStateChange(object :BaseWebViewClient.StateChange{
             override fun loginExit() {
                 val data =Intent()
-                setResult(Activity.RESULT_CANCELED,data)
+                setResult(-2,data)
                 finish()
             }
 

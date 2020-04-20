@@ -221,4 +221,13 @@ public class RetrofitRepository {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
+
+    public Observable<BlackListRepository> getBlackList(int pn){
+        return Observable.just(pn).flatMap(new Function<Integer, ObservableSource<BlackListRepository>>() {
+            @Override
+            public ObservableSource<BlackListRepository> apply(Integer integer) throws Exception {
+                return client.getApiBiliClient().create(AppApiService.class).getBlackList(integer);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
+    }
 }

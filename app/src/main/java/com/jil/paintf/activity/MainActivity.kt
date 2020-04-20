@@ -137,8 +137,12 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                         changHeaderView(userInfo.data.face,userInfo.data.name)
                     })
             }
-            if(resultCode==Activity.RESULT_CANCELED){
+            if(resultCode==-2){
+                //代表退出登录
                 changHeaderView()
+            }
+            if(resultCode==Activity.RESULT_CANCELED){
+                //没有进行操作
             }
         }
         super.onActivityResult(requestCode, resultCode, data)

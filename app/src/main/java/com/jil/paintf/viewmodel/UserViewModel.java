@@ -15,24 +15,85 @@ import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class UserViewModel extends ViewModel {
     @SuppressLint("UseSparseArrays")
     private static Map<Integer,String> map=new HashMap<>();
     int[] page ={0,0};
+
     private MutableLiveData<UserInfo> userInfo;
     private MutableLiveData<UserUpLoadInfo> userUpLoadInfo;
     private RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
     private MutableLiveData<UserDoc> docListData;
     private MutableLiveData<UserOperateResult> mutableOpResult;
 
+    int blackListPn =1;
+    private List<User2> blackList =new ArrayList<>();
+
     public UserViewModel() {
         userUpLoadInfo =new MutableLiveData<>();
         docListData=new MutableLiveData<>();
         userInfo =new MutableLiveData<>();
         mutableOpResult =new MutableLiveData<>();
+        getBlackList();
+    }
+
+    public void refreshBlackList(){
+        blackListPn=1;
+        getBlackList();
+    }
+
+    public boolean checkUidInBlack(int uid){
+        for (User2 user2:
+             blackList) {
+            if (user2.getMid()==uid){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void getBlackList() {
+        retrofitRepository.getBlackList(blackListPn).subscribe(new Observer<BlackListRepository>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(BlackListRepository blackListRepository) {
+                if(blackListRepository.getData()==null){
+                    blackListPn=-1;
+                    return;
+                }
+
+                List<User2> temp =blackListRepository.getData().getList();
+                if(temp==null||temp.isEmpty()){
+                    blackListPn=-1;
+                }else {
+                    blackList.addAll(temp);
+                }
+
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+                if(blackListPn!=-1){
+                    blackListPn++;
+                    getBlackList();
+                }
+
+            }
+        });
     }
 
     public MutableLiveData<UserUpLoadInfo> getUserUpLoadInfo(int uid) {

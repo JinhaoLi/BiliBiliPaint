@@ -49,8 +49,8 @@ public class BaseWebViewClient extends WebViewClient {
     @Override
     public void onPageFinished(WebView view, String url) {
         super.onPageFinished(view, url);
-        Log.i("webView页面开始加载->",url);
-        if(url.equals("https://m.bilibili.com/index.html")){
+        Log.i("webView页面完成加载->",url);
+        if(url.equals("https://m.bilibili.com/index.html")||url.equals("https://m.bilibili.com/")){
             /** 登录完成跳转至此**/
             view.setVisibility(View.INVISIBLE);
             CookieManager cookieManager =CookieManager.getInstance();

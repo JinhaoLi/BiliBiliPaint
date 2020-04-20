@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -22,13 +23,16 @@ import kotlinx.android.synthetic.main.activity_user.*
 class UserActivity : AppCompatActivity() {
     var adapter:UserPagerAdapter?=null
     var viewModel:UserViewModel?=null
+    var menu:Menu? =null
+    var uid:Int=0
+    var flag:Int =1
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
         setContentView(R.layout.activity_user)
         setSupportActionBar(toolbar)
         title=""
-        val uid =intent.getIntExtra("uid",0)
+        uid =intent.getIntExtra("uid",0)
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if(AppPaintF.instance.cookie==null){
                 Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
@@ -71,6 +75,7 @@ class UserActivity : AppCompatActivity() {
             tabs!!.setupWithViewPager(viewpager)
         }
         viewModel!!.getUserInfo(uid).observeForever {
+            initMenuState(it.data.mid)
             user_name.text =it.data.name
             //coll_toolbar__layout.title = it.data.name
             textView14.text=it.data.sign
@@ -81,15 +86,64 @@ class UserActivity : AppCompatActivity() {
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this))).into(imageView11)
             Glide.with(this).load(it.data.top_photo).into(user_bac)
         }
+    }
 
+    /**
+     * 初始黑名单状态
+     * 仅用于初始化
+     * 后续调用此方法不安全
+     */
+    private fun initMenuState(uid: Int) {
+        if(viewModel!!.checkUidInBlack(uid)){
+            switchMenuState(true)
+        }else{
+            switchMenuState(false)
+        }
+    }
 
-
+    private fun switchMenuState(isB:Boolean){
+        if(isB){
+            menu?.getItem(0)?.isVisible = false
+            menu?.getItem(1)?.isVisible = true
+        }else{
+            menu?.getItem(1)?.isVisible = false
+            menu?.getItem(0)?.isVisible = true
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menu!!.add(1,1,1,"加入黑名单")
-        menu.add(1,1,1,"移除黑名单")
+        if(AppPaintF.instance.cookie!=null){//没有登录的话就不显示菜单
+            menu!!.add(1,1,1,"加入黑名单")
+            menu.add(1,2,2,"移除黑名单")
+            this.menu=menu
+        }
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        viewModel!!.mutableOpResult.observe(this,Observer<UserOperateResult>{
+            viewModel!!.mutableOpResult.removeObservers(this)
+            if (it.ttl==1&& it.code==0){
+                if(item.itemId==1){
+                    switchMenuState(true)
+                    Toast.makeText(this, "已加入黑名单", Toast.LENGTH_SHORT).show()
+                }else{
+                    switchMenuState(false)
+                    Toast.makeText(this, "已移除黑名单", Toast.LENGTH_SHORT).show()
+                }
+            }else{
+                Toast.makeText(this, "操作失败", Toast.LENGTH_SHORT).show()
+            }
+        })
+        when(item.itemId){
+            1->{
+                viewModel!!.joinToBlackList(uid)
+            }
+            2->{
+                viewModel!!.removeBlackList(uid)
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     companion object{
