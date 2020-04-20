@@ -44,7 +44,7 @@ public class UserViewModel extends ViewModel {
 
     public void refreshBlackList(){
         blackListPn=1;
-        getBlackList();
+        //getBlackList();
     }
 
     public boolean checkUidInBlack(int uid){
@@ -70,7 +70,6 @@ public class UserViewModel extends ViewModel {
                     blackListPn=-1;
                     return;
                 }
-
                 List<User2> temp =blackListRepository.getData().getList();
                 if(temp==null||temp.isEmpty()){
                     blackListPn=-1;
@@ -87,10 +86,6 @@ public class UserViewModel extends ViewModel {
 
             @Override
             public void onComplete() {
-                if(blackListPn!=-1){
-                    blackListPn++;
-                    getBlackList();
-                }
 
             }
         });

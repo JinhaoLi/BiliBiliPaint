@@ -228,6 +228,6 @@ public class RetrofitRepository {
             public ObservableSource<BlackListRepository> apply(Integer integer) throws Exception {
                 return client.getApiBiliClient().create(AppApiService.class).getBlackList(integer);
             }
-        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 }

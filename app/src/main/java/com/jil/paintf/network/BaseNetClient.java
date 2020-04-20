@@ -4,6 +4,7 @@ import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jil.paintf.service.AppPaintF;
+import com.orhanobut.logger.Logger;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -24,6 +25,8 @@ public class BaseNetClient {
 
     private static OkHttpClient okHttpClient;
     private Gson gson =new GsonBuilder().create();
+    long beforeRequest=0;
+    int twice =0;
 
     public BaseNetClient() {
         if(okHttpClient==null){
@@ -40,6 +43,17 @@ public class BaseNetClient {
                 @NotNull
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
+                    if(twice>=10){
+                        Logger.d("五秒内发起请求超过10次！！！","");
+                        System.exit(0);
+                    }
+                    if(System.currentTimeMillis()-beforeRequest<5000){
+                        twice++;
+                    }else{
+                        twice=0;
+                        beforeRequest=System.currentTimeMillis();
+                    }
+
                     /**@changeRequest(Chain)**/
                     if(AppPaintF.instance.getCookie()==null)
                         return chain.proceed(chain.request());
