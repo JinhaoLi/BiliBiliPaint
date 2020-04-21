@@ -5,6 +5,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
+import android.widget.CompoundButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
@@ -28,6 +29,7 @@ class UserActivity : AppCompatActivity() {
     var uid:Int=0
     var flag:Int =1
     var observer:Observer<UserUpLoadInfo>?=null
+    private var listener:CompoundButton.OnCheckedChangeListener?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
@@ -38,31 +40,46 @@ class UserActivity : AppCompatActivity() {
 
         viewModel=ViewModelProvider(this).get(UserViewModel::class.java)
         viewModel!!.doNetBlackList()
-        checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
-            if(AppPaintF.instance.cookie==null){
-                Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
-                return@setOnCheckedChangeListener
-            }
-            if(isChecked){
-                viewModel!!.joinAttentionList(uid)
-            }else{
-                viewModel!!.removeAttentionList(uid)
-            }
-            viewModel!!.mutableOpResult.observe(this, Observer<UserOperateResult> {
-                viewModel!!.mutableOpResult.removeObservers(this)
-                if (it.ttl==1&& it.code==0){
-                    if(isChecked){
-                        buttonView.text="已关注"
-                    }else{
-                        buttonView.text="关注"
-                    }
-                }else{
-                    checkbox.isChecked=!isChecked
-                    Toast.makeText(this, "操作失败", Toast.LENGTH_SHORT).show()
-
+        listener= CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
+                if(AppPaintF.instance.cookie==null){
+                    Toast.makeText(this@UserActivity, "你还没有登录！", Toast.LENGTH_SHORT).show()
+                    return@OnCheckedChangeListener
                 }
-            })
-        }
+                viewModel!!.mutableOpResult.observe(this, Observer<UserOperateResult> {
+                    /**
+                     * 存在bug！post返回两次结果
+                     * */
+                    viewModel!!.mutableOpResult.removeObservers(this)
+                    checkbox.setOnCheckedChangeListener(null)
+                    if (it.ttl==1&& it.code==0){
+                        if(checkbox.isChecked){
+                            checkbox.text="已关注"
+                        }else{
+                            checkbox.text="关注"
+                        }
+                        Toast.makeText(this, "操作成功:"+it.message, Toast.LENGTH_SHORT).show()
+                    }else{
+                        if(checkbox.isChecked){
+                            checkbox.isChecked=false
+                            checkbox.text="关注"
+
+                        }else{
+                            checkbox.isChecked=true
+                            checkbox.text="已关注"
+                        }
+                        Toast.makeText(this, "操作失败:"+it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    checkbox.setOnCheckedChangeListener(listener)
+                })
+                if(isChecked){
+                    viewModel!!.joinAttentionList(uid)
+                }else{
+                    viewModel!!.removeAttentionList(uid)
+                }
+            }
+        checkbox.setOnCheckedChangeListener (listener)
+
+
 
         //用户作品
         observer=Observer{
