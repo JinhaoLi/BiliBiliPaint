@@ -119,23 +119,25 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                     return
                 }
                 ViewModelProvider.AndroidViewModelFactory(application)
-                    .create(UserViewModel::class.java)
-                    .getUserInfo(input).observe(this@MainActivity, Observer { userInfo->
-                        if(userInfo.code==-404){
-                            Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
-                            return@Observer
-                        }
-
-                        Toast.makeText(this@MainActivity, userInfo!!.data.name, Toast.LENGTH_SHORT).show()
-                        PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-                            .apply {
-                                edit().let {
-                                    it.putString("HEAD",userInfo.data.face).apply()
-                                    it.putString("NAME",userInfo.data.name).apply()
-                                }
+                    .create(UserViewModel::class.java).apply {
+                        userInfo.observe(this@MainActivity, Observer { userInfo->
+                            if(userInfo.code==-404){
+                                Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
+                                return@Observer
                             }
-                        changHeaderView(userInfo.data.face,userInfo.data.name)
-                    })
+
+                            Toast.makeText(this@MainActivity, userInfo!!.data.name, Toast.LENGTH_SHORT).show()
+                            PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                                .apply {
+                                    edit().let {
+                                        it.putString("HEAD",userInfo.data.face).apply()
+                                        it.putString("NAME",userInfo.data.name).apply()
+                                    }
+                                }
+                            changHeaderView(userInfo.data.face,userInfo.data.name)
+                        })
+                       doNetUserInfo(input)
+                    }
             }
             if(resultCode==-2){
                 //代表退出登录

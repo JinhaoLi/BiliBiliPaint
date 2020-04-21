@@ -21,7 +21,6 @@ import kotlinx.android.synthetic.main.fragment_main.*
 private const val ARG_PARAM1 = "param1"
 
 class MainFragment: LazyFragment() {
-    //private var verticalViewpager:VerticalViewpager?=null
     private var param1=0
     private lateinit var viewModel: MainFragmentViewModel
     private var adapter: ItemAdapter?=null
@@ -35,29 +34,22 @@ class MainFragment: LazyFragment() {
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        Logger.d(arguments?.getInt("param1").toString()+"onResume()")
-    }
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        Logger.d(arguments?.getInt(ARG_PARAM1).toString()+"onCreateView()")
+        super.onCreateView(inflater, container, savedInstanceState)
         return initView(inflater,container,R.layout.fragment_main)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        //param1=arguments?.getInt(ARG_PARAM1)
+        super.onCreate(savedInstanceState)
         arguments?.let {
             //arguments不为空则执行
             param1 = it.getInt(ARG_PARAM1)
         }
-        Logger.d(arguments?.getInt(ARG_PARAM1).toString()+"onCreate()")
-        super.onCreate(savedInstanceState)
+
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        Logger.d(arguments?.getInt(ARG_PARAM1).toString()+"onActivityCreated()")
         if (adapter==null){
             viewModel =ViewModelProvider.AndroidViewModelFactory(activity!!.application).create(MainFragmentViewModel::class.java)
             adapter = ItemAdapter(requireActivity())
@@ -119,17 +111,8 @@ class MainFragment: LazyFragment() {
     }
 
     private fun recommendIllusts(){
-//        viewModel.recommendIllustsList.observeForever {
-//            refresh(it)
-//        }
-
         viewModel.recommendIllustsList.observe(this,
             Observer<List<Item>> {
-                Logger.d("125-->viewModel.recommendIllustsList.observe(this,\n" +
-                        "            Observer<List<Item>> {\n" +
-                        "                Logger.d(\"\")\n" +
-                        "                refresh(it)\n" +
-                        "            })")
                 refresh(it)
             })
     }

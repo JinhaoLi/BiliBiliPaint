@@ -25,8 +25,6 @@ public class BaseNetClient {
 
     private static OkHttpClient okHttpClient;
     private Gson gson =new GsonBuilder().create();
-    long beforeRequest=0;
-    int twice =0;
 
     public BaseNetClient() {
         if(okHttpClient==null){
@@ -34,7 +32,7 @@ public class BaseNetClient {
             HttpLoggingInterceptor.Logger logger=new HttpLoggingInterceptor.Logger() {
                 @Override
                 public void log(@NotNull String s) {
-                    Log.d("Client", s);
+                    Log.d("网络操作", s);
                 }
             };
             HttpLoggingInterceptor loggingInterceptor =new HttpLoggingInterceptor(logger);
@@ -43,17 +41,6 @@ public class BaseNetClient {
                 @NotNull
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
-                    if(twice>=10){
-                        Logger.d("五秒内发起请求超过10次！！！","");
-                        System.exit(0);
-                    }
-                    if(System.currentTimeMillis()-beforeRequest<5000){
-                        twice++;
-                    }else{
-                        twice=0;
-                        beforeRequest=System.currentTimeMillis();
-                    }
-
                     /**@changeRequest(Chain)**/
                     if(AppPaintF.instance.getCookie()==null)
                         return chain.proceed(chain.request());

@@ -122,7 +122,7 @@ public class DocViewModel extends ViewModel {
             @Override
             public void onComplete() {
                 isLoading=false;
-                Logger.d("第"+pn+"页评论完成加载！"+"共"+replyData.size()+"条评论！");
+                //Logger.d("第"+pn+"页评论完成加载！"+"共"+replyData.size()+"条评论！");
                 if(pn!=maxpn){
                     pn++;
                     //getReplyData(id,false);

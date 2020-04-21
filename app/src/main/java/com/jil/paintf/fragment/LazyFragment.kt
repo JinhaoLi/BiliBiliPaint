@@ -42,4 +42,50 @@ abstract class LazyFragment : Fragment(){
 
         return rootView
     }
+
+
+//    override fun onPause() {
+//        Logger.d(arguments?.getInt("param1").toString()+"onPause()")
+//        super.onPause()
+//    }
+//
+//    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+//        Logger.d(arguments?.getInt("param1").toString()+"onViewCreated()")
+//        super.onViewCreated(view, savedInstanceState)
+//    }
+//
+//    override fun onActivityCreated(savedInstanceState: Bundle?) {
+//        Logger.d(arguments?.getInt("param1").toString()+"onActivityCreated()")
+//        super.onActivityCreated(savedInstanceState)
+//    }
+//
+//    override fun onCreate(savedInstanceState: Bundle?) {
+//        Logger.d(arguments?.getInt("param1").toString()+"onCreate()")
+//        super.onCreate(savedInstanceState)
+//    }
+//
+//    override fun onStart() {
+//        Logger.d(arguments?.getInt("param1").toString()+"onStart()")
+//        super.onStart()
+//    }
+//
+//    override fun onDetach() {
+//        Logger.d(arguments?.getInt("param1").toString()+"onDetach()")
+//        super.onDetach()
+//    }
+//
+//    override fun onStop() {
+//        Logger.d(arguments?.getInt("param1").toString()+"onStop()")
+//        super.onStop()
+//    }
+//
+//    override fun onViewStateRestored(savedInstanceState: Bundle?) {
+//        Logger.d(arguments?.getInt("param1").toString()+"onViewStateRestored()")
+//        super.onViewStateRestored(savedInstanceState)
+//    }
+//
+//    override fun onDestroy() {
+//        Logger.d(arguments?.getInt("param1").toString()+"onDestroy()")
+//        super.onDestroy()
+//    }
 }

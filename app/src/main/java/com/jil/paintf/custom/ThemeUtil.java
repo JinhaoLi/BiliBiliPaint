@@ -25,7 +25,6 @@ public class ThemeUtil {
 
     public static void initTheme(AppCompatActivity activity){
         int themeIndex = PreferenceManager.getDefaultSharedPreferences(activity).getInt("THEME",0);
-        Logger.d("应用主题："+themeIndex);
         if(themeIndex>THEME.length){
             themeIndex=0;
         }
