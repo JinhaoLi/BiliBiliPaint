@@ -15,6 +15,7 @@ import com.jil.paintf.adapter.UserPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.UserOperateResult
+import com.jil.paintf.repository.UserUpLoadInfo
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.service.CorrespondingValue
 import com.jil.paintf.viewmodel.UserViewModel
@@ -26,6 +27,7 @@ class UserActivity : AppCompatActivity() {
     var menu:Menu? =null
     var uid:Int=0
     var flag:Int =1
+    var observer:Observer<UserUpLoadInfo>?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
@@ -33,6 +35,9 @@ class UserActivity : AppCompatActivity() {
         setSupportActionBar(toolbar)
         title=""
         uid =intent.getIntExtra("uid",0)
+
+        viewModel=ViewModelProvider(this).get(UserViewModel::class.java)
+        viewModel!!.doNetBlackList()
         checkbox.setOnCheckedChangeListener { buttonView, isChecked ->
             if(AppPaintF.instance.cookie==null){
                 Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
@@ -56,15 +61,11 @@ class UserActivity : AppCompatActivity() {
                     Toast.makeText(this, "操作失败", Toast.LENGTH_SHORT).show()
 
                 }
-
             })
-
-
         }
 
-
-        viewModel=ViewModelProvider.AndroidViewModelFactory(application!!).create(UserViewModel::class.java)
-        viewModel!!.getUserUpLoadInfo(uid).observeForever {
+        //用户作品
+        observer=Observer{
             var intArray  =IntArray(3)
             intArray[0] =it.data.all_count
             intArray[1] =it.data.draw_count
@@ -73,11 +74,16 @@ class UserActivity : AppCompatActivity() {
             viewpager!!.adapter=adapter
             viewpager!!.currentItem=0
             tabs!!.setupWithViewPager(viewpager)
+            viewModel!!.userUpLoadInfo.removeObserver{ observer }
         }
-        viewModel!!.getUserInfo(uid).observeForever {
+        viewModel!!.userUpLoadInfo.observe(this, observer!!)
+        viewModel!!.doNetUserUpLoadInfo(uid)
+        //========================================================================
+        //用户信息
+        viewModel!!.userInfo.observe(this, Observer {
+            viewModel!!.userInfo.removeObservers(this)
             initMenuState(it.data.mid)
             user_name.text =it.data.name
-            //coll_toolbar__layout.title = it.data.name
             textView14.text=it.data.sign
             textView15.setBackgroundResource(CorrespondingValue.getLvBg(it.data.level))
             textView15.text="LV "+it.data.level
@@ -85,7 +91,9 @@ class UserActivity : AppCompatActivity() {
             Glide.with(this).load(it.data.face)
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this))).into(imageView11)
             Glide.with(this).load(it.data.top_photo).into(user_bac)
-        }
+        })
+        viewModel!!.doNetUserInfo(uid)
+        //========================================================================
     }
 
     /**
