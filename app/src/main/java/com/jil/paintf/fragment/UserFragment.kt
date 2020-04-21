@@ -1,11 +1,13 @@
 package com.jil.paintf.fragment
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -27,9 +29,10 @@ class UserFragment:LazyFragment(){
     var adapter: UserListItemAdapter?=null
     var viewModel:UserViewModel?=null
     override fun loadAndObserveData() {
-        viewModel!!.getDocListData(uid,param).observeForever {
+        viewModel!!.getDocListData(param).observe(this, Observer {
             refresh(it.items)
-        }
+        })
+        viewModel!!.doNetDocListData(uid,param)
     }
 
     companion object{
@@ -60,12 +63,13 @@ class UserFragment:LazyFragment(){
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(adapter==null){
-            viewModel=ViewModelProvider.AndroidViewModelFactory(activity!!.application).create(UserViewModel::class.java)
+            viewModel=ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
             adapter= UserListItemAdapter(context!!)
             val manager =GridLayoutManager(context,2)
             recyclerview!!.layoutManager =manager
             recyclerview!!.adapter=adapter
             recyclerview!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+                @SuppressLint("FragmentLiveDataObserve")
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
                     if(newState == RecyclerView.SCROLL_STATE_IDLE){
@@ -74,7 +78,7 @@ class UserFragment:LazyFragment(){
                                 adapter!!.data.removeAll(adapter!!.data.subList(0,200))
                             }
                             adapter!!.status="正在加载..."
-                            viewModel!!.getDocListData(uid,param)
+                            viewModel!!.doNetDocListData(uid,param)
                         }
                     }
                 }

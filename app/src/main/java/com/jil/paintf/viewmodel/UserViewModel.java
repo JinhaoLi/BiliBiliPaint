@@ -8,13 +8,7 @@ import com.jil.paintf.service.AppApiService;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
-import okhttp3.Call;
-import okhttp3.Callback;
-import okhttp3.Response;
-import okhttp3.ResponseBody;
-import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,12 +17,19 @@ import java.util.Map;
 public class UserViewModel extends ViewModel {
     @SuppressLint("UseSparseArrays")
     private static Map<Integer,String> map=new HashMap<>();
-    int[] page ={0,0};
+    int[] page ={0,0,0};
 
     private MutableLiveData<UserInfo> userInfo;
     private MutableLiveData<UserUpLoadInfo> userUpLoadInfo;
     private RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
-    private MutableLiveData<UserDoc> docListData;
+    static {
+        map.put(0,"all");
+        map.put(1,"draw");
+        map.put(2,"photo");
+    }
+    private MutableLiveData<UserDoc> docListData0;
+    private MutableLiveData<UserDoc> docListData1;
+    private MutableLiveData<UserDoc> docListData2;
     private MutableLiveData<UserOperateResult> mutableOpResult;
 
     int blackListPn =1;
@@ -36,15 +37,11 @@ public class UserViewModel extends ViewModel {
 
     public UserViewModel() {
         userUpLoadInfo =new MutableLiveData<>();
-        docListData=new MutableLiveData<>();
+        docListData0=new MutableLiveData<>();
+        docListData1=new MutableLiveData<>();
+        docListData2=new MutableLiveData<>();
         userInfo =new MutableLiveData<>();
         mutableOpResult =new MutableLiveData<>();
-        getBlackList();
-    }
-
-    public void refreshBlackList(){
-        blackListPn=1;
-        //getBlackList();
     }
 
     public boolean checkUidInBlack(int uid){
@@ -57,13 +54,12 @@ public class UserViewModel extends ViewModel {
         return false;
     }
 
-    public void getBlackList() {
+    public void doNetBlackList() {
         retrofitRepository.getBlackList(blackListPn).subscribe(new Observer<BlackListRepository>() {
             @Override
             public void onSubscribe(Disposable d) {
 
             }
-
             @Override
             public void onNext(BlackListRepository blackListRepository) {
                 if(blackListRepository.getData()==null){
@@ -78,7 +74,6 @@ public class UserViewModel extends ViewModel {
                 }
 
             }
-
             @Override
             public void onError(Throwable e) {
 
@@ -91,7 +86,11 @@ public class UserViewModel extends ViewModel {
         });
     }
 
-    public MutableLiveData<UserUpLoadInfo> getUserUpLoadInfo(int uid) {
+    public MutableLiveData<UserUpLoadInfo> getUserUpLoadInfo() {
+        return userUpLoadInfo;
+    }
+
+    public void doNetUserUpLoadInfo(int uid){
         retrofitRepository.getUserUpLoad(uid).subscribe(new Observer<UserUpLoadInfo>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -113,23 +112,20 @@ public class UserViewModel extends ViewModel {
 
             }
         });
-        return userUpLoadInfo;
     }
 
-    public void reSetPage(){
-        page[0]=0;
-        page[1]=0;
+    public MutableLiveData<UserDoc> getDocListData(int type) {
+        if(type==0){
+            return docListData0;
+        }else if(type==1){
+            return docListData1;
+        }else {
+            return docListData2;
+        }
     }
 
-    static {
-        map.put(0,"all");
-        map.put(1,"draw");
-        map.put(2,"photo");
-    }
-
-    public MutableLiveData<UserDoc> getDocListData(int uid,int type) {
-
-        retrofitRepository.getUserDocList(uid,page[0],map.get(type)).subscribe(new Observer<UserDocListRep>() {
+    public void doNetDocListData(int uid, final int type){
+        retrofitRepository.getUserDocList(uid,page[type],map.get(type)).subscribe(new Observer<UserDocListRep>() {
             @Override
             public void onSubscribe(Disposable d) {
 
@@ -137,7 +133,13 @@ public class UserViewModel extends ViewModel {
 
             @Override
             public void onNext(UserDocListRep userDocListRep) {
-                docListData.postValue(userDocListRep.getData());
+                if(type==0){
+                    docListData0.postValue(userDocListRep.getData());
+                }else if(type==1){
+                    docListData1.postValue(userDocListRep.getData());
+                }else {
+                    docListData2.postValue(userDocListRep.getData());
+                }
             }
 
             @Override
@@ -147,13 +149,16 @@ public class UserViewModel extends ViewModel {
 
             @Override
             public void onComplete() {
-                page[0]++;
+                page[type]++;
             }
         });
-        return docListData;
     }
 
-    public MutableLiveData<UserInfo> getUserInfo(int mid) {
+    public MutableLiveData<UserInfo> getUserInfo() {
+        return userInfo;
+    }
+
+    public void doNetUserInfo(int mid){
         retrofitRepository.getUserInfo(mid).subscribe(new Observer<UserInfo>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -175,7 +180,6 @@ public class UserViewModel extends ViewModel {
 
             }
         });
-        return userInfo;
     }
 
     public MutableLiveData<UserOperateResult> getMutableOpResult() {
