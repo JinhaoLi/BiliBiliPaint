@@ -28,6 +28,7 @@ import com.jil.paintf.repository.RetrofitRepository
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
 import com.orhanobut.logger.Logger
+import com.orhanobut.logger.Logger.log
 
 class ItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -58,10 +59,8 @@ class ItemAdapter(private val mContext: Context
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-
-
+        Logger.d(position.toString()+"onBindViewHolder->"+holder.toString())
         if (holder is ItemVHolder) {
-            holder.setIsRecyclable(false)
             if(data[position].item.already_voted==0){
                 holder.voteIco.setImageResource(R.drawable.ic_no_voted)
             }else{

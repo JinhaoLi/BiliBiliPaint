@@ -30,7 +30,6 @@ import kotlinx.android.synthetic.main.activity_main.*
 class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
     var adapter: MainPagerAdapter?=null
     var adapter2: MainPagerAdapter?=null
-    var isIllust:Boolean=true
     var ico:ImageView?=null
     var header:View? =null
     override fun onCreate(savedInstanceState: Bundle?) {

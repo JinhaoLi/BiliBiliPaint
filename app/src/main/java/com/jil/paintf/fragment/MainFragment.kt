@@ -17,6 +17,7 @@ import com.jil.paintf.viewmodel.MainFragmentViewModel
 import com.jil.paintf.viewmodel.MainFragmentViewModel.*
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_main.*
+import okhttp3.internal.notifyAll
 
 private const val ARG_PARAM1 = "param1"
 
@@ -35,23 +36,22 @@ class MainFragment: LazyFragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        super.onCreateView(inflater, container, savedInstanceState)
         return initView(inflater,container,R.layout.fragment_main)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
         arguments?.let {
             //arguments不为空则执行
             param1 = it.getInt(ARG_PARAM1)
         }
+        super.onCreate(savedInstanceState)
 
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (adapter==null){
-            viewModel =ViewModelProvider.AndroidViewModelFactory(activity!!.application).create(MainFragmentViewModel::class.java)
+            viewModel =ViewModelProvider(requireActivity()).get(MainFragmentViewModel::class.java)
             adapter = ItemAdapter(requireActivity())
             val manager = GridLayoutManager(context,2)
             recyclerview!!.layoutManager=manager
@@ -63,7 +63,6 @@ class MainFragment: LazyFragment() {
                 if(adapter!=null&&adapter!!.data.size>600){
                     adapter!!.data.removeAll(adapter!!.data.subList(400,600))
                 }
-                //loadAndObserveData()
                 viewModel.refresh(param1)
             }
             recyclerview!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
@@ -138,11 +137,12 @@ class MainFragment: LazyFragment() {
             adapter!!.notifyItemChanged(adapter!!.data.size)
             return
         }
+        val updataPosition=adapter!!.data.size
         if(addAtStart) {
             adapter!!.data.addAll(0, list)
-            adapter!!.notifyItemRangeChanged(0,list.size)
+            adapter!!.notifyItemRangeInserted(0,list.size)
+            recyclerview!!.scrollToPosition(list.size-2)
         }else{
-            val updataPosition=adapter!!.data.size
             adapter!!.data.addAll(list)
             adapter!!.notifyItemInserted(updataPosition)
         }

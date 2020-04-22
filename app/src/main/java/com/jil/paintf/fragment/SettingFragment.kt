@@ -31,7 +31,6 @@ class SettingFragment :LazyFragment(){
         return initView(inflater,container,R.layout.fragment_setting)
     }
 
-
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if(adapter==null){

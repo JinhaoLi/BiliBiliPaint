@@ -39,7 +39,6 @@ abstract class LazyFragment : Fragment(){
         } else {
             isRecovery = true
         }
-
         return rootView
     }
 
