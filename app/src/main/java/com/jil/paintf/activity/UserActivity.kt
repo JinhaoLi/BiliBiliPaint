@@ -45,32 +45,7 @@ class UserActivity : AppCompatActivity() {
                     Toast.makeText(this@UserActivity, "你还没有登录！", Toast.LENGTH_SHORT).show()
                     return@OnCheckedChangeListener
                 }
-                viewModel!!.mutableOpResult.observe(this, Observer<UserOperateResult> {
-                    /**
-                     * 存在bug！post返回两次结果
-                     * */
-                    viewModel!!.mutableOpResult.removeObservers(this)
-                    checkbox.setOnCheckedChangeListener(null)
-                    if (it.ttl==1&& it.code==0){
-                        if(checkbox.isChecked){
-                            checkbox.text="已关注"
-                        }else{
-                            checkbox.text="关注"
-                        }
-                        Toast.makeText(this, "操作成功:"+it.message, Toast.LENGTH_SHORT).show()
-                    }else{
-                        if(checkbox.isChecked){
-                            checkbox.isChecked=false
-                            checkbox.text="关注"
 
-                        }else{
-                            checkbox.isChecked=true
-                            checkbox.text="已关注"
-                        }
-                        Toast.makeText(this, "操作失败:"+it.message, Toast.LENGTH_SHORT).show()
-                    }
-                    checkbox.setOnCheckedChangeListener(listener)
-                })
                 if(isChecked){
                     viewModel!!.joinAttentionList(uid)
                 }else{
@@ -79,7 +54,30 @@ class UserActivity : AppCompatActivity() {
             }
         checkbox.setOnCheckedChangeListener (listener)
 
+        viewModel!!.mutableOpResult.observe(this, Observer<UserOperateResult> {
+            /**
+             * 存在bug！post返回两次结果
+             * */
+            //viewModel!!.mutableOpResult.removeObservers(this)
+            if (it.ttl==1&& it.code==0){
+                if(checkbox.isChecked){
+                    checkbox.text="已关注"
+                }else{
+                    checkbox.text="关注"
+                }
+                Toast.makeText(this, "操作成功:"+it.message, Toast.LENGTH_SHORT).show()
+            }else{
+                if(checkbox.isChecked){
+                    updateCheckNoListener(false)
+                    checkbox.text="关注"
 
+                }else{
+                    updateCheckNoListener(true)
+                    checkbox.text="已关注"
+                }
+                Toast.makeText(this, "操作失败:"+it.message, Toast.LENGTH_SHORT).show()
+            }
+        })
 
         //用户作品
         observer=Observer{
@@ -99,18 +97,41 @@ class UserActivity : AppCompatActivity() {
         //用户信息
         viewModel!!.userInfo.observe(this, Observer {
             viewModel!!.userInfo.removeObservers(this)
-            initMenuState(it.data.mid)
             user_name.text =it.data.name
             textView14.text=it.data.sign
             textView15.setBackgroundResource(CorrespondingValue.getLvBg(it.data.level))
             textView15.text="LV "+it.data.level
-            checkbox.isChecked=it.data.is_followed
+            updateCheckNoListener(it.data.is_followed)
             Glide.with(this).load(it.data.face)
                 .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this))).into(imageView11)
             Glide.with(this).load(it.data.top_photo).into(user_bac)
         })
         viewModel!!.doNetUserInfo(uid)
         //========================================================================
+        //黑名单校验
+        viewModel!!.muBlackList.observe(this, Observer {
+            initMenuState(uid)
+        })
+    }
+
+    /**
+     * 移除监听->修改状态->设置监听
+     */
+    private fun updateCheckNoListener(state: Boolean){
+        checkbox.setOnCheckedChangeListener(null)
+        checkbox.setText(if (state) "已关注" else "关注")
+        checkbox.isChecked=state
+        checkbox.setOnCheckedChangeListener(listener)
+    }
+
+    private fun switchMenuState(isB:Boolean){
+        if(isB){
+            menu?.getItem(0)?.isVisible = false
+            menu?.getItem(1)?.isVisible = true
+        }else{
+            menu?.getItem(1)?.isVisible = false
+            menu?.getItem(0)?.isVisible = true
+        }
     }
 
     /**
@@ -123,16 +144,6 @@ class UserActivity : AppCompatActivity() {
             switchMenuState(true)
         }else{
             switchMenuState(false)
-        }
-    }
-
-    private fun switchMenuState(isB:Boolean){
-        if(isB){
-            menu?.getItem(0)?.isVisible = false
-            menu?.getItem(1)?.isVisible = true
-        }else{
-            menu?.getItem(1)?.isVisible = false
-            menu?.getItem(0)?.isVisible = true
         }
     }
 

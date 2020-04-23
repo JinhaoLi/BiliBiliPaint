@@ -33,9 +33,11 @@ public class UserViewModel extends ViewModel {
     private MutableLiveData<UserOperateResult> mutableOpResult;
 
     int blackListPn =1;
+    public MutableLiveData<List<User2>> muBlackList;
     private List<User2> blackList =new ArrayList<>();
 
     public UserViewModel() {
+        muBlackList =new MutableLiveData<>();
         userUpLoadInfo =new MutableLiveData<>();
         docListData0=new MutableLiveData<>();
         docListData1=new MutableLiveData<>();
@@ -72,6 +74,7 @@ public class UserViewModel extends ViewModel {
                 }else {
                     blackList.addAll(temp);
                 }
+                muBlackList.postValue(blackList);
 
             }
             @Override
