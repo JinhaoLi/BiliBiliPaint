@@ -1,7 +1,6 @@
 package com.jil.paintf.fragment
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,13 +10,11 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jil.paintf.R
 import com.jil.paintf.adapter.ItemAdapter
-import com.jil.paintf.repository.DataListRetryWithDelay.*
 import com.jil.paintf.repository.Item
 import com.jil.paintf.viewmodel.MainFragmentViewModel
 import com.jil.paintf.viewmodel.MainFragmentViewModel.*
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_main.*
-import okhttp3.internal.notifyAll
 
 private const val ARG_PARAM1 = "param1"
 
@@ -45,7 +42,6 @@ class MainFragment: LazyFragment() {
             param1 = it.getInt(ARG_PARAM1)
         }
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -141,7 +137,8 @@ class MainFragment: LazyFragment() {
         if(addAtStart) {
             adapter!!.data.addAll(0, list)
             adapter!!.notifyItemRangeInserted(0,list.size)
-            recyclerview!!.scrollToPosition(list.size-2)
+            adapter!!.notifyItemRangeChanged(list.size,updataPosition)
+            recyclerview!!.scrollToPosition(list.size)
         }else{
             adapter!!.data.addAll(list)
             adapter!!.notifyItemInserted(updataPosition)
@@ -159,8 +156,6 @@ class MainFragment: LazyFragment() {
             HC->{ hotCosplay() }
         }
     }
-
-
 }
 
 
