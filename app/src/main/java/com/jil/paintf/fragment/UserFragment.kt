@@ -100,8 +100,9 @@ class UserFragment:LazyFragment(){
             adapter!!.status="已经没有了..."
             adapter!!.notifyItemChanged(adapter!!.data.size)
         }else{
+            val updataPosition=adapter!!.data.size
             adapter!!.data.addAll(items)
-            adapter!!.notifyDataSetChanged()
+            adapter!!.notifyItemInserted(updataPosition)
         }
 
     }
