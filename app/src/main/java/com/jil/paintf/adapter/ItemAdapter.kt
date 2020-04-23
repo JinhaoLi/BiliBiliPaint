@@ -1,5 +1,7 @@
 package com.jil.paintf.adapter
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -8,10 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
@@ -24,11 +24,9 @@ import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Item
-import com.jil.paintf.repository.RetrofitRepository
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
 import com.orhanobut.logger.Logger
-import com.orhanobut.logger.Logger.log
 
 class ItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -76,10 +74,6 @@ class ItemAdapter(private val mContext: Context
                 holder.count.visibility=View.VISIBLE
                 holder.count.text = data[position].item.pictures.size.toString()+"p"
             }
-
-//            if(data[position].item.already_voted==1){
-//                holder.voteIco.setBackgroundResource(R.drawable.ic_already_voted)
-//            }
 
             holder.voteIco.setOnClickListener {
                 if(AppPaintF.instance.cookie==null){
@@ -173,17 +167,29 @@ class ItemAdapter(private val mContext: Context
         var count: TextView = itemView.findViewById(R.id.textView2)
         var voteIco:ImageView =itemView.findViewById(R.id.vote_ico)
 
+        @SuppressLint("ObjectAnimatorBinding")
+        fun alpView(v:View){
+            val animator = ObjectAnimator.ofFloat(v,"alpha",0f,0.25f,0.75f,1f)
+            animator.duration=700
+            animator.start()
+        }
 
         fun displayImage(){
+            image.visibility=View.INVISIBLE
             Glide.with(itemView.context).asBitmap().load(imageUrl)
                 .into(object :CustomTarget<Bitmap>(){
-                    override fun onLoadCleared(placeholder: Drawable?) {
+                    override fun onLoadCleared(placeholder: Drawable?) {}
 
+                    override fun onLoadFailed(errorDrawable: Drawable?) {
+                        image.visibility=View.VISIBLE
+                        super.onLoadFailed(errorDrawable)
                     }
 
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         image.setImageBitmap(resource)
-                        val builder =Palette.from(resource);
+                        image.visibility=View.VISIBLE
+                        alpView(image)
+                        val builder =Palette.from(resource)
                         builder.generate {
                             //亮、柔和
                             val lightMutedColor: Int = it!!.getLightMutedColor(ThemeUtil.getColorAccent(itemView.context))
