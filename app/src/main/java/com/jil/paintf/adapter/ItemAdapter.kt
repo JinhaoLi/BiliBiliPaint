@@ -59,14 +59,14 @@ class ItemAdapter(private val mContext: Context
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         Logger.d(position.toString()+"onBindViewHolder->"+holder.toString())
         if (holder is ItemVHolder) {
+            holder.imageUrl=data[position].item.pictures[0].img_src + "@512w_384h_1e.webp"
+            holder.icoUrl=data[position].user.head_url+"@32w_32h.webp"
+            holder.displayImage()
             if(data[position].item.already_voted==0){
                 holder.voteIco.setImageResource(R.drawable.ic_no_voted)
             }else{
                 holder.voteIco.setImageResource(R.drawable.ic_already_voted)
             }
-            holder.imageUrl=data[position].item.pictures[0].img_src + "@512w_384h_1e.webp"
-            holder.icoUrl=data[position].user.head_url+"@32w_32h.webp"
-            holder.displayImage()
             holder.title.text = data[position].item.title
             if(data[position].item.pictures.size==1){
                 holder.count.visibility=View.GONE
