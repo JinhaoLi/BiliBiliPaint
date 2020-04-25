@@ -2,14 +2,22 @@ package com.jil.paintf.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
+import android.app.ActivityOptions
 import android.content.Context
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.os.Bundle
+import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
+import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -19,6 +27,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
+import com.jil.paintf.activity.DocDetailActivity
 import com.jil.paintf.activity.DocDetailActivity.Companion.startDocDetailActivity
 import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
@@ -108,16 +117,26 @@ class ItemAdapter(private val mContext: Context
                     }
 
                 })
-
-
             }
 
             holder.image.setOnClickListener { v ->
+                val bundle = Bundle()
+                val intent = Intent(mContext, DocDetailActivity::class.java)
+
                 val intArray =IntArray(data.size)
                 for (index in 0 until data.size){
                     intArray[index] =data[index].item.doc_id
                 }
-                startDocDetailActivity(v.context,intArray,data[position].item.doc_id)
+                bundle.putInt("doc_id",data[position].item.doc_id)
+                bundle.putIntArray("intArray",intArray)
+                intent.putExtra("param1",bundle)
+                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    mContext as Activity,
+                    v, "shareElement"
+                )
+
+                ActivityCompat.startActivity(mContext, intent, options.toBundle())
+                //startDocDetailActivity(v.context,intArray,data[position].item.doc_id)
             }
 
             holder.ico.setOnClickListener{

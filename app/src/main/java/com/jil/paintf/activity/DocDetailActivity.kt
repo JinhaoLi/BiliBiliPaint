@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -45,7 +46,7 @@ class DocDetailActivity : AppCompatActivity(),
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
-
+overridePendingTransition(1,1)
         setContentView(R.layout.activity_doc_detail)
         window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
         window.decorView.systemUiVisibility = View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN or View.SYSTEM_UI_FLAG_LAYOUT_STABLE
@@ -334,5 +335,9 @@ class DocDetailActivity : AppCompatActivity(),
         else{
             viewModel!!.getData(idArray!![current])
         }
+    }
+
+    override fun onBackPressed() {
+        ActivityCompat.finishAfterTransition(this@DocDetailActivity)
     }
 }

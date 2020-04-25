@@ -10,7 +10,7 @@ import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 import okhttp3.ResponseBody;
 
-import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
+import static com.jil.paintf.viewmodel.MainViewModel.*;
 
 public class RetrofitRepository {
     private BaseNetClient client;

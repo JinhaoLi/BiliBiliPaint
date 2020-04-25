@@ -5,7 +5,7 @@ import com.jil.paintf.service.AppApiService;
 import io.reactivex.Observable;
 import io.reactivex.functions.Function;
 
-import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
+import static com.jil.paintf.viewmodel.MainViewModel.*;
 
 public class DataListRetryWithDelay implements Function<Observable<Throwable>, Observable<DocListRepository>> {
     private int time;

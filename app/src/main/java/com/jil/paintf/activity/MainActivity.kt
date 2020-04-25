@@ -8,13 +8,11 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.preference.PreferenceManager
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -23,8 +21,7 @@ import com.jil.paintf.adapter.MainPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
-import com.jil.paintf.viewmodel.MainFragmentViewModel
-import com.jil.paintf.viewmodel.UserViewModel
+import com.jil.paintf.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
@@ -33,16 +30,14 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     var adapter2: MainPagerAdapter?=null
     var ico:ImageView?=null
     var header:View? =null
-    lateinit var viewModel:MainFragmentViewModel
+    lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //val recreate = savedInstanceState?.getBoolean("isRecreate") ?: false
-
         ThemeUtil.initTheme(this)
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar!!)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        viewModel=ViewModelProvider(this).get(MainFragmentViewModel::class.java)
+        viewModel=ViewModelProvider(this).get(MainViewModel::class.java)
         adapter =MainPagerAdapter(supportFragmentManager,0)
         viewpager!!.adapter =adapter
         viewpager!!.currentItem=0

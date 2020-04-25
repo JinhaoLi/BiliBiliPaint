@@ -1,5 +1,6 @@
 package com.jil.paintf.fragment
 
+import android.app.Activity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -11,8 +12,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jil.paintf.R
 import com.jil.paintf.adapter.ItemAdapter
 import com.jil.paintf.repository.Item
-import com.jil.paintf.viewmodel.MainFragmentViewModel
-import com.jil.paintf.viewmodel.MainFragmentViewModel.*
+import com.jil.paintf.viewmodel.MainViewModel
+import com.jil.paintf.viewmodel.MainViewModel.Companion.HC
+import com.jil.paintf.viewmodel.MainViewModel.Companion.HI
+import com.jil.paintf.viewmodel.MainViewModel.Companion.NC
+import com.jil.paintf.viewmodel.MainViewModel.Companion.NI
+import com.jil.paintf.viewmodel.MainViewModel.Companion.RC
+import com.jil.paintf.viewmodel.MainViewModel.Companion.RI
 import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_main.*
 
@@ -20,7 +26,7 @@ private const val ARG_PARAM1 = "param1"
 
 class MainFragment: LazyFragment() {
     private var param1=0
-    private lateinit var viewModel: MainFragmentViewModel
+    private lateinit var viewModel: MainViewModel
     private var adapter: ItemAdapter?=null
     var addAtStart =false
     companion object {
@@ -30,6 +36,10 @@ class MainFragment: LazyFragment() {
                 }
             }
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -47,7 +57,7 @@ class MainFragment: LazyFragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         if (adapter==null){
-            viewModel =ViewModelProvider(requireActivity()).get(MainFragmentViewModel::class.java)
+            viewModel =ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
             adapter = ItemAdapter(requireActivity())
             val manager = GridLayoutManager(context,2)
             recyclerview!!.layoutManager=manager
@@ -94,34 +104,33 @@ class MainFragment: LazyFragment() {
     }
 
     private fun newCosplay() {
-        viewModel.newCosplayList.observeForever {
+        viewModel.newCosplayList.observe(this, Observer<List<Item>> {
             refresh(it)
-        }
+        })
     }
 
     private fun recommendCosplay() {
-        viewModel.recommendCosplayList.observeForever {
+        viewModel.recommendCosPlayList.observe(this, Observer<List<Item>> {
             refresh(it)
-        }
+        })
     }
 
     private fun recommendIllusts(){
-        viewModel.recommendIllustsList.observe(this,
-            Observer<List<Item>> {
+        viewModel.recommendIllustsList.observe(this, Observer<List<Item>> {
                 refresh(it)
             })
     }
 
     private fun newIllusts(){
-        viewModel.newIllustsList.observeForever {
+        viewModel.newIllustsList.observe(this, Observer<List<Item>> {
             refresh(it)
-        }
+        })
     }
 
     private fun hotIllusts(){
-        viewModel.hotIllustsList.observeForever{
+        viewModel.hotIllustsList.observe(this, Observer<List<Item>> {
             refresh(it)
-        }
+        })
     }
 
     private fun refresh(list: List<Item>){
@@ -155,6 +164,7 @@ class MainFragment: LazyFragment() {
             NC->{ newCosplay() }
             HC->{ hotCosplay() }
         }
+        viewModel.refresh(param1)
     }
 }
 
