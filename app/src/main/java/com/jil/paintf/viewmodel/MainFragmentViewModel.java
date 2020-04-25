@@ -4,6 +4,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.jil.paintf.repository.Item;
 import com.jil.paintf.repository.DocListRepository;
+import com.jil.paintf.repository.MyInfo;
 import com.jil.paintf.repository.RetrofitRepository;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -20,6 +21,7 @@ public class MainFragmentViewModel extends ViewModel {
     private static int[] page={0,0,0,0,0,0};
     private static final int SIZE=45;
     RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
+    private MutableLiveData<MyInfo> myInfoMutableLiveData;
     private MutableLiveData<List<Item>> recommendIllustsList;
     private MutableLiveData<List<Item>> newIllustsList;
     private MutableLiveData<List<Item>> hotIllustsList;
@@ -27,6 +29,38 @@ public class MainFragmentViewModel extends ViewModel {
     private MutableLiveData<List<Item>> recommendCosplayList;
     private MutableLiveData<List<Item>> newCosplayList;
     private MutableLiveData<List<Item>> hotCosplayList;
+
+    public MainFragmentViewModel() {
+        myInfoMutableLiveData=new MutableLiveData<>();
+    }
+
+    public MutableLiveData<MyInfo> getMyInfoMutableLiveData() {
+        return myInfoMutableLiveData;
+    }
+
+    public void doNetMyInfo(){
+        retrofitRepository.getMyInfo().subscribe(new Observer<MyInfo>() {
+            @Override
+            public void onSubscribe(Disposable d) {
+
+            }
+
+            @Override
+            public void onNext(MyInfo myInfo) {
+                myInfoMutableLiveData.postValue(myInfo);
+            }
+
+            @Override
+            public void onError(Throwable e) {
+
+            }
+
+            @Override
+            public void onComplete() {
+
+            }
+        });
+    }
 
     public MutableLiveData<List<Item>> getRecommendCosplayList() {
         if(recommendCosplayList==null)

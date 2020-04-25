@@ -14,7 +14,8 @@ import static com.jil.paintf.viewmodel.MainFragmentViewModel.*;
 
 public class RetrofitRepository {
     private BaseNetClient client;
-    private AppApiService appApiService;
+    private AppApiService ApiVcBiliService;
+    private AppApiService ApiBiliService;
     private static RetrofitRepository retrofitRepository;
     public static RetrofitRepository getInstance(){
         if(retrofitRepository==null){
@@ -29,14 +30,15 @@ public class RetrofitRepository {
 
     private RetrofitRepository() {
         client =new BaseNetClient();
-        appApiService =client.getApiVcBiliClient().create(AppApiService.class);
+        ApiVcBiliService =client.getApiVcBiliClient().create(AppApiService.class);
+        ApiBiliService=client.getApiBiliClient().create(AppApiService.class);
     }
 
     public Observable<DocListRepository> getRecommend(final int page, final int size){
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {
             @Override
             public Observable<DocListRepository> apply(Integer integer) throws Exception {
-                return appApiService.getRecommedIllust(page,size);
+                return ApiVcBiliService.getRecommedIllust(page,size);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DataListRetryWithDelay(3,page,size, RI));
     }
@@ -45,7 +47,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocRepository>>() {
             @Override
             public Observable<DocRepository> apply(Integer integer) throws Exception {
-                return appApiService.getIllustDoc(id);
+                return ApiVcBiliService.getIllustDoc(id);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocRetryWithDelay(3,id));
     }
@@ -54,7 +56,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {
             @Override
             public Observable<DocListRepository> apply(Integer integer) throws Exception {
-                return appApiService.getNewIllusts(page,size);
+                return ApiVcBiliService.getNewIllusts(page,size);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DataListRetryWithDelay(3,page,size, NI));
     }
@@ -63,7 +65,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {
             @Override
             public Observable<DocListRepository> apply(Integer integer) throws Exception {
-                return appApiService.getHotIllusts(page,size);
+                return ApiVcBiliService.getHotIllusts(page,size);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DataListRetryWithDelay(3,page,size, HI));
     }
@@ -72,7 +74,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {
             @Override
             public Observable<DocListRepository> apply(Integer integer) throws Exception {
-                return appApiService.getRecommedCosplay(page,size);
+                return ApiVcBiliService.getRecommedCosplay(page,size);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DataListRetryWithDelay(3,page,size, RC));
     }
@@ -81,7 +83,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {
             @Override
             public Observable<DocListRepository> apply(Integer integer) throws Exception {
-                return appApiService.getHotCosplay(page,size);
+                return ApiVcBiliService.getHotCosplay(page,size);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DataListRetryWithDelay(3,page,size, HC));
     }
@@ -90,7 +92,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {
             @Override
             public Observable<DocListRepository> apply(Integer integer) throws Exception {
-                return appApiService.getNewCosplay(page,size);
+                return ApiVcBiliService.getNewCosplay(page,size);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DataListRetryWithDelay(3,page,size, NC));
     }
@@ -105,7 +107,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyRepository>>() {
             @Override
             public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
-                return client.getApiBiliClient().create(AppApiService.class).getDocReply(pn,id);
+                return ApiBiliService.getDocReply(pn,id);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocReplyRetryWithDelay());
     }
@@ -120,7 +122,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyRepository>>() {
             @Override
             public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
-                return client.getApiBiliClient().create(AppApiService.class).getDoc2Reply(oid,root);
+                return ApiBiliService.getDoc2Reply(oid,root);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new DocReplyRetryWithDelay());
     }
@@ -134,7 +136,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UserUpLoadInfo>>() {
             @Override
             public ObservableSource<UserUpLoadInfo> apply(Integer integer) throws Exception {
-                return appApiService.getUserUp(uid);
+                return ApiVcBiliService.getUserUp(uid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new UserUpLoadRetry(uid));
     }
@@ -151,7 +153,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UserDocListRep>>() {
             @Override
             public ObservableSource<UserDocListRep> apply(Integer integer) throws Exception {
-                return appApiService.getUserDocList(uid,page,biz);
+                return ApiVcBiliService.getUserDocList(uid,page,biz);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new UserDocListRetry(uid,page,biz));
     }
@@ -160,7 +162,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UserInfo>>() {
             @Override
             public ObservableSource<UserInfo> apply(Integer integer) throws Exception {
-                return client.getApiBiliClient().create(AppApiService.class).getUserInfo(mid);
+                return ApiBiliService.getUserInfo(mid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new UserInfoRetry(mid));
     }
@@ -176,7 +178,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<SearchRepository>>() {
             @Override
             public ObservableSource<SearchRepository> apply(Integer integer){
-                return client.getApiBiliClient().create(AppApiService.class).getSearchData(page,keyword,categid);
+                return ApiBiliService.getSearchData(page,keyword,categid);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retryWhen(new SearchRetry(page,keyword,categid));
     }
@@ -193,7 +195,7 @@ public class RetrofitRepository {
             @Override
             public ObservableSource<OperateResult> apply(Integer integer) throws Exception {
                 assert AppPaintF.instance.getCookie()!=null;
-                return appApiService.postVoteDoc(id, AppPaintF.instance.getCookie().bili_jct,type);
+                return ApiVcBiliService.postVoteDoc(id, AppPaintF.instance.getCookie().bili_jct,type);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
@@ -206,7 +208,7 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
             @Override
             public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
-                return appApiService.exitLogin();
+                return ApiVcBiliService.exitLogin();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
@@ -216,7 +218,7 @@ public class RetrofitRepository {
             @Override
             public ObservableSource<UserOperateResult> apply(Integer integer) throws Exception {
                 assert AppPaintF.instance.getCookie()!=null;
-                return client.getApiBiliClient().create(AppApiService.class).postUserOperate(integer,act,
+                return ApiBiliService.postUserOperate(integer,act,
                         11,"jsonp",AppPaintF.instance.getCookie().bili_jct);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
@@ -226,7 +228,16 @@ public class RetrofitRepository {
         return Observable.just(pn).flatMap(new Function<Integer, ObservableSource<BlackListRepository>>() {
             @Override
             public ObservableSource<BlackListRepository> apply(Integer integer) throws Exception {
-                return client.getApiBiliClient().create(AppApiService.class).getBlackList(integer);
+                return ApiBiliService.getBlackList(integer);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<MyInfo> getMyInfo(){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<MyInfo>>() {
+            @Override
+            public ObservableSource<MyInfo> apply(Integer integer) throws Exception {
+                return ApiBiliService.getMyInfo();
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }

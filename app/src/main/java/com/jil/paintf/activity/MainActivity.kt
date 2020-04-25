@@ -23,6 +23,7 @@ import com.jil.paintf.adapter.MainPagerAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
+import com.jil.paintf.viewmodel.MainFragmentViewModel
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -32,6 +33,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     var adapter2: MainPagerAdapter?=null
     var ico:ImageView?=null
     var header:View? =null
+    lateinit var viewModel:MainFragmentViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //val recreate = savedInstanceState?.getBoolean("isRecreate") ?: false
@@ -40,7 +42,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar!!)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-
+        viewModel=ViewModelProvider(this).get(MainFragmentViewModel::class.java)
         adapter =MainPagerAdapter(supportFragmentManager,0)
         viewpager!!.adapter =adapter
         viewpager!!.currentItem=0
@@ -53,20 +55,16 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
         header=nav_view!!.getHeaderView(0)
         ico =header!!.findViewById<ImageView>(R.id.imageView3)
-        PreferenceManager.getDefaultSharedPreferences(this).apply {
-            val icoUrl = getString("HEAD","")
-            val name =getString("NAME","")
-            if(AppPaintF.instance.cookie==null){
-                changHeaderView()
-                return@apply
-            }
-            if(!icoUrl.isNullOrEmpty()&&!name.isNullOrEmpty()){
-                changHeaderView(icoUrl,name)
-            }
 
+        viewModel.myInfoMutableLiveData.observe(this, Observer {
+            changHeaderView(it.data.face,it.data.uname)
+        })
 
+        if(AppPaintF.instance.cookie!=null){
+            viewModel.doNetMyInfo()
+        }else{
+            changHeaderView()
         }
-
 
         ico!!.setOnClickListener {
             startActivityForResult(Intent(this,LoginActivity::class.java),3)
@@ -112,31 +110,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(requestCode==3){
             if(resultCode==Activity.RESULT_OK&&data!=null){
-                val input =AppPaintF.instance.cookie?.DedeUserID
-                if(input==null){
-                    changHeaderView()
-                    return
-                }
-                ViewModelProvider.AndroidViewModelFactory(application)
-                    .create(UserViewModel::class.java).apply {
-                        userInfo.observe(this@MainActivity, Observer { userInfo->
-                            if(userInfo.code==-404){
-                                Toast.makeText(this@MainActivity,"错误的UID：" +userInfo.message, Toast.LENGTH_SHORT).show()
-                                return@Observer
-                            }
-
-                            Toast.makeText(this@MainActivity, userInfo!!.data.name, Toast.LENGTH_SHORT).show()
-                            PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-                                .apply {
-                                    edit().let {
-                                        it.putString("HEAD",userInfo.data.face).apply()
-                                        it.putString("NAME",userInfo.data.name).apply()
-                                    }
-                                }
-                            changHeaderView(userInfo.data.face,userInfo.data.name)
-                        })
-                       doNetUserInfo(input)
-                    }
+                viewModel.doNetMyInfo()
             }
             if(resultCode==-2){
                 //代表退出登录

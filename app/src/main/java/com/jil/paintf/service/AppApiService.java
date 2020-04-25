@@ -174,4 +174,7 @@ public interface AppApiService {
     @POST("/link_draw/v2/Vote/operate")
     Observable<OperateResult> postVoteDoc(@Field("doc_id")int doc_id, @Field("csrf_token")String csrf_token, @Field("type")int type );
 
+    @GET("/x/web-interface/nav")
+    Observable<MyInfo> getMyInfo();
+
 }

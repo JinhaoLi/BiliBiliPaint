@@ -136,14 +136,6 @@ class SettingFragment :LazyFragment(){
 
         }
 
-        @JvmStatic
-        val cookie =object :SettingItem("导入cookie","使用cookie模拟登录状态",4){
-            override fun click(v: View?) {
-
-            }
-
-        }
-
         init {
             settingList.add(loadLevel)
             settingList.add(test)

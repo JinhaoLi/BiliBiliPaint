@@ -110,13 +110,6 @@ data class Member(
     val vip: Vip
 )
 
-data class LevelInfo(
-    val current_exp: Int,
-    val current_level: Int,
-    val current_min: Int,
-    val next_exp: Int
-)
-
 data class Nameplate(
     val condition: String,
     val image: String,
@@ -124,11 +117,6 @@ data class Nameplate(
     val level: String,
     val name: String,
     val nid: Int
-)
-
-data class OfficialVerify(
-    val desc: String,
-    val type: Int
 )
 
 data class Pendant(
