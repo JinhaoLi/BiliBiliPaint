@@ -10,9 +10,17 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
+import com.afollestad.materialdialogs.LayoutMode
+import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.bottomsheets.BottomSheet
+import com.afollestad.materialdialogs.bottomsheets.gridItems
+import com.afollestad.materialdialogs.callbacks.onDismiss
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
@@ -135,7 +143,37 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         // Handle navigation view item clicks here.
         when (item.itemId) {
             R.id.nav_theme -> {
-                startActivity(Intent(this, ThemeActivity::class.java))
+                val items = listOf(
+                    ThemeActivity.BackgroundGridItem(R.color.colorPrimary, "Primary"),
+                    ThemeActivity.BackgroundGridItem(R.color.pink, "pink"),
+                    ThemeActivity.BackgroundGridItem(R.color.green, "green"),
+                    ThemeActivity.BackgroundGridItem(R.color.purple, "purple"),
+                    ThemeActivity.BackgroundGridItem(R.color.tea, "tea"),
+                    ThemeActivity.BackgroundGridItem(R.color.walnut, "walnut"),
+                    ThemeActivity.BackgroundGridItem(R.color.seaPine, "seaPine"),
+                    ThemeActivity.BackgroundGridItem(R.color.seedling, "seedling")
+
+                )
+                MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT)).show {
+                    var action: (() -> Unit)? = null
+
+                    title(R.string.change_theme)
+                    gridItems(items) { _, index, item ->
+                        //it.summary = item.title
+                        PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
+                            .apply { edit().putInt("THEME", index).apply()}
+
+                        action = {
+                            AppPaintF.ActivityCollector.recreate()
+                        }
+                    }
+                    onDismiss { action?.invoke() }
+                    cornerRadius(16.0F)
+                    negativeButton(android.R.string.cancel)
+                    positiveButton(R.string.apply)
+                    lifecycleOwner(this@MainActivity)
+                }
+                //startActivity(Intent(this, ThemeActivity::class.java))
             }
 
             R.id.nav_setting->{
@@ -172,7 +210,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
-            R.id.action_settings -> {
+            R.id.action_search -> {
                 val intent = Intent(this, SearchActivity::class.java)
                 startActivity(intent)
                 true

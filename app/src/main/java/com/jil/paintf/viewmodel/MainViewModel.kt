@@ -12,7 +12,7 @@ class MainViewModel : BaseViewModel() {
     val retrofitRepository = RetrofitRepository.getInstance()
 
     val myInfoMutableLiveData: MutableLiveData<MyInfo> = MutableLiveData()
-    val ril = arrayListOf<Item>()
+    val saveData = mutableMapOf<Int,List<Item>>()
     var recommendIllustsList: MutableLiveData<List<Item>> = MutableLiveData()
     var newIllustsList: MutableLiveData<List<Item>> =  MutableLiveData()
     var hotIllustsList: MutableLiveData<List<Item>> = MutableLiveData()
@@ -24,6 +24,14 @@ class MainViewModel : BaseViewModel() {
         retrofitRepository.myInfo.subscribe({ myInfo ->
             if (myInfo != null) myInfoMutableLiveData.postValue(myInfo)
         },{},{}).add()
+    }
+
+    fun restoreSaveData(index: Int): List<Item>? {
+        return saveData[index]
+    }
+
+    fun onSaveData(index:Int,list:List<Item>){
+        saveData[index]=list
     }
 
     private fun doNetRecommendCosPlay() {

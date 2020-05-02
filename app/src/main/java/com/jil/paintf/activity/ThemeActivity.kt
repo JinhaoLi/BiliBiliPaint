@@ -89,7 +89,7 @@ class ThemeActivity : AppCompatActivity() {
         }
     }
 
-    private class BackgroundGridItem(@ColorRes private val color: Int, override val title: String) : GridItem {
+    class BackgroundGridItem(@ColorRes private val color: Int, override val title: String) : GridItem {
 
         override fun populateIcon(imageView: ImageView) {
             imageView.apply {
@@ -127,7 +127,6 @@ class ThemeActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             android.R.id.home -> finish()
-
         }
         return super.onOptionsItemSelected(item)
     }

@@ -32,6 +32,7 @@ import kotlinx.android.synthetic.main.fragment_main.*
 private const val ARG_PARAM1 = "param1"
 
 class MainFragment: LazyFragment() {
+    var saveList:List<Item>? =null
     private var param1=0
     private lateinit var viewModel: MainViewModel
     private var adapter: ItemAdapter?=null
@@ -47,6 +48,7 @@ class MainFragment: LazyFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
+        viewModel.onSaveData(param1,adapter!!.data)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -118,6 +120,10 @@ class MainFragment: LazyFragment() {
                     else 1
                 }
             }
+
+            saveList=viewModel.saveData[param1]
+            if(!saveList.isNullOrEmpty())
+                refresh(saveList!!)
         }
     }
 
@@ -188,7 +194,8 @@ class MainFragment: LazyFragment() {
             NC->{ newCosplay() }
             HC->{ hotCosplay() }
         }
-        viewModel.refresh(param1)
+        if(saveList.isNullOrEmpty())
+            viewModel.refresh(param1)
     }
 }
 
