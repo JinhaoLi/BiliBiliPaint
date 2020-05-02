@@ -38,8 +38,9 @@ import com.jil.paintf.viewmodel.DocOperateModel
 import com.orhanobut.logger.Logger
 
 class ItemAdapter(private val mContext: Context
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
     val data=arrayListOf<Item>()
+    var itemOnClickListener:AdapterView.OnItemClickListener?=null
     var status ="正在加载..."
     private val viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.instance).create(DocOperateModel::class.java)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -120,22 +121,9 @@ class ItemAdapter(private val mContext: Context
             }
 
             holder.image.setOnClickListener { v ->
-                val bundle = Bundle()
-                val intent = Intent(mContext, DocDetailActivity::class.java)
+                if(itemOnClickListener!=null)
+                    itemOnClickListener!!.onItemClick(null,v,position,position.toLong())
 
-                val intArray =IntArray(data.size)
-                for (index in 0 until data.size){
-                    intArray[index] =data[index].item.doc_id
-                }
-                bundle.putInt("doc_id",data[position].item.doc_id)
-                bundle.putIntArray("intArray",intArray)
-                intent.putExtra("param1",bundle)
-                val options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                    mContext as Activity,
-                    v, "shareElement"
-                )
-
-                ActivityCompat.startActivity(mContext, intent, options.toBundle())
                 //startDocDetailActivity(v.context,intArray,data[position].item.doc_id)
             }
 

@@ -1,15 +1,22 @@
 package com.jil.paintf.fragment
 
 import android.app.Activity
+import android.app.ActivityOptions
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
+import androidx.core.app.ActivityCompat
+import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jil.paintf.R
+import com.jil.paintf.activity.DocDetailActivity
 import com.jil.paintf.adapter.ItemAdapter
 import com.jil.paintf.repository.Item
 import com.jil.paintf.viewmodel.MainViewModel
@@ -59,6 +66,23 @@ class MainFragment: LazyFragment() {
         if (adapter==null){
             viewModel =ViewModelProvider(requireActivity()).get(MainViewModel::class.java)
             adapter = ItemAdapter(requireActivity())
+            adapter!!.itemOnClickListener= AdapterView.OnItemClickListener { parent, view, position, id ->
+                val bundle = Bundle()
+                val intent = Intent(requireContext(), DocDetailActivity::class.java)
+
+                val intArray =IntArray(adapter!!.data.size)
+                for (index in 0 until adapter!!.data.size){
+                    intArray[index] =adapter!!.data[index].item.doc_id
+                }
+                bundle.putInt("doc_id",adapter!!.data[position].item.doc_id)
+                bundle.putIntArray("intArray",intArray)
+                intent.putExtra("param1",bundle)
+                val options1 =ActivityOptionsCompat.makeScaleUpAnimation(
+                    view, view.x.toInt(), view.y.toInt(),view.width,view.height
+                )
+
+                ActivityCompat.startActivity(requireContext(), intent, options1.toBundle())
+            }
             val manager = GridLayoutManager(context,2)
             recyclerview!!.layoutManager=manager
             recyclerview!!.adapter =adapter

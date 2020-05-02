@@ -1,9 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView xmlns:android="http://schemas.android.com/apk/res/android"
-           android:layout_width="match_parent"
-           android:id="@+id/imageView"
-           android:src="@drawable/ic_like"
-           android:layout_gravity="center"
-           android:layout_height="match_parent" android:scaleType="fitCenter">
+<com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:layout_width="match_parent"
+        android:id="@+id/imageView"
+        android:transitionName="shareElement"
+        android:src="@mipmap/ic_launcher"
+        android:layout_gravity="center"
+        android:adjustViewBounds="true"
+        android:layout_height="match_parent" android:scaleType="centerCrop">
 
 </com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView>
