@@ -131,6 +131,7 @@ class DocDetailActivity : AppCompatActivity(),
             }
             layoutManager.orientation= RecyclerView.HORIZONTAL
             tags.layoutManager=layoutManager
+
             //==================================================================================喜欢，收藏，支持，tags
         }
         //滑动效果

@@ -179,6 +179,10 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
             R.id.nav_setting->{
                 startActivity(Intent(this,SettingsActivity::class.java))
             }
+
+            R.id.nav_history->{
+                startActivity(Intent(this,LocationHistoryActivity::class.java))
+            }
             else->{
 
             }

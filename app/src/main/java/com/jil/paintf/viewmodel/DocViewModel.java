@@ -1,17 +1,25 @@
 package com.jil.paintf.viewmodel;
 
+import android.media.TimedMetaData;
 import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.jil.paintf.repository.*;
+import com.jil.paintf.service.DataRoomService;
 import com.orhanobut.logger.Logger;
+import io.reactivex.Observable;
+import io.reactivex.ObservableEmitter;
+import io.reactivex.ObservableOnSubscribe;
 import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
+import io.reactivex.schedulers.Schedulers;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class DocViewModel extends ViewModel {
+public class DocViewModel extends BaseViewModel {
     RetrofitRepository retrofitRepository =RetrofitRepository.getInstance();
     private MutableLiveData<DocData> data;
 
@@ -35,6 +43,7 @@ public class DocViewModel extends ViewModel {
 
             @Override
             public void onNext(DocRepository docRepository) {
+                saveHis(docRepository.getData());
                 data.postValue(docRepository.getData());
             }
 
@@ -49,6 +58,27 @@ public class DocViewModel extends ViewModel {
             }
         });
         return data;
+    }
+
+    public void saveHis(final DocData docData){
+        Observable<Integer> insert = Observable.create(new ObservableOnSubscribe<Integer>() {
+            @Override
+            public void subscribe(ObservableEmitter<Integer> emitter){
+                int docid =docData.getItem().getDoc_id();
+                String title =docData.getItem().getTitle();
+                String image =docData.getItem().getPictures().get(0).getImg_src();
+                int count =docData.getItem().getPictures().size();
+                DataRoomService.getDatabase().getHisItemDao().insert(new HisItem(docid, image,title,count));
+            }
+        });
+
+        add(insert.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(new Consumer<Integer>() {
+            @Override
+            public void accept(Integer integer) throws Exception {
+
+            }
+        }));
+
     }
 
     public MutableLiveData<ReplyData> getReply2Data(int oid,long root) {

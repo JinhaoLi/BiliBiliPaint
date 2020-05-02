@@ -1,5 +1,7 @@
 package com.jil.paintf.repository
 
+import androidx.room.Entity
+
 data class DocListRepository(
     val code: Int,
     val `data`: Data,
@@ -11,6 +13,7 @@ data class Data(
     val items: List<Item>,
     val total_count: Int
 )
+
 
 data class Item(
     val item: Doc,
