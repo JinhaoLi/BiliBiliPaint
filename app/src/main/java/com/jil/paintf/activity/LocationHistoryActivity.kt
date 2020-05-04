@@ -59,7 +59,9 @@ class LocationHistoryActivity : AppCompatActivity() {
                         return R.layout.item_doc_list_no_header_ico
                     }
                 }
-                recycleview.layoutManager=GridLayoutManager(this,2)
+                val cfg = resources.configuration
+                val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
+                recycleview.layoutManager=GridLayoutManager(this,spanCount)
                 recycleview.adapter=adapter
             }else{
                 adapter!!.data=it as ArrayList<HisItem>

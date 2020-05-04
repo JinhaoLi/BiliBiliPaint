@@ -1,14 +1,13 @@
 package com.jil.paintf.fragment
 
-import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
@@ -34,7 +33,7 @@ private const val ARG_PARAM1 = "param1"
 class MainFragment: LazyFragment() {
     var saveList:List<Item>? =null
     private var param1=0
-    private lateinit var viewModel: MainViewModel
+    private var viewModel: MainViewModel?=null
     private var adapter: ItemAdapter?=null
     var addAtStart =false
     companion object {
@@ -48,7 +47,7 @@ class MainFragment: LazyFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        viewModel.onSaveData(param1,adapter!!.data)
+        viewModel?.onSaveData(param1,adapter!!.data)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -85,7 +84,9 @@ class MainFragment: LazyFragment() {
 
                 ActivityCompat.startActivity(requireContext(), intent, options1.toBundle())
             }
-            val manager = GridLayoutManager(context,2)
+            val cfg = resources.configuration
+            val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
+            val manager = GridLayoutManager(context,spanCount)
             recyclerview!!.layoutManager=manager
             recyclerview!!.adapter =adapter
             swiperefresh!!.setOnRefreshListener {
@@ -95,7 +96,7 @@ class MainFragment: LazyFragment() {
                 if(adapter!=null&&adapter!!.data.size>600){
                     adapter!!.data.removeAll(adapter!!.data.subList(400,600))
                 }
-                viewModel.refresh(param1)
+                viewModel?.refresh(param1)
             }
             recyclerview!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
@@ -107,7 +108,7 @@ class MainFragment: LazyFragment() {
                                 adapter!!.data.removeAll(adapter!!.data.subList(0,200))
                             }
                             adapter!!.status="正在加载..."
-                            viewModel.refresh(param1)
+                            viewModel?.refresh(param1)
                         }
                     }
                 }
@@ -121,51 +122,51 @@ class MainFragment: LazyFragment() {
                 }
             }
 
-            saveList=viewModel.saveData[param1]
+            saveList= viewModel?.saveData?.get(param1)
             if(!saveList.isNullOrEmpty())
                 refresh(saveList!!)
         }
     }
 
     private fun hotCosplay() {
-        viewModel.hotCosplayList.observeForever {
+        viewModel?.hotCosplayList?.observeForever {
             refresh(it)
         }
     }
 
     private fun newCosplay() {
-        viewModel.newCosplayList.observe(this, Observer<List<Item>> {
+        viewModel?.newCosplayList?.observe(this, Observer<List<Item>> {
             refresh(it)
         })
     }
 
     private fun recommendCosplay() {
-        viewModel.recommendCosPlayList.observe(this, Observer<List<Item>> {
+        viewModel?.recommendCosPlayList?.observe(this, Observer<List<Item>> {
             refresh(it)
         })
     }
 
     private fun recommendIllusts(){
-        viewModel.recommendIllustsList.observe(this, Observer<List<Item>> {
+        viewModel?.recommendIllustsList?.observe(this, Observer<List<Item>> {
                 refresh(it)
             })
     }
 
     private fun newIllusts(){
-        viewModel.newIllustsList.observe(this, Observer<List<Item>> {
+        viewModel?.newIllustsList?.observe(this, Observer<List<Item>> {
             refresh(it)
         })
     }
 
     private fun hotIllusts(){
-        viewModel.hotIllustsList.observe(this, Observer<List<Item>> {
+        viewModel?.hotIllustsList?.observe(this, Observer<List<Item>> {
             refresh(it)
         })
     }
 
     private fun refresh(list: List<Item>){
-        if(swiperefresh!!.isRefreshing)
-            swiperefresh!!.isRefreshing=false
+        if(swiperefresh!=null&&swiperefresh.isRefreshing)
+            swiperefresh?.isRefreshing=false
         Logger.d("当前数据大小:"+adapter!!.data.size.toString()+"--添加条目："+list.size.toString())
         if(list.isNullOrEmpty()){
             adapter!!.status="已经没有了..."
@@ -195,7 +196,7 @@ class MainFragment: LazyFragment() {
             HC->{ hotCosplay() }
         }
         if(saveList.isNullOrEmpty())
-            viewModel.refresh(param1)
+            viewModel?.refresh(param1)
     }
 }
 

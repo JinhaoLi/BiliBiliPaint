@@ -1,6 +1,7 @@
 package com.jil.paintf.fragment
 
 import android.annotation.SuppressLint
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -65,7 +66,9 @@ class UserFragment:LazyFragment(){
         if(adapter==null){
             viewModel=ViewModelProvider(requireActivity()).get(UserViewModel::class.java)
             adapter= UserListItemAdapter(context!!)
-            val manager =GridLayoutManager(context,2)
+            val cfg = resources.configuration
+            val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
+            val manager = GridLayoutManager(context,spanCount)
             recyclerview!!.layoutManager =manager
             recyclerview!!.adapter=adapter
             recyclerview!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){

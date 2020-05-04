@@ -2,6 +2,7 @@ package com.jil.paintf.activity
 
 import android.content.Context
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -43,7 +44,9 @@ class SearchActivity :AppCompatActivity(){
         setSupportActionBar(toolbar2)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         viewModel =ViewModelProvider.AndroidViewModelFactory(application).create(SearchViewModel::class.java)
-        val layoutManager =GridLayoutManager(this,2)
+        val cfg = resources.configuration
+        val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
+        val layoutManager =GridLayoutManager(this,spanCount)
         adapter = SearchItemAdapter(this)
         recycler_view.adapter =adapter
         recycler_view.layoutManager =layoutManager

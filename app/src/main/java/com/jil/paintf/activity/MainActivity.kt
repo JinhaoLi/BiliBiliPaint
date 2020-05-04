@@ -2,12 +2,14 @@ package com.jil.paintf.activity
 
 import android.app.Activity
 import android.content.Intent
+import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.edit
@@ -48,11 +50,9 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         viewModel=ViewModelProvider(this).get(MainViewModel::class.java)
         adapter =MainPagerAdapter(supportFragmentManager,0)
         viewpager!!.adapter =adapter
-        viewpager!!.currentItem=0
 
         adapter2 =MainPagerAdapter(supportFragmentManager,1)
         viewpager2!!.adapter =adapter2
-        viewpager2!!.currentItem=0
 
         tab_title!!.setupWithViewPager(viewpager)
 
@@ -95,6 +95,11 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
             }
 
         })
+        if(savedInstanceState!=null){
+            main_tabs!!.selectTab(main_tabs!!.getTabAt(savedInstanceState.getInt("main_tabs",0)))
+            viewpager!!.currentItem=savedInstanceState.getInt("pager_select",0)
+            viewpager2!!.currentItem=savedInstanceState.getInt("pager2_select",0)
+        }
 
         nav_view!!.setNavigationItemSelectedListener(this)
 
@@ -199,8 +204,14 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putBoolean("isRecreate",true)
+        outState.putInt("main_tabs",main_tabs.selectedTabPosition)
+        outState.putInt("pager_select",viewpager.currentItem)
+        outState.putInt("pager2_select",viewpager2.currentItem)
 
+    }
+
+    override fun onConfigurationChanged(newConfig: Configuration) {
+        super.onConfigurationChanged(newConfig)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
