@@ -1,6 +1,7 @@
 package com.jil.paintf.activity
 
 import android.content.Intent
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
@@ -24,6 +25,8 @@ class LocationHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_location_history)
+        setSupportActionBar(toolbar3)
+        title ="历史记录"
         val viewModel =ViewModelProvider(this).get(HistoryViewModel::class.java)
         viewModel.mutableLiveData.observe(this, Observer {
             if(adapter==null){
