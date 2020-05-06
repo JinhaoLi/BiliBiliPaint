@@ -24,7 +24,7 @@
                     android:layout_height="wrap_content"
                     android:background="?attr/colorPrimary"
                     android:minHeight="?attr/actionBarSize"
-                    android:theme="@style/MyToolbar"
+                    android:theme="@style/BaseToolbar"
                     app:contentInsetEndWithActions="0dp"
                     app:contentInsetStart="0.0dp"
                     app:contentInsetStartWithNavigation="0dp"
@@ -35,9 +35,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         app:tabGravity="center"
-                        app:tabIndicatorHeight="0dp"
-                        app:tabPadding="0dp"
-                        app:tabPaddingStart="20dp">
+                        app:tabIndicatorHeight="0dp">
 
                     <com.google.android.material.tabs.TabItem
                             android:layout_width="wrap_content"
@@ -58,7 +56,9 @@
                     app:tabIndicatorHeight="3dp"
                     android:layout_height="40dp"
                     app:tabIndicatorGravity="bottom"
-                    app:tabTextAppearance="@style/MyTabLayoutTextAppearanceInverse"
+                    app:tabSelectedTextColor="@color/white"
+                    app:tabIndicatorColor="@color/white"
+                    app:tabTextAppearance="@style/BaseTabLayoutTextAppearance"
             >
                 <com.google.android.material.tabs.TabItem
                         android:layout_width="match_parent"

@@ -13,7 +13,7 @@
             <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabs"
                     android:layout_width="match_parent"
-                    app:tabTextAppearance="@style/MyTabLayoutTextAppearanceInverse"
+                    app:tabTextAppearance="@style/BaseTabLayoutTextAppearance"
                     android:layout_height="match_parent">
 
                 <com.google.android.material.tabs.TabItem

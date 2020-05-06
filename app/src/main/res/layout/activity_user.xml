@@ -140,7 +140,9 @@
                 android:id="@+id/tabs"
                 app:tabIndicatorHeight="3dp"
                 android:layout_height="40dp"
-                app:tabIndicatorGravity="bottom" app:tabTextAppearance="@style/MyTabLayoutTextAppearanceInverse"
+                app:tabSelectedTextColor="@color/white"
+                app:tabIndicatorColor="@color/white"
+                app:tabTextAppearance="@style/BaseTabLayoutTextAppearance"
         >
             <com.google.android.material.tabs.TabItem
                     android:layout_width="match_parent"
