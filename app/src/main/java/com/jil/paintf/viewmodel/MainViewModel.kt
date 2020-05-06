@@ -7,6 +7,7 @@ import com.jil.paintf.repository.MyInfo
 import com.jil.paintf.repository.RetrofitRepository
 import io.reactivex.Observer
 import io.reactivex.disposables.Disposable
+import io.reactivex.functions.Consumer
 
 class MainViewModel : BaseViewModel() {
     val retrofitRepository = RetrofitRepository.getInstance()
@@ -152,6 +153,7 @@ class MainViewModel : BaseViewModel() {
             NC -> doNetNewCosPlay()
             HC -> doNetHotCosPlay()
             else -> {
+
             }
         }
     }
