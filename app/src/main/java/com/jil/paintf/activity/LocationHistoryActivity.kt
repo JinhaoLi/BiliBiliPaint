@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.bumptech.glide.Glide
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
+import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.HisItem
 import com.jil.paintf.viewmodel.HistoryViewModel
 import kotlinx.android.synthetic.main.activity_location_history.*
@@ -24,9 +25,10 @@ class LocationHistoryActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ThemeUtil.initTheme(this)
         setContentView(R.layout.activity_location_history)
         setSupportActionBar(toolbar3)
-        title ="历史记录"
+        title ="本地历史记录"
         val viewModel =ViewModelProvider(this).get(HistoryViewModel::class.java)
         viewModel.mutableLiveData.observe(this, Observer {
             if(adapter==null){
