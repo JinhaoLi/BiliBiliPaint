@@ -12,6 +12,15 @@
             android:fitsSystemWindows="true"
             tools:context=".activity.MainActivity">
 
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="25dp"
+                app:backgroundTint="?attr/colorPrimary"
+                app:layout_behavior=".custom.SlideHideFab"
+                android:clickable="true" app:srcCompat="@drawable/ic_file_upload"
+                android:id="@+id/floatingActionButton"/>
         <com.google.android.material.appbar.AppBarLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

@@ -2,8 +2,12 @@ package com.jil.paintf.service;
 
 import com.jil.paintf.repository.*;
 import io.reactivex.Observable;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.*;
+
+import java.util.List;
 
 /**
  * API
@@ -26,7 +30,6 @@ public interface AppApiService {
      */
     @GET("/login?act=exit")
     Observable<ResponseBody> exitLogin();
-
 
 
     /**
@@ -176,5 +179,9 @@ public interface AppApiService {
 
     @GET("/x/web-interface/nav")
     Observable<MyInfo> getMyInfo();
+
+    @Multipart //请求体有多部分，使用@MultiPart上传
+    @POST("/api/v1/drawImage/upload") //URL，可以为空
+    Observable<UpLoadResult> postUploadImage(@Part List<MultipartBody.Part> request_img_part);
 
 }

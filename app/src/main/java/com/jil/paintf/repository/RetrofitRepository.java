@@ -8,7 +8,11 @@ import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
+import kotlin.UByteArray;
+import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+
+import java.util.List;
 
 import static com.jil.paintf.viewmodel.MainViewModel.*;
 
@@ -238,6 +242,15 @@ public class RetrofitRepository {
             @Override
             public ObservableSource<MyInfo> apply(Integer integer) throws Exception {
                 return ApiBiliService.getMyInfo();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<UpLoadResult> postUpload(final List<MultipartBody.Part> body){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<UpLoadResult>>() {
+            @Override
+            public ObservableSource<UpLoadResult> apply(Integer integer) throws Exception {
+                return ApiVcBiliService.postUploadImage(body);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }

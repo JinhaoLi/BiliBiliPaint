@@ -3,6 +3,7 @@ package com.jil.paintf.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
+import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -110,6 +111,10 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
+
+        floatingActionButton.setOnClickListener {
+            startActivity(Intent(this,UpLoadActivity::class.java))
+        }
         toggle.syncState()
         drawer_layout.addDrawerListener(toggle)
 
@@ -187,6 +192,13 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
             R.id.nav_history->{
                 startActivity(Intent(this,LocationHistoryActivity::class.java))
+            }
+            R.id.nav_bilibili->{
+                val uri = Uri.parse("https://space.bilibili.com/75965179");
+
+                val intent = Intent(Intent.ACTION_VIEW, uri)
+
+                startActivity(intent)
             }
             else->{
 
