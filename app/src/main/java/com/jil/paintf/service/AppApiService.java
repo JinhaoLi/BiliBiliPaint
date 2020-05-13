@@ -8,6 +8,7 @@ import okhttp3.ResponseBody;
 import retrofit2.http.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * API
@@ -183,5 +184,27 @@ public interface AppApiService {
     @Multipart //请求体有多部分，使用@MultiPart上传
     @POST("/api/v1/drawImage/upload") //URL，可以为空
     Observable<UpLoadResult> postUploadImage(@Part List<MultipartBody.Part> request_img_part);
+
+
+    /**
+     *
+     * @param biz 1
+     * @param category 漫画 5 插画 4 其他 1
+     * @param type 原创 0 同人1
+     * @param title
+     * @param description
+     * @param copy_forbidden
+     * @param csrf_token
+     * @param tags
+     * @param imgs
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("https://api.vc.bilibili.com/link_draw/v1/doc/create")
+    Observable<ResponseBody> createDoc(@Field("biz")int biz,@Field("category")int category,@Field("type")int type
+                                       ,@Field("title")String title,@Field("description")String description,@Field("setting[copy_forbidden]")int copy_forbidden
+                                       ,@Field("csrf_token")String csrf_token,@FieldMap() Map<String, String> tags,@FieldMap() Map<String, String> imgs);
+
+
 
 }

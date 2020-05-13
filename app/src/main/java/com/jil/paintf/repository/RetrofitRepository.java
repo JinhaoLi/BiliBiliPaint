@@ -11,8 +11,11 @@ import io.reactivex.schedulers.Schedulers;
 import kotlin.UByteArray;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
+import retrofit2.http.Field;
+import retrofit2.http.FieldMap;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.jil.paintf.viewmodel.MainViewModel.*;
 
@@ -251,6 +254,19 @@ public class RetrofitRepository {
             @Override
             public ObservableSource<UpLoadResult> apply(Integer integer) throws Exception {
                 return ApiVcBiliService.postUploadImage(body);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<ResponseBody> createDoc(final int biz, final int category, final int type
+            , final String title, final String description, final int copy_forbidden
+            , final String csrf_token, final Map<String, String> fields,final Map<String, String> imgs){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
+                return ApiVcBiliService.createDoc(biz,category,type
+            ,title,description,copy_forbidden
+            ,csrf_token,fields,imgs);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }

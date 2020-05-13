@@ -12,18 +12,21 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jil.paintf.R;
+import com.jil.paintf.repository.DataXX;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class UpLoadImgAdapter extends RecyclerView.Adapter {
-    List<String> imageUrl =new ArrayList<>();
+    List<DataXX> images =new ArrayList<>();
     Context mContext;
     public final static int UPLOAD_CODE = 1521;
     public UpLoadImgAdapter(Context context) {
         this.mContext=context;
     }
-
+    HashMap<String,String> map=new HashMap<>();
 
     @NonNull
     @Override
@@ -51,23 +54,27 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
                 }
             });
         }else {
-            Glide.with(mContext).load(imageUrl.get(position)).into((ImageView) holder.itemView);
+            Glide.with(mContext).load(images.get(position).getImage_url()+"@512w_384h_1e.webp").into((ImageView) holder.itemView);
         }
     }
 
     @Override
     public int getItemCount() {
-        return imageUrl.size()+1;
+        return images.size()+1;
     }
 
     @Override
     public int getItemViewType(int position) {
-        if(position==imageUrl.size()){
+        if(position== images.size()){
             return 1;
         }else {
             return 0;
         }
 
+    }
+
+    public Map<String,String> getMap(){
+        return map;
     }
 
     static class AddItemViewHolder extends RecyclerView.ViewHolder{
@@ -85,9 +92,37 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public int addImage(String url){
-        imageUrl.add(url);
-        notifyItemInserted(imageUrl.size());
+    /**
+     * pictures[0][img_src]: http://i0.hdslb.com/bfs/album/6da689102c1fac93aed220b2f7355e9345180443.jpg
+     * pictures[0][img_width]: 800
+     * pictures[0][img_height]: 1174
+     * pictures[0][img_size]: 271.1640625
+     * pictures[0][id]: 135564716471984830
+     * @param data
+     * @return
+     */
+    public int addImage(DataXX data){
+        int position =images.size();
+        images.add(data);
+        notifyItemInserted(images.size());
+
+        String key ="pictures["+position+"][img_src]";
+        map.put(key,images.get(position).getImage_url());
+
+        String key1 ="pictures["+position+"][img_width]";
+        map.put(key1,images.get(position).getImage_width()+"");
+
+        String key2 ="pictures["+position+"][img_height]";
+        map.put(key2,images.get(position).getImage_height()+"");
+
+        String key3 ="pictures["+position+"][img_size]";
+        map.put(key3,271.24929528+"");
+
+        String key4 ="pictures["+position+"][id]";
+        map.put(key4,(long)(Math.random()*Long.MAX_VALUE)+"");
+
+
+
         return 0;
     }
 }

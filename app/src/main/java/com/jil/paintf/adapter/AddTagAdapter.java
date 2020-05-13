@@ -7,15 +7,18 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
+import androidx.collection.SimpleArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 import com.jil.paintf.R;
+import com.jil.paintf.repository.DataXX;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class AddTagAdapter extends RecyclerView.Adapter<AddTagAdapter.TagItemVH> {
     List<TagItem> list =new ArrayList<>();
-
     @NonNull
     @Override
     public TagItemVH onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -57,6 +60,27 @@ public class AddTagAdapter extends RecyclerView.Adapter<AddTagAdapter.TagItemVH>
             });
         }
 
+    }
+
+    /**
+     * tags[0][name]: 刀剑神域
+     * tags[0][type]: 4
+     * tags[1][name]: sao
+     * tags[1][type]: 3
+     * tags[2][name]: 刀剑
+     * tags[2][type]: 3
+     * @return
+     */
+    public Map<String,String> getMap(){
+        HashMap<String,String> map=new HashMap<>();
+        for(int i =0;i<list.size();i++){
+            String key ="tags["+i+"][name]";
+            String key1 ="tags["+i+"][type]";
+            map.put(key,list.get(i).name);
+            map.put(key1,((int)(Math.random()*4)+1)+"");
+
+        }
+        return map;
     }
 
     @Override
