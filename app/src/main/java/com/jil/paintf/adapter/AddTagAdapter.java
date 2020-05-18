@@ -1,8 +1,10 @@
 package com.jil.paintf.adapter;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -53,13 +55,21 @@ public class AddTagAdapter extends RecyclerView.Adapter<AddTagAdapter.TagItemVH>
                         holder.editText.setText("");
                         list.add(new TagItem(0,str));
                         notifyDataSetChanged();
+                        showOrHide(v.getContext());
                         return;
                     }
-                    holder.editText.setVisibility(View.VISIBLE);
+                    if(holder.editText.getVisibility()==View.GONE)
+                        holder.editText.setVisibility(View.VISIBLE);
                 }
             });
         }
 
+    }
+
+    //如果输入法在窗口上已经显示，则隐藏，反之则显示
+    public static void showOrHide(Context context) {
+        InputMethodManager imm = (InputMethodManager) context.getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
     }
 
     /**

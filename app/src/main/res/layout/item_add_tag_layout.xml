@@ -7,6 +7,8 @@
 
     <TextView
             android:text="TextView"
+            android:padding="5dp"
+            android:background="@drawable/background_tag"
             android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="match_parent" android:id="@+id/textView" android:layout_weight="1"/>
@@ -15,6 +17,7 @@
             android:layout_height="30dp"
             android:inputType="textPersonName"
             android:ems="10"
+            android:hint="请输入"
             android:background="@null"
             android:textSize="18sp"
             android:id="@+id/editText" android:layout_weight="1"/>

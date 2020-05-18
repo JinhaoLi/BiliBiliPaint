@@ -18,7 +18,7 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="n">
-        <activity android:name=".activity.UpLoadActivity">
+        <activity android:name=".activity.UpLoadActivity" android:windowSoftInputMode="adjustPan">
         </activity>
         <activity android:name=".activity.LocationHistoryActivity">
         </activity>

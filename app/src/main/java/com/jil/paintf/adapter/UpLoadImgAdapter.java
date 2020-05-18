@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import androidx.annotation.NonNull;
 import androidx.core.app.ActivityCompat;
@@ -26,7 +27,6 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
     public UpLoadImgAdapter(Context context) {
         this.mContext=context;
     }
-    HashMap<String,String> map=new HashMap<>();
 
     @NonNull
     @Override
@@ -34,15 +34,18 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
         if(viewType==1){
             return new AddItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_layout_upload,null));
         }else {
-            return new ImageItemViewHolder(new ImageView(mContext));
+            return new ImageItemViewHolder(LayoutInflater.from(mContext).inflate(R.layout.item_layout_upload,null));
         }
 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, final int position) {
         if(holder instanceof AddItemViewHolder){
-            Glide.with(mContext).load(R.drawable.ic_add_green_24dp).into(((AddItemViewHolder) holder).imageView);
+            AddItemViewHolder addItemViewHolder= (AddItemViewHolder) holder;
+            addItemViewHolder.delete.setVisibility(View.GONE);
+            //addItemViewHolder.imageView.setImageResource(R.drawable.ic_add_green_24dp);
+            //Glide.with(mContext).load(R.drawable.ic_add_green_24dp).into(addItemViewHolder.imageView);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -54,7 +57,15 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
                 }
             });
         }else {
-            Glide.with(mContext).load(images.get(position).getImage_url()+"@512w_384h_1e.webp").into((ImageView) holder.itemView);
+            ImageItemViewHolder imageItemViewHolder = (ImageItemViewHolder) holder;
+            imageItemViewHolder.delete.setVisibility(View.VISIBLE);
+            imageItemViewHolder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    removeImage(position);
+                }
+            });
+            Glide.with(mContext).load(images.get(position).getImage_url()+"@512w_384h_1e.webp").into(imageItemViewHolder.imageView);
         }
     }
 
@@ -73,12 +84,9 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
 
     }
 
-    public Map<String,String> getMap(){
-        return map;
-    }
-
     static class AddItemViewHolder extends RecyclerView.ViewHolder{
         ImageView imageView =itemView.findViewById(R.id.image);
+        Button delete =itemView.findViewById(R.id.button4);
 
         public AddItemViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -86,7 +94,8 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
     }
 
     static class ImageItemViewHolder extends RecyclerView.ViewHolder{
-
+        ImageView imageView =itemView.findViewById(R.id.image);
+        Button delete =itemView.findViewById(R.id.button4);
         public ImageItemViewHolder(@NonNull View itemView) {
             super(itemView);
         }
@@ -102,27 +111,35 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
      * @return
      */
     public int addImage(DataXX data){
-        int position =images.size();
         images.add(data);
         notifyItemInserted(images.size());
+        return 0;
+    }
 
-        String key ="pictures["+position+"][img_src]";
-        map.put(key,images.get(position).getImage_url());
+    public Map<String,String> buildMap(){
+        HashMap<String,String> map=new HashMap<>();
+        for(int position =0;position<images.size();position++){
+            String key ="pictures["+position+"][img_src]";
+            map.put(key,images.get(position).getImage_url());
 
-        String key1 ="pictures["+position+"][img_width]";
-        map.put(key1,images.get(position).getImage_width()+"");
+            String key1 ="pictures["+position+"][img_width]";
+            map.put(key1,images.get(position).getImage_width()+"");
 
-        String key2 ="pictures["+position+"][img_height]";
-        map.put(key2,images.get(position).getImage_height()+"");
+            String key2 ="pictures["+position+"][img_height]";
+            map.put(key2,images.get(position).getImage_height()+"");
 
-        String key3 ="pictures["+position+"][img_size]";
-        map.put(key3,271.24929528+"");
+            String key3 ="pictures["+position+"][img_size]";
+            map.put(key3,271.24929528+"");
 
-        String key4 ="pictures["+position+"][id]";
-        map.put(key4,(long)(Math.random()*Long.MAX_VALUE)+"");
+            String key4 ="pictures["+position+"][id]";
+            map.put(key4,(long)(Math.random()*Long.MAX_VALUE)+"");
+        }
+        return map;
+    }
 
-
-
+    public int removeImage(int position){
+        images.remove(position);
+        notifyItemRemoved(position);
         return 0;
     }
 }

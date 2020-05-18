@@ -14,12 +14,6 @@
             android:theme="?attr/actionBarTheme"
             android:minHeight="?attr/actionBarSize"
             tools:layout_editor_absoluteX="3dp" android:id="@+id/toolbar5" app:layout_constraintTop_toTopOf="parent"/>
-    <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            app:layout_constraintTop_toBottomOf="@+id/toolbar5"
-            android:id="@+id/recyclerView" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
@@ -28,8 +22,15 @@
             android:backgroundTint="@color/white"
             android:id="@+id/editText2"
             android:maxLength="20"
-            app:layout_constraintTop_toBottomOf="@+id/recyclerView" app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" android:hint="请输入标题"/>
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" android:hint="请输入标题"
+            app:layout_constraintTop_toBottomOf="@+id/toolbar5"/>
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:id="@+id/recyclerView"
+            app:layout_constraintBottom_toTopOf="@+id/button3" app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

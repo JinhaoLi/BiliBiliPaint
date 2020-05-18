@@ -1,6 +1,7 @@
 package com.jil.paintf.viewmodel
 
 import androidx.lifecycle.MutableLiveData
+import com.jil.paintf.repository.DataXX
 import com.jil.paintf.repository.RetrofitRepository
 import com.jil.paintf.repository.UpLoadResult
 import com.jil.paintf.service.AppPaintF
@@ -27,8 +28,12 @@ class UpLoadViewModel : BaseViewModel() {
         postList.add(part)
         postList.add(part1)
         postList.add(part2)
-        RetrofitRepository.getInstance().postUpload(postList).subscribe(Consumer {
+        RetrofitRepository.getInstance().postUpload(postList).subscribe({
             mutableLiveData.postValue(it)
+        }, {
+            if(!it.message.isNullOrEmpty()){
+                mutableLiveData.postValue(UpLoadResult(-3, DataXX(0,"null",0),"请上传宽高>=420像素的图片"))
+            }
         }).add()
     }
 

@@ -1,8 +1,10 @@
 package com.jil.paintf.activity
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.view.inputmethod.InputMethodManager
 import android.widget.RadioGroup
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -113,7 +115,12 @@ class UpLoadActivity : AppCompatActivity() {
         tags.layoutManager=GridLayoutManager(this,3)
         tags.adapter =addTagAdapter
         viewModel.mutableLiveData.observe(this, Observer {
-            adapter!!.addImage(it.data)
+            if(it.code!=0){
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+            }else{
+                adapter!!.addImage(it.data)
+            }
+
         })
 
         button3.setOnClickListener {
@@ -123,7 +130,7 @@ class UpLoadActivity : AppCompatActivity() {
             }
 
             viewModel.doNetCreateDoc(1,categoryInt,type,title = editText2.text.toString()
-                    ,description =editText3.text.toString(),copy_forbidden = forbidden,imgs = adapter!!.map
+                    ,description =editText3.text.toString(),copy_forbidden = forbidden,imgs = adapter!!.buildMap()
                     ,tags = addTagAdapter.map
             )
 
@@ -132,6 +139,8 @@ class UpLoadActivity : AppCompatActivity() {
             finish()
         })
     }
+
+
 
     private fun checkParam(): Boolean {
         if(AppPaintF.instance.cookie==null){
