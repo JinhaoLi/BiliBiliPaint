@@ -28,18 +28,20 @@ class UpLoadActivity : AppCompatActivity() {
     var category:String ="draw"
     var forbidden =0
     var type =1
-    var categoryInt =1
+    var categoryInt =4
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
         setContentView(R.layout.activity_up_load)
 
         setSupportActionBar(toolbar5)
-        title ="上传创作"
+        title ="发布绘画"
         viewModel =ViewModelProvider(this).get(UpLoadViewModel::class.java)
         adapter= UpLoadImgAdapter(this)
-        recyclerView.layoutManager=GridLayoutManager(this,4)
+        recyclerView.layoutManager=GridLayoutManager(this,3)
         recyclerView.adapter=adapter
+
+        radioButton3.isChecked=true
 
         radioGroup1.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
             override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
@@ -57,6 +59,8 @@ class UpLoadActivity : AppCompatActivity() {
             }
 
         })
+
+        radioButton2.isChecked=true
 
         radioGroup.setOnCheckedChangeListener(object : RadioGroup.OnCheckedChangeListener {
             override fun onCheckedChanged(group: RadioGroup?, checkedId: Int) {
@@ -109,6 +113,10 @@ class UpLoadActivity : AppCompatActivity() {
         list1.add(operate1)
         list1.add(operate2)
         list1.add(operate3)
+
+        textView27.setOnClickListener {
+            NestedPopupListDialog(this, textView27, list1).show()
+        }
         button2.setOnClickListener{
             NestedPopupListDialog(this, textView27, list1).show()
         }
@@ -123,8 +131,8 @@ class UpLoadActivity : AppCompatActivity() {
 
         })
 
-        button3.setOnClickListener {
-            button3.isClickable=false
+        floatingActionButton2.setOnClickListener {
+            floatingActionButton2.isClickable=false
             if(!checkParam()){
                 return@setOnClickListener
             }
@@ -145,25 +153,25 @@ class UpLoadActivity : AppCompatActivity() {
     private fun checkParam(): Boolean {
         if(AppPaintF.instance.cookie==null){
             Toast.makeText(this, "你还没登录", Toast.LENGTH_SHORT).show()
-            button3.isClickable=true
+            floatingActionButton2.isClickable=true
             return false
         }
         val title=editText2.text.toString()
         if(title.isNullOrEmpty()){
             Toast.makeText(this, "标题不能为空", Toast.LENGTH_SHORT).show()
-            button3.isClickable=true
+            floatingActionButton2.isClickable=true
             return false
         }
 
         if(adapter==null||adapter!!.itemCount==1){
             Toast.makeText(this, "你还没添加选择作品", Toast.LENGTH_SHORT).show()
-            button3.isClickable=true
+            floatingActionButton2.isClickable=true
             return false
         }
 
         if(type==1&&addTagAdapter.itemCount==1){
             Toast.makeText(this, "同人作品必须添加一个tag", Toast.LENGTH_SHORT).show()
-            button3.isClickable=true
+            floatingActionButton2.isClickable=true
             return false
         }
 

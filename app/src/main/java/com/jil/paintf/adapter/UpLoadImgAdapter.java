@@ -3,6 +3,7 @@ package com.jil.paintf.adapter;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,8 +45,7 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
         if(holder instanceof AddItemViewHolder){
             AddItemViewHolder addItemViewHolder= (AddItemViewHolder) holder;
             addItemViewHolder.delete.setVisibility(View.GONE);
-            //addItemViewHolder.imageView.setImageResource(R.drawable.ic_add_green_24dp);
-            //Glide.with(mContext).load(R.drawable.ic_add_green_24dp).into(addItemViewHolder.imageView);
+            addItemViewHolder.imageView.setBackgroundColor(Color.GRAY);
             holder.itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -57,6 +57,7 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
                 }
             });
         }else {
+
             ImageItemViewHolder imageItemViewHolder = (ImageItemViewHolder) holder;
             imageItemViewHolder.delete.setVisibility(View.VISIBLE);
             imageItemViewHolder.delete.setOnClickListener(new View.OnClickListener() {
@@ -140,6 +141,7 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
     public int removeImage(int position){
         images.remove(position);
         notifyItemRemoved(position);
+        notifyItemRangeChanged(position,images.size());
         return 0;
     }
 }

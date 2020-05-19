@@ -9,10 +9,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
-import androidx.collection.SimpleArrayMap;
 import androidx.recyclerview.widget.RecyclerView;
 import com.jil.paintf.R;
-import com.jil.paintf.repository.DataXX;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,6 +45,7 @@ public class AddTagAdapter extends RecyclerView.Adapter<AddTagAdapter.TagItemVH>
             holder.imageView2.setVisibility(View.GONE);
             holder.editText.setVisibility(View.GONE);
             holder.imageView.setVisibility(View.VISIBLE);
+            holder.imageView.setImageResource(R.drawable.ic_add_circle_black_24dp);
             holder.imageView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -58,8 +57,11 @@ public class AddTagAdapter extends RecyclerView.Adapter<AddTagAdapter.TagItemVH>
                         showOrHide(v.getContext());
                         return;
                     }
-                    if(holder.editText.getVisibility()==View.GONE)
+                    if(holder.editText.getVisibility()==View.GONE){
+                        holder.imageView.setImageResource(R.drawable.ic_check_circle_black_24dp);
                         holder.editText.setVisibility(View.VISIBLE);
+                    }
+
                 }
             });
         }

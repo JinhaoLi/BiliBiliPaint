@@ -1,17 +1,20 @@
 package com.jil.paintf.activity
 
-import android.app.ActivityOptions
+import android.Manifest
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Bundle
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.animation.AccelerateInterpolator
 import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.view.get
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -139,7 +142,20 @@ class DocDetailActivity : AppCompatActivity(),
 
         //下载
         imageButton.setOnClickListener{
-            adapter!!.download(pager.currentItem,this)
+            if(checkReadWrite()){
+                adapter!!.download(pager.currentItem,this)
+            }else{
+                //进行授权
+                ActivityCompat.requestPermissions(
+                    this,
+                    arrayOf(
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE
+                    ),
+                    6
+                )
+            }
+
         }
 
         //分享
@@ -185,6 +201,23 @@ class DocDetailActivity : AppCompatActivity(),
             }
         })
 
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        if (requestCode == 6) {
+            if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                adapter!!.download(pager.currentItem,this)
+            } else {
+                Toast.makeText(this, "没读写权限我太难了！", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    private fun checkReadWrite(): Boolean {
+        return ContextCompat.checkSelfPermission(this,
+            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     private fun showReply(){
