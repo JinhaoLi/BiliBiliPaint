@@ -74,9 +74,8 @@ class SettingFragment :LazyFragment(){
             }
             recyclerview!!.adapter=adapter
             //设置分隔线
-            //设置分隔线
-            recyclerview.addItemDecoration(RecycleItemDecoration(requireContext(),1))
-            recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
+            //recyclerview.addItemDecoration(RecycleItemDecoration(requireContext(),1))
+            //recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
         }
 
 

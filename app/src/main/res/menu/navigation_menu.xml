@@ -21,22 +21,22 @@
 
 
 
-    <item android:title="关于作者">
-        <menu android:menuCategory="alternative">
-            <item android:id="@+id/nav_bilibili"
-                  android:icon="@drawable/ic_bilibili_line"
-                  android:title="干杯"/>
+<!--    <item android:title="关于作者">-->
+<!--        <menu android:menuCategory="alternative">-->
+<!--            <item android:id="@+id/nav_bilibili"-->
+<!--                  android:icon="@drawable/ic_bilibili_line"-->
+<!--                  android:title="干杯"/>-->
 
-            <item
-                    android:id="@+id/nav_github"
-                    android:icon="@drawable/ic_share"
-                    android:title="分享" />
-            <item
-                    android:id="@+id/nav_about"
-                    android:icon="@drawable/ic_info"
-                    android:title="关于" />
+<!--            <item-->
+<!--                    android:id="@+id/nav_github"-->
+<!--                    android:icon="@drawable/ic_share"-->
+<!--                    android:title="分享" />-->
+<!--            <item-->
+<!--                    android:id="@+id/nav_about"-->
+<!--                    android:icon="@drawable/ic_info"-->
+<!--                    android:title="关于" />-->
 
-        </menu>
-    </item>
+<!--        </menu>-->
+<!--    </item>-->
 
 </menu>

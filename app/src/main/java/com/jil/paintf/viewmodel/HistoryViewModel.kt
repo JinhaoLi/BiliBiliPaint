@@ -12,6 +12,7 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.functions.Consumer
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 
 
 class HistoryViewModel: BaseViewModel() {
@@ -30,5 +31,19 @@ class HistoryViewModel: BaseViewModel() {
         }).add()
 
 
+    }
+
+    fun clearHis(){
+        val download: Observable<Any?> = Observable.create(object : ObservableOnSubscribe<Any?> {
+            override fun subscribe(emitter: ObservableEmitter<Any?>) {
+                DataRoomService.getDatabase().hisItemDao.deleteByDate(System.currentTimeMillis())
+                emitter.onNext("null")
+            }
+
+        })
+
+        download.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe(Consumer {
+            mutableLiveData.postValue(arrayListOf())
+        }).add()
     }
 }

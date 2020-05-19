@@ -4,6 +4,8 @@ import android.content.Intent
 import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
@@ -75,7 +77,20 @@ class LocationHistoryActivity : AppCompatActivity() {
 
         })
         viewModel.doLoadHis()
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menu!!.add(1,1,1,"清除历史记录")
+        return super.onCreateOptionsMenu(menu)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when(item.itemId){
+            1->{
+                val viewModel =ViewModelProvider(this).get(HistoryViewModel::class.java)
+                viewModel.clearHis()
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

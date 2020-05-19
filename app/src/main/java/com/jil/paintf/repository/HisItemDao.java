@@ -12,7 +12,7 @@ public interface HisItemDao {
     void insert(HisItem... hisItems);
 
     @Query("delete from HisItem where date <:date")
-    void deleteByDate(int date);
+    void deleteByDate(long date);
 
     @Query("select * from HisItem ORDER BY date DESC")
     List<HisItem> loadAll();

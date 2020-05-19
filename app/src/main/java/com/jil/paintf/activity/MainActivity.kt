@@ -194,11 +194,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                 startActivity(Intent(this,LocationHistoryActivity::class.java))
             }
             R.id.nav_bilibili->{
-                val uri = Uri.parse("https://space.bilibili.com/75965179");
 
-                val intent = Intent(Intent.ACTION_VIEW, uri)
-
-                startActivity(intent)
             }
             else->{
 
