@@ -247,9 +247,6 @@ class DocDetailActivity : AppCompatActivity(),
             if(replyAdapter==null){
                 replyAdapter=object :SuperRecyclerAdapter<Reply>(replyData as ArrayList<Reply>){
                     override fun bindData(holder: SuperVHolder, position: Int) {
-                        //解决数据错乱
-                        holder.setIsRecyclable(false)
-
                         val bindData =data[position]
 
                         val name:TextView=holder.getView(R.id.textView22) as TextView
@@ -257,9 +254,11 @@ class DocDetailActivity : AppCompatActivity(),
 
                         holder.setText(bindData.content.message,R.id.textView20)
                         holder.setImageIco(bindData.member.avatar,R.id.icon)
-                        if(bindData.replies.isNullOrEmpty())
-                            return
                         val checkReply =holder.getView(R.id.textView21) as TextView
+                        if(bindData.replies.isNullOrEmpty()){
+                            checkReply.visibility=View.GONE
+                            return
+                        }
                         checkReply.visibility=View.VISIBLE
                         checkReply.text = "查看"+data[position].replies.size+"条评论"
                         checkReply.setOnClickListener {
