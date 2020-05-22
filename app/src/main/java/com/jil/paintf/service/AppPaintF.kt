@@ -3,10 +3,12 @@ package com.jil.paintf.service
 import android.app.Activity
 import android.app.Application
 import android.os.Bundle
+import android.os.Environment
 import androidx.preference.PreferenceManager
 import com.jil.paintf.network.NetCookie
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
+import java.io.File
 
 class AppPaintF : Application() {
     companion object {
@@ -14,12 +16,15 @@ class AppPaintF : Application() {
         @JvmStatic
         var LoadLevel=1080
         @JvmStatic
+        var SaveDir =Environment.getExternalStorageDirectory().path+ File.separator+Environment.DIRECTORY_DOWNLOADS
+        @JvmStatic
         lateinit var instance: AppPaintF
     }
     override fun onCreate() {
         super.onCreate()
         instance=this
         Logger.addLogAdapter(AndroidLogAdapter())
+        SaveDir = PreferenceManager.getDefaultSharedPreferences(this).getString("SAVE_DIR", SaveDir)!!
         LoadLevel =PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {
             override fun onActivityCreated(activity: Activity, savedInstanceState: Bundle?) {

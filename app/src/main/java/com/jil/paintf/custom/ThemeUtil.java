@@ -31,6 +31,14 @@ public class ThemeUtil {
         activity.setTheme(THEME[themeIndex]);
     }
 
+    public static int themeResId(Context context){
+        int themeIndex = PreferenceManager.getDefaultSharedPreferences(context).getInt("THEME",0);
+        if(themeIndex>THEME.length){
+            themeIndex=0;
+        }
+        return THEME[themeIndex];
+    }
+
     public static int getColorAccent(Context context){
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
             return 0xFFD81B60;

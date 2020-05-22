@@ -8,11 +8,14 @@
                                                      android:layout_height="50dp">
         <com.google.android.material.appbar.MaterialToolbar android:layout_width="match_parent"
                                                             android:id="@+id/toolbar"
+                                                            android:theme="@style/BaseActionTheme"
                                                             android:layout_height="match_parent">
 
             <com.google.android.material.tabs.TabLayout
                     android:id="@+id/tabs"
                     android:layout_width="match_parent"
+                    app:tabIndicatorHeight="0dp"
+                    app:tabSelectedTextColor="@color/white"
                     app:tabTextAppearance="@style/BaseTabLayoutTextAppearance"
                     android:layout_height="match_parent">
 

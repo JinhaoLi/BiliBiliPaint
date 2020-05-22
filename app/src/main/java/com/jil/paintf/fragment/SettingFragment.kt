@@ -1,31 +1,131 @@
 package com.jil.paintf.fragment
 
 import android.app.AlertDialog
-import android.app.Application
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
-import android.widget.Toast
-import androidx.lifecycle.ViewModelProvider
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.jil.dialog.InputDialog
-import com.jil.dialog.Only
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
-import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.SettingItem
+import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
-import com.jil.paintf.viewmodel.UserViewModel
+import com.jil.paintf.service.AppPaintF.Companion.SaveDir
+import com.leon.lfilepickerlibrary.LFilePicker
 import kotlinx.android.synthetic.main.fragment_setting.*
+
 
 class SettingFragment :LazyFragment(){
     var adapter :SuperRecyclerAdapter<SettingItem>?=null
+
     override fun loadAndObserveData() {
     }
 
+
+    fun picDescription(): String {
+        return when(AppPaintF.LoadLevel){
+            720->{
+                "720P"
+            }
+            1080->{
+                "1080p"
+            }
+            else->{
+                "原始尺寸"
+            }
+        }
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        settingList.clear()
+
+
+        val loadLevel =object:SettingItem("图片质量",picDescription(),2){
+            override fun click(v: View?) {
+                val checkItem=when(AppPaintF.LoadLevel){
+                    720->{
+                        0
+                    }
+                    1080->{
+                        1
+                    }
+                    else->{
+                        2
+                    }
+                }
+                val builder =AlertDialog.Builder(v!!.context).setTitle("选择图片质量")
+                    .setSingleChoiceItems(R.array.reply_entries,checkItem) { dialog, which ->
+                        val level: Int = when(which){
+
+                            1->{
+                                1080
+                            }
+                            2->{
+                                5000
+                            }
+                            else->{
+                                720
+                            }
+                        }
+                        PreferenceManager.getDefaultSharedPreferences(v.context)
+                            .apply {
+                                edit().let {
+                                    it.putInt("LOAD_LEVEL",level).apply()
+                                    AppPaintF.LoadLevel=level
+
+                                }
+                            }
+                        this.description=picDescription()
+                        dialog.dismiss()
+                        adapter!!.notifyDataSetChanged()
+                    }
+                builder.create().show()
+            }
+        }
+        val selectDir =object:SettingItem("图片保存位置", SaveDir,3){
+            override fun click(v: View?) {
+
+                LFilePicker()
+                    .withActivity(requireActivity())
+                    .withRequestCode(REQUESTCODE_FROM_SELECT_DIR)
+                    .withStartPath(SaveDir)
+                    .withChooseMode(false)
+                    .start()
+
+                val lbm=LocalBroadcastManager.getInstance(requireActivity())
+                lbm.registerReceiver(object :BroadcastReceiver(){
+                    override fun onReceive(context: Context?, intent: Intent?) {
+                        val path:String?=intent?.getStringExtra("PATH")
+                        if(!path.isNullOrEmpty()){
+                            PreferenceManager.getDefaultSharedPreferences(requireContext())
+                                .apply {
+                                    edit().let {
+                                        it.putString("SAVE_DIR",path).apply()
+                                    }
+                                }
+                            description=path
+                            SaveDir =path
+                        }
+                        adapter!!.notifyDataSetChanged()
+                        lbm.unregisterReceiver(this)
+                    }
+
+                }, IntentFilter("ACTION_CHANGE_DIR"))
+            }
+        }
+
+        settingList.add(loadLevel)
+        settingList.add(selectDir)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return initView(inflater,container,R.layout.fragment_setting)
@@ -75,7 +175,7 @@ class SettingFragment :LazyFragment(){
             recyclerview!!.adapter=adapter
             //设置分隔线
             //recyclerview.addItemDecoration(RecycleItemDecoration(requireContext(),1))
-            //recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
+            recyclerview!!.layoutManager=LinearLayoutManager(requireContext())
         }
 
 
@@ -86,60 +186,7 @@ class SettingFragment :LazyFragment(){
         val settingList = arrayListOf<SettingItem>()
 
         @JvmStatic
-        val loadLevel =object:SettingItem("图片质量","选择图片质量",2){
-            override fun click(v: View?) {
-                val checkItem=when(AppPaintF.LoadLevel){
-                    720->{
-                        0
-                    }
-                    1080->{
-                        1
-                    }
-                    else->{
-                        2
-                    }
-                }
-                val builder =AlertDialog.Builder(v!!.context).setTitle("选择图片质量")
-                    .setSingleChoiceItems(R.array.reply_entries,checkItem) { dialog, which ->
-                        val level: Int = when(which){
-
-                            1->{
-                                1080
-                            }
-                            2->{
-                                5000
-                            }
-                            else->{
-                                720
-                            }
-                        }
-                        PreferenceManager.getDefaultSharedPreferences(v.context)
-                            .apply {
-                                edit().let {
-                                    it.putInt("LOAD_LEVEL",level).apply()
-                                    AppPaintF.LoadLevel=level
-                                }
-                            }
-                        dialog.dismiss()
-                    }
-                builder.create().show()
-            }
-
-        }
-
-        @JvmStatic
-        val test =object:SettingItem("测试","测试",false,3){
-            override fun click(v: View?) {
-
-            }
-
-        }
-
-        init {
-            settingList.add(loadLevel)
-            settingList.add(test)
-        }
-
+        val REQUESTCODE_FROM_SELECT_DIR = 1000
 
 
         fun newInstance()= SettingFragment()

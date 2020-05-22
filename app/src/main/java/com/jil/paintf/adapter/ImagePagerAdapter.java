@@ -166,7 +166,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     }
 
     private void downLoadPic(final String urlStr,File into) throws IOException {
-       File f = new File(Environment.getExternalStorageDirectory(),"Pictures");
+       File f = new File(AppPaintF.Companion.getSaveDir());
         if(!f.exists())
             f.mkdir();
         String[] strs=urlStr.split("/");
@@ -239,7 +239,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                 if(url==null){
                     return;
                 }
-                File f = new File(Environment.getExternalStorageDirectory(),"Pictures");
+                File f = new File(AppPaintF.Companion.getSaveDir());
                 if(!f.exists())
                     f.mkdir();
                 String[] strs=urlStr.split("/");
@@ -300,7 +300,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     }
 
     @Override
-    public int getItemPosition(Object object) {
+    public int getItemPosition(@NotNull Object object) {
         return POSITION_NONE;
     }
 
