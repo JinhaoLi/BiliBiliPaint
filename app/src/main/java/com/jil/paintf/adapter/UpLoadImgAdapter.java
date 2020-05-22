@@ -14,7 +14,7 @@ import androidx.core.app.ActivityCompat;
 import androidx.recyclerview.widget.RecyclerView;
 import com.bumptech.glide.Glide;
 import com.jil.paintf.R;
-import com.jil.paintf.repository.DataXX;
+import com.jil.paintf.repository.DataXXX;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 public class UpLoadImgAdapter extends RecyclerView.Adapter {
-    List<DataXX> images =new ArrayList<>();
+    List<DataXXX> images =new ArrayList<>();
     Context mContext;
     public final static int UPLOAD_CODE = 1521;
     public UpLoadImgAdapter(Context context) {
@@ -111,7 +111,7 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
      * @param data
      * @return
      */
-    public int addImage(DataXX data){
+    public int addImage(DataXXX data){
         images.add(data);
         notifyItemInserted(images.size());
         return 0;
@@ -130,7 +130,7 @@ public class UpLoadImgAdapter extends RecyclerView.Adapter {
             map.put(key2,images.get(position).getImage_height()+"");
 
             String key3 ="pictures["+position+"][img_size]";
-            map.put(key3,271.24929528+"");
+            map.put(key3,images.get(position).getImage_size()+"");
 
             String key4 ="pictures["+position+"][id]";
             map.put(key4,(long)(Math.random()*Long.MAX_VALUE)+"");

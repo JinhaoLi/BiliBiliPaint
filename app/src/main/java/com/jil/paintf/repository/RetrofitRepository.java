@@ -270,4 +270,17 @@ public class RetrofitRepository {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
+
+    public Observable<ResponseBody> createPhotoDoc(final int biz, final int category
+            , final String title, final String description, final int copy_forbidden
+            , final String csrf_token, final Map<String, String> fields,final Map<String, String> imgs){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+            @Override
+            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
+                return ApiVcBiliService.createPhotoDoc(biz,category
+                        ,title,description,copy_forbidden
+                        ,csrf_token,fields,imgs);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
 }

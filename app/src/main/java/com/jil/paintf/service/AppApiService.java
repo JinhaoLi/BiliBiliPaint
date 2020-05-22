@@ -188,8 +188,8 @@ public interface AppApiService {
 
     /**
      *
-     * @param biz 1
-     * @param category 漫画 5 插画 4 其他 1
+     * @param biz 1绘画 2 photo
+     * @param category 漫画 5 插画 4 其他 1  cos 2 私服 6
      * @param type 原创 0 同人1
      * @param title
      * @param description
@@ -204,6 +204,12 @@ public interface AppApiService {
     Observable<ResponseBody> createDoc(@Field("biz")int biz,@Field("category")int category,@Field("type")int type
                                        ,@Field("title")String title,@Field("description")String description,@Field("setting[copy_forbidden]")int copy_forbidden
                                        ,@Field("csrf_token")String csrf_token,@FieldMap() Map<String, String> tags,@FieldMap() Map<String, String> imgs);
+
+    @FormUrlEncoded
+    @POST("https://api.vc.bilibili.com/link_draw/v1/doc/create")
+    Observable<ResponseBody> createPhotoDoc(@Field("biz")int biz,@Field("category")int category
+            ,@Field("title")String title,@Field("description")String description,@Field("setting[copy_forbidden]")int copy_forbidden
+            ,@Field("csrf_token")String csrf_token,@FieldMap() Map<String, String> tags,@FieldMap() Map<String, String> imgs);
 
 
 

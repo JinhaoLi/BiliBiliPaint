@@ -3,17 +3,14 @@ package com.jil.paintf.activity
 import android.app.Activity
 import android.content.Intent
 import android.content.res.Configuration
-import android.net.Uri
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.edit
 import androidx.core.view.GravityCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -113,7 +110,12 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         )
 
         floatingActionButton.setOnClickListener {
-            startActivity(Intent(this,UpLoadActivity::class.java))
+            if(main_tabs.selectedTabPosition==0){
+                startActivity(Intent(this,UpLoadIllustActivity::class.java))
+            }else if(main_tabs.selectedTabPosition==1){
+                startActivity(Intent(this,UpLoadPhotoActivity::class.java))
+            }
+
         }
         toggle.syncState()
         drawer_layout.addDrawerListener(toggle)
@@ -192,9 +194,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
             R.id.nav_history->{
                 startActivity(Intent(this,LocationHistoryActivity::class.java))
-            }
-            R.id.nav_bilibili->{
-
             }
             else->{
 

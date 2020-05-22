@@ -21,7 +21,7 @@ import com.jil.paintf.viewmodel.UpLoadViewModel
 import kotlinx.android.synthetic.main.activity_up_load.*
 import kotlin.concurrent.thread
 
-class UpLoadActivity : AppCompatActivity() {
+class UpLoadIllustActivity : AppCompatActivity() {
     var adapter:UpLoadImgAdapter?=null
     val addTagAdapter:AddTagAdapter = AddTagAdapter()
     lateinit var viewModel: UpLoadViewModel

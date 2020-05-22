@@ -11,7 +11,7 @@
         <item
                 android:id="@+id/nav_theme"
                 android:icon="@drawable/ic_theme"
-                android:title="更换配色" />
+                android:title="更换主题" />
 
         <item
                 android:id="@+id/nav_history"
