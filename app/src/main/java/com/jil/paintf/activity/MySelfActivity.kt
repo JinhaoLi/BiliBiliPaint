@@ -120,8 +120,11 @@ class MySelfActivity : AppCompatActivity() {
                 //点击editText控件外部
                 if(v!!.visibility==View.VISIBLE){
 
-                    textView14.text=editText14.text
-                    viewModel!!.updateSign(editText14.text.toString())
+                    val result =editText14.text.toString()
+                    if(textView14.text.toString()!=result){
+                        viewModel!!.updateSign(result)
+                        textView14.text = result
+                    }
 
                     v.visibility=View.GONE
                     v.isFocusable=false
