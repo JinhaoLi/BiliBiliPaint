@@ -8,7 +8,6 @@ import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import android.widget.CompoundButton
 import android.widget.EditText
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -31,9 +30,7 @@ class MySelfActivity : AppCompatActivity() {
     var viewModel:UserViewModel?=null
     var menu:Menu? =null
     var uid:Int=0
-    var flag:Int =1
     var observer:Observer<UserUpLoadInfo>?=null
-    private var listener:CompoundButton.OnCheckedChangeListener?=null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         ThemeUtil.initTheme(this)
