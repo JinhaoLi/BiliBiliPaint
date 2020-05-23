@@ -26,8 +26,8 @@ class AboutFragment :LazyFragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         aboutList.clear()
-        aboutList.add(project)
-        aboutList.add(bilibili)
+//        aboutList.add(project)
+//        aboutList.add(bilibili)
         val versionName =context!!.applicationContext
             .packageManager
             .getPackageInfo(context!!.packageName, 0).versionName

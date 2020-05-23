@@ -91,7 +91,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     @SuppressLint("ClickableViewAccessibility")
     @NonNull
     @Override
-    public Object instantiateItem(ViewGroup container, final int position) {
+    public Object instantiateItem(final ViewGroup container, final int position) {
         if(position==ts.size()){
             final View v =LayoutInflater.from(container.getContext()).inflate(R.layout.item_viewpager_end,container,false);
             TextView up =v.findViewById(R.id.textView18);
@@ -118,7 +118,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
         final View v = LayoutInflater.from(container.getContext()).inflate(R.layout.item_doc_illusts_layout,container,false);
         final SubsamplingScaleImageView imageView =v.findViewById(R.id.imageView);
         RoundedCorners roundedCorners= new RoundedCorners(10);
-        RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners);
+        final RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners);
 
         Glide.with(container.getContext()).asFile().load(ts.get(position)+loadLevel).apply(requestOptions)
                 .into(new CustomTarget<File>() {
@@ -134,6 +134,38 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
                     }
                 });
+        if(!loadLevel.equals(""))
+        imageView.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(final View v) {
+                new AlertDialog.Builder(v.getContext()).setTitle("加载原图").setNegativeButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        Glide.with(v.getContext()).asFile().load(ts.get(position)).apply(requestOptions)
+                                .into(new CustomTarget<File>() {
+
+                                    @Override
+                                    public void onResourceReady(@NonNull File resource, @Nullable Transition<? super File> transition) {
+                                        imageView.setImage(ImageSource.uri(Uri.fromFile(resource)));
+                                        pic = resource;
+                                    }
+
+                                    @Override
+                                    public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                                    }
+                                });
+                        dialog.dismiss();
+                    }
+                }).setPositiveButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                }).setMessage("临时加载此图片的原图！").create().show();
+                return false;
+            }
+        });
         imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

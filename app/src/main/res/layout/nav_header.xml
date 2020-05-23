@@ -5,13 +5,13 @@
               android:background="?attr/colorPrimary"
               android:layout_height="180dp">
 
-    <ImageView
-            android:layout_width="160dp"
-            android:layout_marginBottom="10dp"
-            android:layout_gravity="end|bottom"
-            android:layout_marginEnd="20dp"
-            android:layout_height="80dp" app:srcCompat="@drawable/ic_bilibili_logo"
-            android:id="@+id/imageView4"/>
+<!--    <ImageView-->
+<!--            android:layout_width="160dp"-->
+<!--            android:layout_marginBottom="10dp"-->
+<!--            android:layout_gravity="end|bottom"-->
+<!--            android:layout_marginEnd="20dp"-->
+<!--            android:layout_height="80dp" app:srcCompat="@drawable/ic_bilibili_logo"-->
+<!--            android:id="@+id/imageView4"/>-->
     <ImageView
             android:layout_width="80dp"
             android:layout_gravity="center_vertical"

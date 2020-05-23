@@ -1,5 +1,7 @@
 package com.jil.paintf.adapter
 
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -118,6 +120,7 @@ class SearchItemAdapter(private val mContext: Context
 
 
         fun displayImage(){
+            image.visibility=View.INVISIBLE
             Glide.with(itemView.context).asBitmap().load(imageUrl)
                 .into(object : CustomTarget<Bitmap>(){
                     override fun onLoadCleared(placeholder: Drawable?) {
@@ -126,6 +129,8 @@ class SearchItemAdapter(private val mContext: Context
 
                     override fun onResourceReady(resource: Bitmap, transition: Transition<in Bitmap>?) {
                         image.setImageBitmap(resource)
+                        image.visibility=View.VISIBLE
+                        alpView(image)
                         val builder = Palette.from(resource);
                         builder.generate {
                             //亮、柔和
@@ -139,6 +144,13 @@ class SearchItemAdapter(private val mContext: Context
                     }
 
                 })
+        }
+
+        @SuppressLint("ObjectAnimatorBinding")
+        fun alpView(v:View){
+            val animator = ObjectAnimator.ofFloat(v,"alpha",0f,0.25f,0.75f,1f)
+            animator.duration=700
+            animator.start()
         }
     }
 
