@@ -47,6 +47,7 @@ class MySelfActivity : AppCompatActivity() {
 
         checkbox.visibility= View.GONE
         textView14.setOnClickListener {
+            editText14.setText(textView14.text)
             editText14.visibility=View.VISIBLE
             editText14.isFocusable = true
             editText14.selectAll()
