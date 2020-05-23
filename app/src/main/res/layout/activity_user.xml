@@ -85,7 +85,8 @@
                         android:fillViewport="true"
                         android:orientation="horizontal"
                         android:layout_height="30dp" app:layout_constraintStart_toEndOf="@+id/imageView11"
-                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toStartOf="@+id/checkbox">
+                        app:layout_constraintTop_toTopOf="parent" app:layout_constraintEnd_toEndOf="parent"
+                        android:layout_marginEnd="102dp">
                     <LinearLayout
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
@@ -103,7 +104,7 @@
                                 android:textColor="@color/white"
 
                                 android:textSize="25sp"
-                                />
+                        />
                         <TextView
                                 android:text="LV 0"
                                 android:textColor="@android:color/white"
@@ -125,10 +126,23 @@
                         android:autoLink="web"
                         android:focusableInTouchMode="true"
                         android:textColor="@color/white"
-                        android:layout_width="wrap_content"
+                        android:layout_width="0dp"
                         android:layout_height="20dp" android:id="@+id/textView14"
                         app:layout_constraintBottom_toBottomOf="@+id/imageView11"
-                        app:layout_constraintStart_toEndOf="@+id/imageView11"/>
+                        app:layout_constraintStart_toEndOf="@+id/imageView11"
+                        app:layout_constraintEnd_toEndOf="parent"/>
+
+                <EditText
+                        android:text="分享、搬运内容仅为学习与交流，不可用作商业用途。"
+                        android:layout_width="0dp"
+                        android:singleLine="true"
+                        android:visibility="gone"
+                        android:textSize="14sp"
+                        android:background="@color/white"
+                        android:layout_height="20dp" android:id="@+id/editText14"
+                        app:layout_constraintBottom_toBottomOf="@+id/imageView11"
+                        app:layout_constraintStart_toEndOf="@+id/imageView11" app:layout_constraintEnd_toEndOf="parent"
+                />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 

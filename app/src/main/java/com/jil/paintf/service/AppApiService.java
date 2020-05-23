@@ -185,6 +185,17 @@ public interface AppApiService {
     @POST("/api/v1/drawImage/upload") //URL，可以为空
     Observable<UpLoadResult> postUploadImage(@Part List<MultipartBody.Part> request_img_part);
 
+    /**
+     * 更新签名
+     * @param sign
+     * @param jsonp
+     * @param csrf
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/x/member/web/sign/update")
+    Observable<UserOperateResult> updateSign(@Field("user_sign")String sign,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
+
 
     /**
      *

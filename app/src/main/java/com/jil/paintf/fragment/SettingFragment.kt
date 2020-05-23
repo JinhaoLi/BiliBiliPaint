@@ -16,7 +16,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.SettingItem
-import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.service.AppPaintF.Companion.SaveDir
 import com.leon.lfilepickerlibrary.LFilePicker

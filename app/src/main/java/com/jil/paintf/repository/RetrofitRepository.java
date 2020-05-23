@@ -283,4 +283,13 @@ public class RetrofitRepository {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
+
+    public Observable<UserOperateResult> updateSign(String sign){
+        return Observable.just(sign).flatMap(new Function<String, ObservableSource<UserOperateResult>>() {
+            @Override
+            public ObservableSource<UserOperateResult> apply(String s) throws Exception {
+                return ApiBiliService.updateSign(s,"json",AppPaintF.instance.getCookie().bili_jct);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
 }

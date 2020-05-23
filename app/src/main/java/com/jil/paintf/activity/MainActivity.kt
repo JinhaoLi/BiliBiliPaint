@@ -68,7 +68,11 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         }
 
         ico!!.setOnClickListener {
-            startActivityForResult(Intent(this,LoginActivity::class.java),3)
+            if(AppPaintF.instance.cookie==null){
+                startActivityForResult(Intent(this,LoginActivity::class.java),3)
+                return@setOnClickListener
+            }
+            MySelfActivity.startUserActivity(this,AppPaintF.instance.cookie!!.DedeUserID)
         }
 
         main_tabs!!.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{

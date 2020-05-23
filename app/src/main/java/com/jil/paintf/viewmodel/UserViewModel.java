@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 import com.jil.paintf.repository.*;
 import com.jil.paintf.service.AppApiService;
+import com.jil.paintf.service.AppPaintF;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -203,6 +204,11 @@ public class UserViewModel extends ViewModel {
 
     public void removeAttentionList(int uid){
         subscribe(retrofitRepository.userOperate(uid,AppApiService.REMOVE_ATTENTION_LIST));
+    }
+
+    public void updateSign(String sign){
+        if(AppPaintF.instance.getCookie()!=null)
+            subscribe(retrofitRepository.updateSign(sign));
     }
 
     private void subscribe(Observable<UserOperateResult> observable){
