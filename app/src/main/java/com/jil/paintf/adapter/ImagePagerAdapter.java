@@ -191,7 +191,18 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
         }).setPositiveButton("保存原图", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                downLoadPic((String) ts.get(position),context);
+                if(loadLevel.equals("")){
+                    try {
+                        downLoadPic((String) ts.get(position),pic);
+                        Toast.makeText(context,"已保存！",Toast.LENGTH_SHORT).show();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        Toast.makeText(context,"保存失败！",Toast.LENGTH_SHORT).show();
+                    }
+                }else {
+                    downLoadPic((String) ts.get(position),context);
+                }
+
             }
         }).create().show();
 
@@ -200,7 +211,9 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     private void downLoadPic(final String urlStr,File into) throws IOException {
        File f = new File(AppPaintF.Companion.getSaveDir());
         if(!f.exists())
-            f.mkdir();
+            if(!f.mkdir()){
+               throw new FileNotFoundException("创建文件夹失败");
+            }
         String[] strs=urlStr.split("/");
         final File pic =new File(f,strs[strs.length-1]);
         FileInputStream fi =new FileInputStream(into);
@@ -248,6 +261,9 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
             @Override
             public void onError(Throwable e) {
                 Logger.d(e.getMessage());
+                pd1.setTitle("错误");
+                pd1.setProgress(100);
+                pd1.setMessage(e.getMessage());
             }
 
             @Override
@@ -276,6 +292,10 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                     f.mkdir();
                 String[] strs=urlStr.split("/");
                 final File pic =new File(f,strs[strs.length-1]);
+                if(pic.exists()){
+                    emitter.onError(new Throwable("图片已存在！"));
+                    return;
+                }
                 final OkHttpClient.Builder builder =new OkHttpClient.Builder();
                 Request.Builder rq =new Request.Builder().url(urlStr);
                 Call call =builder.build().newCall(rq.build());
