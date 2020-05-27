@@ -2,22 +2,14 @@ package com.jil.paintf.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
-import android.app.ActivityOptions
 import android.content.Context
-import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.os.Bundle
-import android.util.Pair
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityOptionsCompat
-import androidx.core.content.ContextCompat.startActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -27,8 +19,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
-import com.jil.paintf.activity.DocDetailActivity
-import com.jil.paintf.activity.DocDetailActivity.Companion.startDocDetailActivity
 import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
@@ -96,7 +86,7 @@ class ItemAdapter(private val mContext: Context
                 if(data[position].item.already_voted==1)
                     type=2
 
-                viewModel.doAction(data[position].item.doc_id,type).observe(mContext as LifecycleOwner, Observer {
+                viewModel.voteResult.observe(mContext as LifecycleOwner, Observer {
                     //点赞按钮
                     if(it.data.type==1){
                         data[position].item.already_voted=1
@@ -114,10 +104,11 @@ class ItemAdapter(private val mContext: Context
                      * 这里进行判断，只有得到正确的结果后才移除观察者
                      */
                     if(it.data.type==type){
-                        viewModel.data.removeObservers(mContext as LifecycleOwner)
+                        viewModel.voteResult.removeObservers(mContext as LifecycleOwner)
                     }
 
                 })
+                viewModel.doNetVote(data[position].item.doc_id,type)
             }
 
             holder.image.setOnClickListener { v ->
