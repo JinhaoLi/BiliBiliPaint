@@ -3,7 +3,6 @@ package com.jil.paintf.service;
 import com.jil.paintf.repository.*;
 import io.reactivex.Observable;
 import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.*;
 
@@ -170,13 +169,35 @@ public interface AppApiService {
 
 
     /**
-     * 插画点赞功能
+     * 点赞功能
      * https://api.vc.bilibili.com/link_draw/v2/Vote/operate
      * @param type 1:点赞;2:取消点赞
      */
     @FormUrlEncoded
     @POST("/link_draw/v2/Vote/operate")
     Observable<OperateResult> postVoteDoc(@Field("doc_id")int doc_id, @Field("csrf_token")String csrf_token, @Field("type")int type );
+
+    /***
+     * 收藏
+     * @param biz_type 2
+     * @param fav_id
+     * @param csrf_token
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/user_plus/v1/Fav/add")
+    Observable<FavOperateResult> postFavAddDoc(@Field("biz_type")int biz_type, @Field("fav_id")int fav_id, @Field("csrf_token")String csrf_token);
+
+    /**
+     * 取消收藏
+     * @param biz_type
+     * @param fav_id
+     * @param csrf_token
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/user_plus/v1/Fav/delete")
+    Observable<FavOperateResult> postFavDeleteDoc(@Field("biz_type")int biz_type, @Field("fav_id")int fav_id, @Field("csrf_token")String csrf_token);
 
     @GET("/x/web-interface/nav")
     Observable<MyInfo> getMyInfo();

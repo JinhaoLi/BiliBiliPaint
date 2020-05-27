@@ -8,11 +8,8 @@ import io.reactivex.ObservableSource;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
-import kotlin.UByteArray;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
-import retrofit2.http.Field;
-import retrofit2.http.FieldMap;
 
 import java.util.List;
 import java.util.Map;
@@ -206,6 +203,37 @@ public class RetrofitRepository {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
+
+    /**
+     * 收藏
+     * @param id
+     * @return
+     */
+    public Observable<FavOperateResult> postAddFav(int id){
+        return Observable.just(id).flatMap(new Function<Integer, ObservableSource<FavOperateResult>>() {
+            @Override
+            public ObservableSource<FavOperateResult> apply(Integer integer) throws Exception {
+                assert AppPaintF.instance.getCookie()!=null;
+                return ApiVcBiliService.postFavAddDoc(2,integer,AppPaintF.instance.getCookie().bili_jct);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
+    }
+
+    /**
+     * 收藏
+     * @param id
+     * @return
+     */
+    public Observable<FavOperateResult> postDeleteFav(int id){
+        return Observable.just(id).flatMap(new Function<Integer, ObservableSource<FavOperateResult>>() {
+            @Override
+            public ObservableSource<FavOperateResult> apply(Integer integer) throws Exception {
+                assert AppPaintF.instance.getCookie()!=null;
+                return ApiVcBiliService.postFavDeleteDoc(2,integer,AppPaintF.instance.getCookie().bili_jct);
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
+    }
+
 
     /***
      * 退出登录

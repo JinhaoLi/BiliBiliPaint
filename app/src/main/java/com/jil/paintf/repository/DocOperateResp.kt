@@ -1,5 +1,7 @@
 package com.jil.paintf.repository
 
+import java.util.*
+
 data class OperateResult(
     val code: Int,
     val `data`: Data2,
@@ -16,3 +18,11 @@ data class UserOperateResult(
 data class Data2(
     val type: Int
 )
+
+data class FavOperateResult(
+    val code: Int,
+    val data: List<Objects>,
+    val message: String,
+    val msg: String
+)
+

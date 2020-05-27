@@ -13,9 +13,9 @@ data class DocData(
 )
 
 data class DocDetail(
-    val already_collected: Int,
+    var already_collected: Int,
     val already_liked: Int,
-    val already_voted: Int,
+    var already_voted: Int,
     val at_control: String,
     val biz: Int,
     val category: String,

@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -32,6 +33,7 @@ import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.service.AppPaintF
+import com.jil.paintf.viewmodel.DocOperateModel
 import com.jil.paintf.viewmodel.DocViewModel
 import kotlinx.android.synthetic.main.activity_doc_detail.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
@@ -42,6 +44,7 @@ class DocDetailActivity : AppCompatActivity(),
     var current=0
     var idArray:IntArray?=null
     var viewModel:DocViewModel? =null
+    lateinit var operateViewModel:DocOperateModel
     var adapter:ImagePagerAdapter<String>? =null
     private var lock =false
     var docData:DocData?=null
@@ -58,8 +61,8 @@ class DocDetailActivity : AppCompatActivity(),
         idArray=bundle!!.getIntArray("intArray")
         val docId =bundle.getInt("doc_id")
         current =idArray!!.indexOf(docId)
-        viewModel =ViewModelProvider.AndroidViewModelFactory(AppPaintF.instance!!).create(DocViewModel::class.java)
-
+        viewModel =ViewModelProvider(this).get(DocViewModel::class.java)
+        operateViewModel =ViewModelProvider(this).get(DocOperateModel::class.java)
         viewModel!!.getData(docId).observeForever { docData ->
             this.docData=docData
             if(docData!=null){
@@ -118,6 +121,17 @@ class DocDetailActivity : AppCompatActivity(),
             textView10.text=pic0.img_width.toString()+"*"+pic0.img_height
             textView12.text =if(docData.item.description=="")"一切尽在不言中..." else docData.item.description
             textView13.text ="1/"+docData.item.pictures.size
+            if(docData.item.already_voted==1){
+                imageView8.setImageResource(R.drawable.ic_like)
+            }else{
+                imageView8.setImageResource(R.drawable.ic_no_vote_big)
+            }
+
+            if(docData.item.already_collected==1){
+                imageView9.setImageResource(R.drawable.ic_star)
+            }else{
+                imageView9.setImageResource(R.drawable.ic_no_star)
+            }
             val layoutManager = LinearLayoutManager(this)
             tags.adapter =object : SuperRecyclerAdapter<Tag>(docData.item.tags as ArrayList<Tag>){
                 override fun bindData(holder: SuperVHolder, position: Int) {
@@ -164,6 +178,74 @@ class DocDetailActivity : AppCompatActivity(),
             intent.putExtra(Intent.EXTRA_TEXT,"https://h.bilibili.com/"+idArray!![current])
             intent.type="text/plain"
             startActivity(intent)
+        }
+
+        //点赞
+        imageView8!!.setOnClickListener {
+            if(AppPaintF.instance.cookie==null){
+                Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            var type=1
+            if(docData!!.item.already_voted==1)
+                type=2
+            operateViewModel.voteResult.observe(this, Observer {
+                //点赞按钮
+                if(it.data.type==1){
+                    docData!!.item.already_voted=1
+                    imageView8.setImageResource(R.drawable.ic_like)
+                }else if(it.data.type==2){
+                    docData!!.item.already_voted=0
+                    imageView8.setImageResource(R.drawable.ic_no_vote_big)
+                }else{
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                }
+                /**
+                 * 不理解！！！ post请求取消点赞时，会返回两次结果
+                 * 通过对比发现！
+                 * b站对已经点过赞的->先返回操作之前的状态->再进行操作之后的状态
+                 * 这里进行判断，只有得到正确的结果后才移除观察者
+                 */
+                if(it.data.type==type){
+                    operateViewModel.voteResult.removeObservers(this)
+                }
+
+            })
+            operateViewModel.doNetVote(idArray!![current],type)
+        }
+
+        //收藏
+        imageView9.setOnClickListener {
+            if(AppPaintF.instance.cookie==null){
+                Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            var isCollection =false
+            if(docData!!.item.already_collected==1)
+                isCollection=true
+            if (isCollection){
+                operateViewModel.removeFavResult.observe(this, Observer {
+                    if(it.code==0){
+                        docData!!.item.already_collected=0
+                        imageView9.setImageResource(R.drawable.ic_no_star)
+                        operateViewModel.removeFavResult.removeObservers(this)
+                    }else{
+                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                })
+                operateViewModel.doNetDeleteFav(idArray!![current])
+            }else{
+                operateViewModel.favResult.observe(this, Observer {
+                    if(it.code==0){
+                        docData!!.item.already_collected=1
+                        imageView9.setImageResource(R.drawable.ic_star)
+                        operateViewModel.favResult.removeObservers(this)
+                    }else{
+                        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+                    }
+                })
+                operateViewModel.doNetAddFav(idArray!![current])
+            }
         }
 
         var mIsScrolled =false
