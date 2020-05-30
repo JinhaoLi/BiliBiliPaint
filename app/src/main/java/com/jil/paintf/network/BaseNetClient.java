@@ -32,11 +32,11 @@ public class BaseNetClient {
             HttpLoggingInterceptor.Logger logger=new HttpLoggingInterceptor.Logger() {
                 @Override
                 public void log(@NotNull String s) {
-                    Log.d("网络操作", s);
+                    Log.d("jil", s);
                 }
             };
             HttpLoggingInterceptor loggingInterceptor =new HttpLoggingInterceptor(logger);
-            loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+            loggingInterceptor.level(HttpLoggingInterceptor.Level.BASIC);
             OkHttpClient.Builder builder =new OkHttpClient.Builder().addNetworkInterceptor(new Interceptor() {
                 @NotNull
                 @Override

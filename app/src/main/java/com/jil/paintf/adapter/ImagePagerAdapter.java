@@ -260,7 +260,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
 
             @Override
             public void onError(Throwable e) {
-                Logger.d(e.getMessage());
+//                Logger.d(e.getMessage());
                 pd1.setTitle("错误");
                 pd1.setProgress(100);
                 pd1.setMessage(e.getMessage());
@@ -328,7 +328,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                             fileOutputStream.close();
                             emitter.onComplete();
                         }else {
-                            Logger.d(response);
+//                            Logger.d(response);
                         }
 
                     }

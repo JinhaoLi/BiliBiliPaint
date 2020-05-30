@@ -31,10 +31,15 @@ public class DocViewModel extends BaseViewModel {
     int pn=1;
     int maxpn=2;
 
-    public MutableLiveData<DocData> getData(int id){
-        if(data==null){
-            data=new MutableLiveData<>();
-        }
+    public DocViewModel() {
+        data=new MutableLiveData<>();
+    }
+
+    public MutableLiveData<DocData> getData(){
+        return data;
+    }
+
+    public void doNetGetDoc(int id){
         retrofitRepository.getDocDetail(id).subscribe(new Observer<DocRepository>() {
             @Override
             public void onSubscribe(Disposable d) {
@@ -57,7 +62,6 @@ public class DocViewModel extends BaseViewModel {
 
             }
         });
-        return data;
     }
 
     public void saveHis(final DocData docData){
@@ -125,7 +129,7 @@ public class DocViewModel extends BaseViewModel {
             @Override
             public void onSubscribe(Disposable d) {
                 isLoading=true;
-                Logger.d("正在加载第"+pn+"页评论！");
+//                Logger.d("正在加载第"+pn+"页评论！");
             }
 
             @Override
@@ -159,7 +163,7 @@ public class DocViewModel extends BaseViewModel {
                 }else {
                     pn=-1;
                     //liveReplyData.postValue(replyData);
-                    Logger.d("共"+maxpn+"页，加载评论完成！");
+//                    Logger.d("共"+maxpn+"页，加载评论完成！");
                 }
             }
         });

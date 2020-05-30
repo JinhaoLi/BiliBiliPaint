@@ -26,7 +26,7 @@ abstract class LazyFragment : Fragment(){
                 (rootView!!.parent as ViewGroup).removeView(rootView)
             }
         }
-        Logger.d(arguments?.getInt("param1").toString()+"onDestroyView()")
+//        Logger.d(arguments?.getInt("param1").toString()+"onDestroyView()")
     }
 
 

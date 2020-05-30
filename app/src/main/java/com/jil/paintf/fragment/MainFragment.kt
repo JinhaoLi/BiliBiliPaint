@@ -167,7 +167,7 @@ class MainFragment: LazyFragment() {
     private fun refresh(list: List<Item>){
         if(swiperefresh!=null&&swiperefresh.isRefreshing)
             swiperefresh?.isRefreshing=false
-        Logger.d("当前数据大小:"+adapter!!.data.size.toString()+"--添加条目："+list.size.toString())
+//        Logger.d("当前数据大小:"+adapter!!.data.size.toString()+"--添加条目："+list.size.toString())
         if(list.isNullOrEmpty()){
             adapter!!.status="已经没有了..."
             adapter!!.notifyItemChanged(adapter!!.data.size)

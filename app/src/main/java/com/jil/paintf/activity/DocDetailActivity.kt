@@ -1,6 +1,8 @@
 package com.jil.paintf.activity
 
 import android.Manifest
+import android.animation.ObjectAnimator
+import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -44,7 +46,7 @@ class DocDetailActivity : AppCompatActivity(),
     var current=0
     var idArray:IntArray?=null
     var viewModel:DocViewModel? =null
-    lateinit var operateViewModel:DocOperateModel
+    private lateinit var operateViewModel:DocOperateModel
     var adapter:ImagePagerAdapter<String>? =null
     private var lock =false
     var docData:DocData?=null
@@ -63,7 +65,7 @@ class DocDetailActivity : AppCompatActivity(),
         current =idArray!!.indexOf(docId)
         viewModel =ViewModelProvider(this).get(DocViewModel::class.java)
         operateViewModel =ViewModelProvider(this).get(DocOperateModel::class.java)
-        viewModel!!.getData(docId).observeForever { docData ->
+        viewModel!!.data.observe(this, Observer { docData ->
             this.docData=docData
             if(docData!=null){
                 imageView5!!.setOnClickListener {
@@ -101,10 +103,9 @@ class DocDetailActivity : AppCompatActivity(),
                 listPopupWindow.width=200
                 listPopupWindow.show()
             }
-
-            showReply()
             //获取评论
-            //viewModel!!.getReplyData(docData.item.doc_id,true)
+            showReply()
+
             //================================================================================标题，上传者头像
             if(!isDestroyed)
             Glide.with(this).load(docData.user.head_url).placeholder(R.drawable.noface)
@@ -150,7 +151,8 @@ class DocDetailActivity : AppCompatActivity(),
             tags.layoutManager=layoutManager
 
             //==================================================================================喜欢，收藏，支持，tags
-        }
+        })
+        viewModel!!.doNetGetDoc(docId)
         //滑动效果
         //pager!!.setPageTransformer(false, ImageSlideTransformer())
 
@@ -182,6 +184,10 @@ class DocDetailActivity : AppCompatActivity(),
 
         //点赞
         imageView8!!.setOnClickListener {
+            shakeView(it)
+            if(operateViewModel.voteResult.hasActiveObservers()){
+                return@setOnClickListener
+            }
             if(AppPaintF.instance.cookie==null){
                 Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -216,6 +222,10 @@ class DocDetailActivity : AppCompatActivity(),
 
         //收藏
         imageView9.setOnClickListener {
+            shakeView(it)
+            if(operateViewModel.removeFavResult.hasActiveObservers()){
+                return@setOnClickListener
+            }
             if(AppPaintF.instance.cookie==null){
                 Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -283,6 +293,17 @@ class DocDetailActivity : AppCompatActivity(),
             }
         })
 
+    }
+
+    //抖动
+    @SuppressLint("ObjectAnimatorBinding")
+    fun shakeView(v:View){
+        val width =v.width/10f
+        val animator = ObjectAnimator.ofFloat(v,"translationX",0f,
+            width, -width, width, -width, width, -width,
+            width, -width, width, -width, width,0f)
+        animator.duration=500
+        animator.start()
     }
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
@@ -436,7 +457,7 @@ class DocDetailActivity : AppCompatActivity(),
         if(current>= idArray!!.size)
             finish()
         else{
-            viewModel!!.getData(idArray!![current])
+            viewModel!!.doNetGetDoc(idArray!![current])
 
         }
     }
@@ -447,7 +468,7 @@ class DocDetailActivity : AppCompatActivity(),
         if(current<0)
             finish()
         else{
-            viewModel!!.getData(idArray!![current])
+            viewModel!!.doNetGetDoc(idArray!![current])
         }
     }
 }

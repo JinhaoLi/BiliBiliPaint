@@ -57,7 +57,7 @@ class UserFragment:LazyFragment(){
             param = it.getInt(ARG_PARAM1)
             uid =it.getInt(ARG_PARAM2)
         }
-        Logger.d(arguments?.getInt(ARG_PARAM1).toString()+"onCreate()")
+//        Logger.d(arguments?.getInt(ARG_PARAM1).toString()+"onCreate()")
         super.onCreate(savedInstanceState)
     }
 

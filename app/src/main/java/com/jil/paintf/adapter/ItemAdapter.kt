@@ -57,7 +57,7 @@ class ItemAdapter(private val mContext: Context
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        Logger.d(position.toString()+"onBindViewHolder->"+holder.toString())
+//        Logger.d(position.toString()+"onBindViewHolder->"+holder.toString())
         if (holder is ItemVHolder) {
             holder.imageUrl=data[position].item.pictures[0].img_src + "@512w_384h_1e.webp"
             holder.icoUrl=data[position].user.head_url+"@32w_32h.webp"
