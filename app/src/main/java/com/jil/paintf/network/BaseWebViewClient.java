@@ -37,7 +37,7 @@ public class BaseWebViewClient extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-        Log.i("webView页面开始加载->",url);
+        Log.i("onPageStarted->",url);
 
         if(AppPaintF.instance.getCookie()!=null){
             CookieManager cookieManager =CookieManager.getInstance();
@@ -47,11 +47,11 @@ public class BaseWebViewClient extends WebViewClient {
     }
 
     @Override
-    public void onPageFinished(WebView view, String url) {
-        super.onPageFinished(view, url);
-        Log.i("webView页面完成加载->",url);
+    public void onPageCommitVisible(WebView view, String url) {
+        super.onPageCommitVisible(view, url);
+        Log.i("onPageCommitVisible->",url);
         if(url.equals("https://m.bilibili.com/index.html")||url.equals("https://m.bilibili.com/")){
-            /** 登录完成跳转至此**/
+            /** 登录完成**/
             view.setVisibility(View.INVISIBLE);
             CookieManager cookieManager =CookieManager.getInstance();
             String cookieStr =cookieManager.getCookie(url);
@@ -62,7 +62,9 @@ public class BaseWebViewClient extends WebViewClient {
                 stateChange.isLogin();
             return;
         }
-
+        if(url.startsWith("https://m.bilibili.com/space/")){
+            Toast.makeText(view.getContext(), "可以点击->编辑资料->退出登录", Toast.LENGTH_SHORT).show();
+        }
         if(url.equals("https://passport.bilibili.com/login?act=exit")){
             /**退出登录**/
             DataRoomService.getDatabase().getCookieDao().deleteAll();
@@ -70,6 +72,12 @@ public class BaseWebViewClient extends WebViewClient {
             if(stateChange!=null)
                 stateChange.loginExit();
         }
+    }
+
+    @Override
+    public void onPageFinished(WebView view, String url) {
+        super.onPageFinished(view, url);
+        Log.i("onPageFinished->",url);
     }
 
     public interface StateChange{

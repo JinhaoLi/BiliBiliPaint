@@ -21,7 +21,6 @@ import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.UserUpLoadInfo
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.service.CorrespondingValue
-import com.jil.paintf.service.DataRoomService
 import com.jil.paintf.viewmodel.UserViewModel
 import kotlinx.android.synthetic.main.activity_user.*
 
@@ -100,7 +99,7 @@ class MySelfActivity : AppCompatActivity() {
         when(item.itemId){
             1->{
               //退出登录操作
-                DataRoomService.getDatabase().cookieDao.deleteAll()
+                startActivityForResult(Intent(this,LoginActivity::class.java),3)
                 finish()
             }
         }

@@ -59,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
         when(item.itemId){
             1->{
                 /**此处可以获取id */
-                Toast.makeText(this, "点击->编辑资料->退出登录", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "可以点击->编辑资料->退出登录", Toast.LENGTH_SHORT).show()
             }
         }
         return super.onOptionsItemSelected(item)
