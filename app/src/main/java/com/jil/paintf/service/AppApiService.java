@@ -26,7 +26,6 @@ public interface AppApiService {
 
     /**
      *  退出登录
-     * @return
      */
     @GET("/login?act=exit")
     Observable<ResponseBody> exitLogin();
@@ -43,7 +42,6 @@ public interface AppApiService {
      * &re_src=11
      * &jsonp=jsonp
      * &csrf=c0efc5ac59ec2b29668af384d22889ad
-     * @return
      */
     @FormUrlEncoded
     @POST("/x/relation/modify")
@@ -52,7 +50,6 @@ public interface AppApiService {
     /**
      * 获取黑名单列表
      * @param pn 页码
-     * @return
      */
     @GET("/x/relation/blacks?re_version=0&ps=20&jsonp=jsonp")
     Observable<BlackListRepository> getBlackList(@Query("pn")int pn);
@@ -256,5 +253,13 @@ public interface AppApiService {
             ,@Field("csrf_token")String csrf_token,@FieldMap() Map<String, String> tags,@FieldMap() Map<String, String> imgs);
 
 
-
+    /**
+     *
+     * @param biz_type 2
+     * @param page 1
+     * @param pagesize 30
+     * @return
+     */
+    @GET("https://api.vc.bilibili.com/user_plus/v1/Fav/getMyFav")
+    Observable<CollectionResult> getMCollection(@Query("biz_type")int biz_type,@Query("page")int page,@Query("pagesize")int pagesize);
 }

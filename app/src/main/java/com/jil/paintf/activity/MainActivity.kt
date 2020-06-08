@@ -56,7 +56,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         tab_title!!.setupWithViewPager(viewpager)
 
         header=nav_view!!.getHeaderView(0)
-        ico =header!!.findViewById<ImageView>(R.id.imageView3)
+        ico =header!!.findViewById(R.id.imageView3)
 
         viewModel.myInfoMutableLiveData.observe(this, Observer {
             changHeaderView(it.data.face,it.data.uname)
@@ -136,9 +136,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                 //代表退出登录
                 changHeaderView()
             }
-            if(resultCode==Activity.RESULT_CANCELED){
-                //没有进行操作
-            }
         }
         super.onActivityResult(requestCode, resultCode, data)
     }
@@ -148,7 +145,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
      * default icoUrl = https://static.hdslb.com/images/akari.jpg
      * default name = 未登录
      */
-    private fun changHeaderView(icoUrl: String="https://static.hdslb.com/images/akari.jpg", name: String="未登录"): Unit {
+    private fun changHeaderView(icoUrl: String="https://static.hdslb.com/images/akari.jpg", name: String="未登录") {
         Glide.with(this@MainActivity).load(icoUrl)
             .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
             .into(ico!!)
@@ -199,6 +196,10 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
             R.id.nav_history->{
                 startActivity(Intent(this,LocationHistoryActivity::class.java))
+            }
+
+            R.id.nav_collection->{
+                startActivity(Intent(this,CollectionActivity::class.java))
             }
             else->{
 

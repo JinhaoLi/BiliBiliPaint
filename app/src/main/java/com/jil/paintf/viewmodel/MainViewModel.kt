@@ -23,7 +23,8 @@ class MainViewModel : BaseViewModel() {
 
     fun doNetMyInfo() {
         retrofitRepository.myInfo.subscribe({ myInfo ->
-            if (myInfo != null) myInfoMutableLiveData.postValue(myInfo)
+            if (myInfo != null)
+                myInfoMutableLiveData.postValue(myInfo)
         },{},{}).add()
     }
 

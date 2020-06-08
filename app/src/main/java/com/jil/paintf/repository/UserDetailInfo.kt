@@ -68,7 +68,7 @@ data class Wallet(
 
 data class UserData(
     val birthday: String,
-    val coins: Int,
+    val coins: Float,
     val face: String,
     val fans_badge: Boolean,
     val is_followed: Boolean,
