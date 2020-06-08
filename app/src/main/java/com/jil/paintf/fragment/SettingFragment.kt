@@ -1,29 +1,38 @@
 package com.jil.paintf.fragment
 
+import android.Manifest
 import android.app.AlertDialog
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jil.dirpicker.DirPicker
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.SettingItem
+import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.service.AppPaintF.Companion.SaveDir
-import com.leon.lfilepickerlibrary.LFilePicker
+import kotlinx.android.synthetic.main.activity_doc_detail.*
 import kotlinx.android.synthetic.main.fragment_setting.*
+import kotlinx.android.synthetic.main.fragment_setting.recyclerview
 
 
 class SettingFragment :LazyFragment(){
     var adapter :SuperRecyclerAdapter<SettingItem>?=null
+
 
     override fun loadAndObserveData() {
     }
@@ -92,38 +101,46 @@ class SettingFragment :LazyFragment(){
         }
         val selectDir =object:SettingItem("图片保存位置", SaveDir,3){
             override fun click(v: View?) {
-
-                LFilePicker()
-                    .withActivity(requireActivity())
-                    .withRequestCode(REQUESTCODE_FROM_SELECT_DIR)
-                    .withStartPath(SaveDir)
-                    .withChooseMode(false)
-                    .start()
-
-                val lbm=LocalBroadcastManager.getInstance(requireActivity())
-                lbm.registerReceiver(object :BroadcastReceiver(){
-                    override fun onReceive(context: Context?, intent: Intent?) {
-                        val path:String?=intent?.getStringExtra("PATH")
-                        if(!path.isNullOrEmpty()){
-                            PreferenceManager.getDefaultSharedPreferences(requireContext())
-                                .apply {
-                                    edit().let {
-                                        it.putString("SAVE_DIR",path).apply()
+                if(checkReadWrite()){
+                    DirPicker.instance(requireContext()).startWith(Environment.getExternalStorageDirectory().path)
+                        .useThemeRes(ThemeUtil.themeResId(requireContext()))
+                        .chooseDir().addListener(object : DirPicker.DirPickerListener{
+                            override fun onChoose(path: String) {
+                                PreferenceManager.getDefaultSharedPreferences(requireContext())
+                                    .apply {
+                                        edit().let {
+                                            it.putString("SAVE_DIR",path).apply()
+                                        }
                                     }
-                                }
-                            description=path
-                            SaveDir =path
-                        }
-                        adapter!!.notifyDataSetChanged()
-                        lbm.unregisterReceiver(this)
-                    }
+                                SaveDir =path
+                                description=path
+                                adapter!!.notifyDataSetChanged()
 
-                }, IntentFilter("ACTION_CHANGE_DIR"))
+                            }
+                        }).open()
+                }else{
+                    //进行授权
+                    ActivityCompat.requestPermissions(
+                        requireActivity(),
+                        arrayOf(
+                            Manifest.permission.READ_EXTERNAL_STORAGE,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ),
+                        CAN_SELECT_DIR
+                    )
+                }
             }
         }
 
         settingList.add(loadLevel)
         settingList.add(selectDir)
+    }
+
+    private fun checkReadWrite(): Boolean {
+        return ContextCompat.checkSelfPermission(requireContext(),
+            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(requireContext(),
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -182,10 +199,9 @@ class SettingFragment :LazyFragment(){
 
     companion object{
         @JvmStatic
-        val settingList = arrayListOf<SettingItem>()
-
+        val CAN_SELECT_DIR = 6
         @JvmStatic
-        val REQUESTCODE_FROM_SELECT_DIR = 1000
+        val settingList = arrayListOf<SettingItem>()
 
 
         fun newInstance()= SettingFragment()

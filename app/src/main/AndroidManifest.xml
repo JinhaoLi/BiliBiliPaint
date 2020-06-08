@@ -51,7 +51,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".activity.TestAc"/>
-        <activity android:name=".activity.ThemeActivity"/>
         <activity android:name=".activity.SearchActivity">
         </activity>
         <activity android:name=".activity.MySelfActivity"/>

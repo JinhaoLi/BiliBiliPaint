@@ -1,16 +1,18 @@
 package com.jil.paintf.activity
 
-import android.app.Activity
-import android.content.Intent
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Environment
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
+import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.jil.dirpicker.DirPicker
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SettingPagerAdapter
 import com.jil.paintf.custom.ThemeUtil
-import com.jil.paintf.fragment.SettingFragment.Companion.REQUESTCODE_FROM_SELECT_DIR
+import com.jil.paintf.fragment.SettingFragment.Companion.CAN_SELECT_DIR
 import com.jil.paintf.service.AppPaintF
 import kotlinx.android.synthetic.main.settings_activity.*
 
@@ -30,19 +32,44 @@ class SettingsActivity : AppCompatActivity() {
 
     }
 
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == REQUESTCODE_FROM_SELECT_DIR) {
-                val path: String = data!!.getStringExtra("path")!!
+        when(requestCode){
+            CAN_SELECT_DIR->{
+                for (element in grantResults) {
+                    if (element == PackageManager.PERMISSION_DENIED) {
+                        Toast.makeText(this, "没权限！", Toast.LENGTH_SHORT).show()
+                        return
+                    }
+                }
 
-                val lbm= LocalBroadcastManager.getInstance(this)
-                val intent=Intent("ACTION_CHANGE_DIR")
-                intent.putExtra("PATH",path)
-                lbm.sendBroadcast(intent)
+                if(checkReadWrite()){
+                    DirPicker.instance(this).startWith(Environment.getExternalStorageDirectory().path)
+                        .useThemeRes(ThemeUtil.themeResId(this))
+                        .chooseDir().addListener(object : DirPicker.DirPickerListener{
+                            override fun onChoose(path: String) {
+                                PreferenceManager.getDefaultSharedPreferences(this@SettingsActivity)
+                                    .apply {
+                                        edit().let {
+                                            it.putString("SAVE_DIR",path).apply()
+                                        }
+                                    }
+                                AppPaintF.SaveDir =path
+                                adapter!!.notifyDataSetChanged()
+                            }
+                        }).open()
+
+                }
             }
         }
+    }
+
+    private fun checkReadWrite(): Boolean {
+        return ContextCompat.checkSelfPermission(this,
+            Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
 

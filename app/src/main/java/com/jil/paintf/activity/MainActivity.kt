@@ -26,6 +26,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
 import com.jil.paintf.R
 import com.jil.paintf.adapter.MainPagerAdapter
+import com.jil.paintf.custom.BackgroundGridItem
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
@@ -160,14 +161,14 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         when (item.itemId) {
             R.id.nav_theme -> {
                 val items = listOf(
-                    ThemeActivity.BackgroundGridItem(R.color.colorPrimary, "Primary"),
-                    ThemeActivity.BackgroundGridItem(R.color.pink, "pink"),
-                    ThemeActivity.BackgroundGridItem(R.color.green, "green"),
-                    ThemeActivity.BackgroundGridItem(R.color.purple, "purple"),
-                    ThemeActivity.BackgroundGridItem(R.color.tea, "tea"),
-                    ThemeActivity.BackgroundGridItem(R.color.walnut, "walnut"),
-                    ThemeActivity.BackgroundGridItem(R.color.seaPine, "seaPine"),
-                    ThemeActivity.BackgroundGridItem(R.color.seedling, "seedling")
+                    BackgroundGridItem(R.color.colorPrimary, "Primary"),
+                    BackgroundGridItem(R.color.pink, "pink"),
+                    BackgroundGridItem(R.color.green, "green"),
+                    BackgroundGridItem(R.color.purple, "purple"),
+                    BackgroundGridItem(R.color.tea, "tea"),
+                    BackgroundGridItem(R.color.walnut, "walnut"),
+                    BackgroundGridItem(R.color.seaPine, "seaPine"),
+                    BackgroundGridItem(R.color.seedling, "seedling")
 
                 )
                 MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT)).show {

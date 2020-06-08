@@ -25,6 +25,7 @@ android {
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation fileTree(dir: 'libs', include: ['*.aar'])
     implementation project(':dialog')
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
     implementation 'androidx.appcompat:appcompat:1.1.0'
@@ -88,9 +89,9 @@ dependencies {
     //放大缩小图片
     implementation 'com.davemorrissey.labs:subsampling-scale-image-view:3.10.0'
 
+    //下拉刷新
     implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
-    implementation 'androidx.palette:palette:1.0.0'
 
-    //文件夹选择
-    implementation 'com.leon:lfilepickerlibrary:1.8.0'
+    //调色板
+    implementation 'androidx.palette:palette:1.0.0'
 }

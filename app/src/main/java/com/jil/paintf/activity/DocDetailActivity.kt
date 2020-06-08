@@ -386,7 +386,7 @@ class DocDetailActivity : AppCompatActivity(),
                                 }
                             })
 
-                            listPopupWindow.setOnItemClickListener { parent, view, position, id ->
+                            listPopupWindow.setOnItemClickListener { _, _, _, id ->
                                 listPopupWindow.dismiss()
                             }
                             listPopupWindow.anchorView =it
