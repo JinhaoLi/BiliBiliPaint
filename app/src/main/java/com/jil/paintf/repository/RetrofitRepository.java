@@ -220,7 +220,7 @@ public class RetrofitRepository {
     }
 
     /**
-     * 收藏
+     * 取消收藏
      * @param id
      * @return
      */

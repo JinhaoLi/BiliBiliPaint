@@ -2,8 +2,9 @@ package com.jil.paintf.viewmodel
 
 import androidx.lifecycle.MutableLiveData
 import com.jil.paintf.repository.CollectionResult
+import com.jil.paintf.repository.FavOperateResult
 import com.jil.paintf.repository.RetrofitRepository
-import io.reactivex.functions.Consumer
+import com.jil.paintf.service.AppPaintF
 
 class CollectionViewModel:BaseViewModel() {
     val mutableLiveData:MutableLiveData<CollectionResult> =MutableLiveData()
@@ -23,6 +24,15 @@ class CollectionViewModel:BaseViewModel() {
         }else{
             return false
         }
-
+    }
+    var removeFavResult = MutableLiveData<FavOperateResult>()
+    fun doNetDeleteFav(id: Int) {
+        if (AppPaintF.instance.cookie == null) {
+            removeFavResult.postValue(FavOperateResult(-1, arrayListOf(), "没有登录", "没有登录"))
+            return
+        }
+        RetrofitRepository.getInstance().postDeleteFav(id).subscribe(
+            { favOperateResult -> removeFavResult.postValue(favOperateResult) },
+            { }).add()
     }
 }

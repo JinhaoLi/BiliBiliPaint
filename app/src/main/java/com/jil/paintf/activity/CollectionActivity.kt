@@ -1,5 +1,6 @@
 package com.jil.paintf.activity
 
+import android.content.res.Configuration
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.lifecycle.Observer
@@ -28,7 +29,9 @@ class CollectionActivity : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         viewModel =ViewModelProvider(this).get(CollectionViewModel::class.java)
         adapter= CollectionAdapter(this)
-        layoutManager=GridLayoutManager(this,2)
+        val cfg = resources.configuration
+        val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
+        layoutManager=GridLayoutManager(this,spanCount)
         recycler_view.adapter=adapter
         recycler_view.layoutManager=layoutManager
         viewModel.mutableLiveData.observe(this, Observer {

@@ -96,7 +96,7 @@ class NestedPopupListDialog(context: Context, val arch: View,var list:List<Neste
         return -99999
     }
 
-    fun GetYoff(clickView: View, position: Int, parentYoff: Int, itemCount: Int): Int {
+    private fun GetYoff(clickView: View, position: Int, parentYoff: Int, itemCount: Int): Int {
         val location2 = IntArray(2)
         clickView.getLocationOnScreen(location2)
         if (parentYoff > 0) {

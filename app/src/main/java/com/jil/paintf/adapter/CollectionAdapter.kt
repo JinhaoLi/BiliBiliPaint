@@ -2,6 +2,7 @@ package com.jil.paintf.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -13,6 +14,10 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.ProgressBar
 import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -20,8 +25,10 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.DocDetailActivity
+import com.jil.paintf.custom.NestedPopupListDialog
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.CollectItem
+import com.jil.paintf.viewmodel.CollectionViewModel
 
 class CollectionAdapter(val mContext: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var data=arrayListOf<CollectItem>()
@@ -75,6 +82,33 @@ class CollectionAdapter(val mContext: Context) : RecyclerView.Adapter<RecyclerVi
                 }
                 DocDetailActivity.startDocDetailActivity(v.context, intArray, data[position].content.item.doc_id)
             }
+
+            holder.itemView.setOnLongClickListener {
+                val item = object :NestedPopupListDialog.NestedPopupItem("取消收藏"){
+                    override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
+//                        Toast.makeText(mContext, "取消收藏", Toast.LENGTH_SHORT).show()
+                        val viewModel =ViewModelProvider(mContext as AppCompatActivity).get(CollectionViewModel::class.java)
+                        viewModel.removeFavResult.observe(mContext, Observer {
+                            if(it.code==0){
+                                data.removeAt(position)
+                                notifyItemRemoved(position)
+                                viewModel.removeFavResult.removeObservers(mContext)
+                            }else
+                                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+
+                        })
+                        viewModel.doNetDeleteFav(data[position].fav_id)
+                        nestedPopupListDialog.dismiss()
+                    }
+                }
+                val list = arrayListOf<NestedPopupListDialog.NestedPopupItem>()
+                list.add(item)
+                val nestedPopupListDialog =NestedPopupListDialog(mContext,holder.title, list)
+                nestedPopupListDialog.show()
+                false
+            }
+
+
         }
 
         if(holder is BottomViewHolder){
