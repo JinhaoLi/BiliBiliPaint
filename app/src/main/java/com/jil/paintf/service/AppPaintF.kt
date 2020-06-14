@@ -56,7 +56,6 @@ class AppPaintF : Application() {
             }
 
             override fun onActivitySaveInstanceState(activity: Activity, outState: Bundle) {
-                //
             }
         })
     }

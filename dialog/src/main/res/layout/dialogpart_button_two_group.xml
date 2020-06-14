@@ -5,8 +5,7 @@
     android:orientation="vertical">
 
     <View
-        android:id="@+id/view18"
-        android:layout_width="match_parent"
+            android:layout_width="match_parent"
         android:layout_height="1dp"
         android:background="?attr/colorPrimary" />
 
@@ -25,8 +24,7 @@
             android:text="取消" />
 
         <View
-            android:id="@+id/view16"
-            android:layout_width="1dp"
+                android:layout_width="1dp"
             android:layout_height="match_parent"
             android:background="?attr/colorPrimary" />
 

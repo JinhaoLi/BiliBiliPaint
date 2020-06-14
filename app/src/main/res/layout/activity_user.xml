@@ -26,8 +26,6 @@
 
                 app:expandedTitleMarginBottom="100dp"
 
-                android:id="@+id/coll_toolbar__layout"
-
                 app:layout_scrollFlags="scroll|exitUntilCollapsed">
 
 

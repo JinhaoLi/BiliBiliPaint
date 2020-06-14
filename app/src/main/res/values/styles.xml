@@ -1,7 +1,4 @@
 <resources>
-
-    <!-- Base application theme. -->
-    <!--    Theme.AppCompat.Light.NoActionBar-->
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
@@ -9,19 +6,8 @@
         <item name="android:textColor">?attr/colorPrimaryDark</item>
         <item name="android:navigationBarColor">?attr/colorPrimary</item>
         <item name="android:statusBarColor">?attr/colorPrimary</item>
-
-<!--        <item name="android:textColorPrimary">@color/white</item>-->
         <item name="actionBarTheme">@style/BaseActionTheme</item>
-        <!--        <item name="tabIconTint">@color/white</item>-->
-        <!--        <item name="tabIndicatorColor">@color/green_light</item>-->
-        <!--        <item name="tabTextAppearance">@style/MyTabLayoutTextAppearanceInverse</item>-->
-        <!--        <item name="tabTextColor">@color/white</item>-->
-        <!--        <item name="tabRippleColor">@color/mtrl_tabs_ripple_color</item>-->
-        <!--        <item name="tabUnboundedRipple">true</item>-->
-        <!--        <item name="actionBarTabStyle">@style/Widget.AppCompat.Light.ActionBar.TabView</item>-->
-        <!--        <item name="actionBarTabBarStyle">@style/Widget.AppCompat.Light.ActionBar.TabBar</item>-->
-        <!--        <item name="actionBarTabTextStyle">@style/Widget.AppCompat.Light.ActionBar.TabText</item>-->
-        <!--        <item name="actionButtonStyle">@style/Widget.AppCompat.Light.ActionButton</item>-->
+
     </style>
 
     <style name="BaseActionTheme" parent="Base.ThemeOverlay.AppCompat.ActionBar">
@@ -84,9 +70,6 @@
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
-    <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar"/>
-    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light"/>
 
 
 </resources>
