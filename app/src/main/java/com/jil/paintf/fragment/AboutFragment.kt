@@ -26,7 +26,7 @@ class AboutFragment :LazyFragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         aboutList.clear()
-//        aboutList.add(project)
+        aboutList.add(project)
 //        aboutList.add(bilibili)
         val versionName =context!!.applicationContext
             .packageManager
@@ -96,9 +96,9 @@ class AboutFragment :LazyFragment(){
 
 
         @JvmStatic
-        private val project = object :SettingItem("项目地址","https://github.com/JinhaoLi",1){
+        private val project = object :SettingItem("项目地址","https://github.com/JinhaoLi/BiliBiliPaint",1){
             override fun click(v: View?) {
-                val uri = Uri.parse("https://github.com/JinhaoLi")
+                val uri = Uri.parse("https://github.com/JinhaoLi/BiliBiliPaint")
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 ActivityCompat.startActivity(v!!.context,intent,null)
             }

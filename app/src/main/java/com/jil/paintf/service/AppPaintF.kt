@@ -20,10 +20,15 @@ class AppPaintF : Application() {
         @JvmStatic
         lateinit var instance: AppPaintF
     }
+    private val Activity.simpleName get() = javaClass.simpleName
+    var FirstEntry = false
+    val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null
+    else DataRoomService.getDatabase().cookieDao.loadAll()[0]
     override fun onCreate() {
         super.onCreate()
         instance=this
         Logger.addLogAdapter(AndroidLogAdapter())
+        FirstEntry =PreferenceManager.getDefaultSharedPreferences(this).getBoolean("FirstEntry", true)
         SaveDir = PreferenceManager.getDefaultSharedPreferences(this).getString("SAVE_DIR", SaveDir)!!
         LoadLevel =PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {
@@ -59,11 +64,6 @@ class AppPaintF : Application() {
             }
         })
     }
-
-    private val Activity.simpleName get() = javaClass.simpleName
-
-    val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null
-    else DataRoomService.getDatabase().cookieDao.loadAll()[0]
 
     object ActivityCollector {
 

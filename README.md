@@ -1,6 +1,6 @@
 #画友
 
-用于浏览哔哩哔哩画友的第三方安卓app，目前正在完善，敬请期待
+本应用是用于浏览bilibili画友网站的第三方客户端,本着学习，交流的态度进行开发，不用于商业用途。
 
 # Preview
 |![Preview](./preview/2.png) | ![Preview](./preview/1.png) | ![Preview](./preview/3.png) |

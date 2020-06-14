@@ -48,7 +48,7 @@ abstract class BaseDialog(context: Context, layoutId:Int) : DialogInterface, Dia
         animator.start()
     }
 
-    override fun setTitle(title: CharSequence?) {
+    final override fun setTitle(title: CharSequence?) {
         headerView.findViewById<TextView>(R.id.title).text = title
     }
 
@@ -62,7 +62,7 @@ abstract class BaseDialog(context: Context, layoutId:Int) : DialogInterface, Dia
         return this
     }
 
-    override fun <T : View?> findViewById(id: Int): T? {
+    final override fun <T : View?> findViewById(id: Int): T? {
         return contentView.findViewById<T>(id)
     }
 

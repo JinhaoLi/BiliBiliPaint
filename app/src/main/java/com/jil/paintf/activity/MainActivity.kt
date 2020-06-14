@@ -24,6 +24,8 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
+import com.jil.dialog.BaseDialog
+import com.jil.dialog.TextShowDialog
 import com.jil.paintf.R
 import com.jil.paintf.adapter.MainPagerAdapter
 import com.jil.paintf.custom.BackgroundGridItem
@@ -125,6 +127,13 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         toggle.syncState()
         drawer_layout.addDrawerListener(toggle)
 
+        if(AppPaintF.instance.FirstEntry){
+            object : TextShowDialog(this,getString(R.string.first_info),"使用须知"){
+
+            }.setIcon(R.drawable.ic_info_outline_black_24dp).show()
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("FirstEntry",false).apply()
+        }
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -210,10 +219,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         return true
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
@@ -221,14 +226,6 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         outState.putInt("pager_select",viewpager.currentItem)
         outState.putInt("pager2_select",viewpager2.currentItem)
 
-    }
-
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-    }
-
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu): Boolean {

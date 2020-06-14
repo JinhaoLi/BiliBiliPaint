@@ -18,7 +18,6 @@ import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Result
 import com.jil.paintf.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.dialog_input.*
 import kotlinx.android.synthetic.main.fragment_user.*
 import java.util.ArrayList
 

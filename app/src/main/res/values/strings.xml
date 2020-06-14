@@ -16,4 +16,5 @@
     <string name="my_collection">我的收藏</string>
     <string name="Setting">设置</string>
     <string name="history">历史记录</string>
+    <string name="first_info">本应用是用于浏览bilibili画友网站的第三方客户端,本着学习，交流的态度进行开发，不用于商业用途。开源Github地址：https://github.com/JinhaoLi/BiliBiliPaint</string>
 </resources>
