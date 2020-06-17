@@ -8,7 +8,6 @@ import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,7 +26,6 @@ import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
 import com.jil.paintf.R;
 import com.jil.paintf.service.AppPaintF;
-import com.orhanobut.logger.Logger;
 import io.reactivex.*;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -209,7 +207,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
     }
 
     private void downLoadPic(final String urlStr,File into) throws IOException {
-       File f = new File(AppPaintF.Companion.getSaveDir());
+       File f = new File(AppPaintF.Companion.getSave_dir_path());
         if(!f.exists())
             if(!f.mkdir()){
                throw new FileNotFoundException("创建文件夹失败");
@@ -287,7 +285,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                 if(url==null){
                     return;
                 }
-                File f = new File(AppPaintF.Companion.getSaveDir());
+                File f = new File(AppPaintF.Companion.getSave_dir_path());
                 if(!f.exists())
                     f.mkdir();
                 String[] strs=urlStr.split("/");

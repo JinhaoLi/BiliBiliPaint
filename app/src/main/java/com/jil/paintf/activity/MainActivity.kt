@@ -36,11 +36,11 @@ import com.jil.paintf.viewmodel.MainViewModel
 import kotlinx.android.synthetic.main.activity_main.*
 
 
-class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelectedListener {
-    var adapter: MainPagerAdapter?=null
-    var adapter2: MainPagerAdapter?=null
-    var ico:ImageView?=null
-    var header:View? =null
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    lateinit var adapter: MainPagerAdapter
+    lateinit var adapter2: MainPagerAdapter
+    lateinit var ico: ImageView
+    lateinit var header: View
     lateinit var viewModel: MainViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,37 +48,37 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         setContentView(R.layout.activity_main)
         setSupportActionBar(toolbar!!)
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        viewModel=ViewModelProvider(this).get(MainViewModel::class.java)
-        adapter =MainPagerAdapter(supportFragmentManager,0)
-        viewpager!!.adapter =adapter
+        viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
+        adapter = MainPagerAdapter(supportFragmentManager, 0)
+        viewpager!!.adapter = adapter
 
-        adapter2 =MainPagerAdapter(supportFragmentManager,1)
-        viewpager2!!.adapter =adapter2
+        adapter2 = MainPagerAdapter(supportFragmentManager, 1)
+        viewpager2!!.adapter = adapter2
 
         tab_title!!.setupWithViewPager(viewpager)
 
-        header=nav_view!!.getHeaderView(0)
-        ico =header!!.findViewById(R.id.imageView3)
+        header = nav_view!!.getHeaderView(0)
+        ico = header.findViewById(R.id.imageView3)
 
         viewModel.myInfoMutableLiveData.observe(this, Observer {
-            changHeaderView(it.data.face,it.data.uname)
+            changHeaderView(it.data.face, it.data.uname)
         })
 
-        if(AppPaintF.instance.cookie!=null){
+        if (AppPaintF.instance.cookie != null) {
             viewModel.doNetMyInfo()
-        }else{
+        } else {
             changHeaderView()
         }
 
-        ico!!.setOnClickListener {
-            if(AppPaintF.instance.cookie==null){
-                startActivityForResult(Intent(this,LoginActivity::class.java),3)
+        ico.setOnClickListener {
+            if (AppPaintF.instance.cookie == null) {
+                startActivityForResult(Intent(this, LoginActivity::class.java), 3)
                 return@setOnClickListener
             }
-            MySelfActivity.startUserActivity(this,AppPaintF.instance.cookie!!.DedeUserID)
+            MySelfActivity.startUserActivity(this, AppPaintF.instance.cookie!!.DedeUserID)
         }
 
-        main_tabs!!.addOnTabSelectedListener(object :TabLayout.OnTabSelectedListener{
+        main_tabs!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabReselected(tab: TabLayout.Tab?) {
 
             }
@@ -88,27 +88,27 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
             }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                if(main_tabs!!.selectedTabPosition==0){
-                    viewpager!!.visibility= View.VISIBLE
-                    viewpager2!!.visibility= View.GONE
+                if (main_tabs!!.selectedTabPosition == 0) {
+                    viewpager!!.visibility = View.VISIBLE
+                    viewpager2!!.visibility = View.GONE
                     tab_title!!.setupWithViewPager(viewpager)
-                }else{
-                    viewpager2!!.visibility= View.VISIBLE
-                    viewpager!!.visibility= View.GONE
+                } else {
+                    viewpager2!!.visibility = View.VISIBLE
+                    viewpager!!.visibility = View.GONE
                     tab_title!!.setupWithViewPager(viewpager2)
                 }
             }
 
         })
-        if(savedInstanceState!=null){
-            main_tabs!!.selectTab(main_tabs!!.getTabAt(savedInstanceState.getInt("main_tabs",0)))
-            viewpager!!.currentItem=savedInstanceState.getInt("pager_select",0)
-            viewpager2!!.currentItem=savedInstanceState.getInt("pager2_select",0)
+        if (savedInstanceState != null) {
+            main_tabs!!.selectTab(main_tabs!!.getTabAt(savedInstanceState.getInt("main_tabs", 0)))
+            viewpager!!.currentItem = savedInstanceState.getInt("pager_select", 0)
+            viewpager2!!.currentItem = savedInstanceState.getInt("pager2_select", 0)
         }
 
         nav_view!!.setNavigationItemSelectedListener(this)
 
-        val toggle  = ActionBarDrawerToggle(
+        val toggle = ActionBarDrawerToggle(
             this,
             drawer_layout,
             toolbar,
@@ -117,31 +117,31 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
         )
 
         floatingActionButton.setOnClickListener {
-            if(main_tabs.selectedTabPosition==0){
-                startActivity(Intent(this,UpLoadIllustActivity::class.java))
-            }else if(main_tabs.selectedTabPosition==1){
-                startActivity(Intent(this,UpLoadPhotoActivity::class.java))
+            if (main_tabs.selectedTabPosition == 0) {
+                startActivity(Intent(this, UpLoadIllustActivity::class.java))
+            } else if (main_tabs.selectedTabPosition == 1) {
+                startActivity(Intent(this, UpLoadPhotoActivity::class.java))
             }
 
         }
         toggle.syncState()
         drawer_layout.addDrawerListener(toggle)
 
-        if(AppPaintF.instance.FirstEntry){
-            object : TextShowDialog(this,getString(R.string.first_info),"使用须知"){
+        if (AppPaintF.instance.FirstEntry) {
+            object : TextShowDialog(this, getString(R.string.first_info), getString(R.string.first_tips)) {
 
             }.setIcon(R.drawable.ic_info_outline_black_24dp).show()
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("FirstEntry",false).apply()
+            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("FirstEntry", false).apply()
         }
 
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if(requestCode==3){
-            if(resultCode==Activity.RESULT_OK&&data!=null){
+        if (requestCode == 3) {
+            if (resultCode == Activity.RESULT_OK && data != null) {
                 viewModel.doNetMyInfo()
             }
-            if(resultCode==-2){
+            if (resultCode == -2) {
                 //代表退出登录
                 changHeaderView()
             }
@@ -154,11 +154,14 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
      * default icoUrl = https://static.hdslb.com/images/akari.jpg
      * default name = 未登录
      */
-    private fun changHeaderView(icoUrl: String="https://static.hdslb.com/images/akari.jpg", name: String="未登录") {
+    private fun changHeaderView(
+        icoUrl: String = getString(R.string.no_header_img_url),
+        name: String = getString(R.string.unlogin)
+    ) {
         Glide.with(this@MainActivity).load(icoUrl)
-            .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(this@MainActivity)))
-            .into(ico!!)
-        header!!.findViewById<TextView>(R.id.textView3).text=name
+            .transform(GlideCircleWithBorder(2, ThemeUtil.getColorAccent(this@MainActivity)))
+            .into(ico)
+        header.findViewById<TextView>(R.id.textView3).text = name
     }
 
 
@@ -184,7 +187,7 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                     gridItems(items) { _, index, item ->
                         //it.summary = item.title
                         PreferenceManager.getDefaultSharedPreferences(this@MainActivity)
-                            .apply { edit().putInt("THEME", index).apply()}
+                            .apply { edit().putInt("THEME", index).apply() }
 
                         action = {
                             AppPaintF.ActivityCollector.recreate()
@@ -199,18 +202,18 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
                 //startActivity(Intent(this, ThemeActivity::class.java))
             }
 
-            R.id.nav_setting->{
-                startActivity(Intent(this,SettingsActivity::class.java))
+            R.id.nav_setting -> {
+                startActivity(Intent(this, SettingsActivity::class.java))
             }
 
-            R.id.nav_history->{
-                startActivity(Intent(this,LocationHistoryActivity::class.java))
+            R.id.nav_history -> {
+                startActivity(Intent(this, LocationHistoryActivity::class.java))
             }
 
-            R.id.nav_collection->{
-                startActivity(Intent(this,CollectionActivity::class.java))
+            R.id.nav_collection -> {
+                startActivity(Intent(this, CollectionActivity::class.java))
             }
-            else->{
+            else -> {
 
             }
 
@@ -222,9 +225,9 @@ class MainActivity : AppCompatActivity(),NavigationView.OnNavigationItemSelected
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putInt("main_tabs",main_tabs.selectedTabPosition)
-        outState.putInt("pager_select",viewpager.currentItem)
-        outState.putInt("pager2_select",viewpager2.currentItem)
+        outState.putInt("main_tabs", main_tabs.selectedTabPosition)
+        outState.putInt("pager_select", viewpager.currentItem)
+        outState.putInt("pager2_select", viewpager2.currentItem)
 
     }
 

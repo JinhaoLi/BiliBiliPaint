@@ -39,7 +39,7 @@ class SettingsActivity : AppCompatActivity() {
             CAN_SELECT_DIR->{
                 for (element in grantResults) {
                     if (element == PackageManager.PERMISSION_DENIED) {
-                        Toast.makeText(this, "没权限！", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, getString(R.string.permission_denied), Toast.LENGTH_SHORT).show()
                         return
                     }
                 }
@@ -52,10 +52,10 @@ class SettingsActivity : AppCompatActivity() {
                                 PreferenceManager.getDefaultSharedPreferences(this@SettingsActivity)
                                     .apply {
                                         edit().let {
-                                            it.putString("SAVE_DIR",path).apply()
+                                            it.putString(AppPaintF.SAVE_DIR,path).apply()
                                         }
                                     }
-                                AppPaintF.SaveDir =path
+                                AppPaintF.save_dir_path =path
                                 adapter!!.notifyDataSetChanged()
                             }
                         }).open()

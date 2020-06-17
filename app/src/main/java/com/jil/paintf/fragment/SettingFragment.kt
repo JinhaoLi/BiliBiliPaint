@@ -2,10 +2,6 @@ package com.jil.paintf.fragment
 
 import android.Manifest
 import android.app.AlertDialog
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.os.Environment
@@ -15,7 +11,6 @@ import android.view.ViewGroup
 import android.widget.Switch
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jil.dirpicker.DirPicker
@@ -24,9 +19,7 @@ import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.SettingItem
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
-import com.jil.paintf.service.AppPaintF.Companion.SaveDir
-import kotlinx.android.synthetic.main.activity_doc_detail.*
-import kotlinx.android.synthetic.main.fragment_setting.*
+import com.jil.paintf.service.AppPaintF.Companion.save_dir_path
 import kotlinx.android.synthetic.main.fragment_setting.recyclerview
 
 
@@ -99,7 +92,7 @@ class SettingFragment :LazyFragment(){
                 builder.create().show()
             }
         }
-        val selectDir =object:SettingItem("图片保存位置", SaveDir,3){
+        val selectDir =object:SettingItem("图片保存位置", save_dir_path,3){
             override fun click(v: View?) {
                 if(checkReadWrite()){
                     DirPicker.instance(requireContext()).startWith(Environment.getExternalStorageDirectory().path)
@@ -112,7 +105,7 @@ class SettingFragment :LazyFragment(){
                                             it.putString("SAVE_DIR",path).apply()
                                         }
                                     }
-                                SaveDir =path
+                                save_dir_path =path
                                 description=path
                                 adapter!!.notifyDataSetChanged()
 
