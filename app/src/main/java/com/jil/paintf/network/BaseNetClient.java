@@ -1,5 +1,6 @@
 package com.jil.paintf.network;
 
+import android.os.Build;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -36,7 +37,13 @@ public class BaseNetClient {
                 }
             };
             HttpLoggingInterceptor loggingInterceptor =new HttpLoggingInterceptor(logger);
-            loggingInterceptor.level(HttpLoggingInterceptor.Level.BASIC);
+
+//            if(AppPaintF.isDebug()){
+                loggingInterceptor.level(HttpLoggingInterceptor.Level.BASIC);
+//            }else {
+//                loggingInterceptor.level(HttpLoggingInterceptor.Level.NONE);
+//            }
+
             OkHttpClient.Builder builder =new OkHttpClient.Builder().addNetworkInterceptor(new Interceptor() {
                 @NotNull
                 @Override

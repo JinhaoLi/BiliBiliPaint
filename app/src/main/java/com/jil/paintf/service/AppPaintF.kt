@@ -2,13 +2,19 @@ package com.jil.paintf.service
 
 import android.app.Activity
 import android.app.Application
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.pm.ApplicationInfo
 import android.os.Bundle
+import android.os.Debug
 import android.os.Environment
 import androidx.preference.PreferenceManager
 import com.jil.paintf.network.NetCookie
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import java.io.File
+import java.lang.Exception
+
 
 class AppPaintF : Application() {
     companion object {
@@ -20,6 +26,8 @@ class AppPaintF : Application() {
         var save_dir_path =Environment.getExternalStorageDirectory().path+ File.separator+Environment.DIRECTORY_DOWNLOADS
         @JvmStatic
         lateinit var instance: AppPaintF
+        @JvmStatic
+        var isDebug=true
     }
     private val Activity.simpleName get() = javaClass.simpleName
     var FirstEntry = false
@@ -28,6 +36,7 @@ class AppPaintF : Application() {
     override fun onCreate() {
         super.onCreate()
         instance=this
+        isDebug =isDebugState()
         Logger.addLogAdapter(AndroidLogAdapter())
         FirstEntry =PreferenceManager.getDefaultSharedPreferences(this).getBoolean("FirstEntry", true)
         save_dir_path = PreferenceManager.getDefaultSharedPreferences(this).getString(SAVE_DIR, save_dir_path)!!
@@ -87,6 +96,21 @@ class AppPaintF : Application() {
                 activityList[i].recreate()
             }
         }
+    }
+
+    fun isDebugState():Boolean{
+        var isdebug =true
+        try {
+            val info=instance.applicationContext.applicationInfo
+            val isdebug =info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+        }catch (e:Exception){
+
+            val clipboard = instance.getSystemService(Application.CLIPBOARD_SERVICE) as ClipboardManager
+            val clipdata =ClipData.newPlainText(null,e.message)
+            clipboard.setPrimaryClip(clipdata)
+        }
+        Logger.i("检测是否debug"+isdebug)
+        return isdebug
     }
 
 

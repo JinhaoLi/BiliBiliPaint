@@ -32,3 +32,5 @@ public static *** e(...);
 public static *** w(...);
 
 }
+
+-keep class com.jil.paintf.repository.**{*;}
