@@ -13,13 +13,14 @@
             android:background="?attr/colorPrimary"
             android:theme="?attr/actionBarTheme"
             android:minHeight="?attr/actionBarSize"
-            tools:layout_editor_absoluteX="3dp" android:id="@+id/toolbar5" app:layout_constraintTop_toTopOf="parent"/>
+            tools:layout_editor_absoluteX="3dp"
+            android:id="@+id/toolbar5" app:layout_constraintTop_toTopOf="parent"/>
     <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:inputType="textPersonName"
             android:ems="10"
-            android:backgroundTint="@color/white"
+            android:backgroundTint="@android:color/darker_gray"
             android:id="@+id/editText2"
             android:maxLength="20"
             app:layout_constraintEnd_toEndOf="parent"
@@ -31,17 +32,21 @@
             android:id="@+id/recyclerView"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView29" app:layout_constraintBottom_toBottomOf="parent"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView29" app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="8dp"/>
     <EditText
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:textSize="14sp"
             android:minLines="1"
+            android:backgroundTint="@android:color/darker_gray"
             android:id="@+id/editText3"
-            android:backgroundTint="@color/white"
-            app:layout_constraintTop_toBottomOf="@+id/editText2" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" android:hint="请输入作品介绍，临摹作品请一定要注明作品的出处来源"/>
+            app:layout_constraintTop_toBottomOf="@+id/editText2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:hint="请输入作品介绍，临摹作品请一定要注明作品的出处来源"
+            android:layout_marginTop="8dp"/>
     <RadioGroup
             android:layout_width="0dp"
             android:orientation="horizontal"
@@ -99,7 +104,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView26"
-            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/radioGroup1"/>
+            app:layout_constraintStart_toStartOf="parent" app:layout_constraintTop_toBottomOf="@+id/radioGroup1"
+            android:layout_marginTop="8dp"/>
     <TextView
             android:text="不设置转载权限"
             android:gravity="center"
@@ -108,7 +114,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:id="@+id/textView27" app:layout_constraintStart_toEndOf="@+id/textView26"
-            app:layout_constraintTop_toBottomOf="@+id/radioGroup1" app:layout_constraintEnd_toStartOf="@+id/button2"/>
+            app:layout_constraintTop_toBottomOf="@+id/radioGroup1" app:layout_constraintEnd_toStartOf="@+id/button2"
+            android:layout_marginTop="8dp"/>
     <ImageButton
             android:text="Button"
             android:background="@null"
@@ -116,27 +123,28 @@
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:id="@+id/button2"
-            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/radioGroup1"/>
+            app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toBottomOf="@+id/radioGroup1"
+            android:layout_marginTop="8dp"/>
     <TextView
             android:text="添加标签："
             android:textSize="18sp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView28" app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView26"/>
+            app:layout_constraintTop_toBottomOf="@+id/textView26" android:layout_marginTop="8dp"/>
     <androidx.recyclerview.widget.RecyclerView
             android:layout_width="0dp"
             android:layout_height="100dp"
             app:layout_constraintTop_toBottomOf="@+id/textView27"
             app:layout_constraintEnd_toEndOf="parent" app:layout_constraintStart_toEndOf="@+id/textView28"
-            android:id="@+id/tags"/>
+            android:id="@+id/tags" android:layout_marginTop="8dp"/>
     <TextView
             android:text="最多可上传20张哦 (支持格式 jpg、png，宽高尺寸须大于420像素)"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/textView29" app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tags"/>
+            app:layout_constraintTop_toBottomOf="@+id/tags" android:layout_marginTop="16dp"/>
     <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

@@ -339,12 +339,12 @@ class DocDetailActivity : AppCompatActivity(),
                         if(replyAdapter!=null&&replyAdapter!!.data.size>600){
                             replyAdapter!!.data.removeAll(replyAdapter!!.data.subList(0,200))
                         }
-                        viewModel!!.getReplyData(idArray!![current],false)
+                        viewModel!!.doNetReply(idArray!![current],false)
                     }
                 }
             }
         })
-        viewModel!!.getReplyData(idArray!![current],true).observe(this, Observer<List<Reply>> { replyData ->
+        viewModel!!.liveReplyData.observe(this, Observer<List<Reply>> { replyData ->
             if(replyData.isEmpty())
                 return@Observer
             if(replyAdapter==null){
@@ -408,6 +408,7 @@ class DocDetailActivity : AppCompatActivity(),
                 replyAdapter!!.notifyItemInserted(oldSize-20)
             }
         })
+        viewModel!!.doNetReply(idArray!![current],true)
 
         imageView10!!.setOnClickListener {
             if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){

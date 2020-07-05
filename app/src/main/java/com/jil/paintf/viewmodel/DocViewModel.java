@@ -1,12 +1,8 @@
 package com.jil.paintf.viewmodel;
 
-import android.media.TimedMetaData;
-import android.widget.Toast;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
 import com.jil.paintf.repository.*;
 import com.jil.paintf.service.DataRoomService;
-import com.orhanobut.logger.Logger;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
 import io.reactivex.ObservableOnSubscribe;
@@ -25,13 +21,14 @@ public class DocViewModel extends BaseViewModel {
 
     //==================================评论相关数据
     private MutableLiveData<ReplyData> reply2Data;
-    private MutableLiveData<List<Reply>> liveReplyData;
+    public MutableLiveData<List<Reply>> liveReplyData;
     private List<Reply> replyData =new ArrayList<>();
     boolean isLoading =false;
     int pn=1;
     int maxpn=2;
 
     public DocViewModel() {
+        liveReplyData =new MutableLiveData<>();
         data=new MutableLiveData<>();
     }
 
@@ -48,8 +45,8 @@ public class DocViewModel extends BaseViewModel {
 
             @Override
             public void onNext(DocRepository docRepository) {
-                saveHis(docRepository.getData());
                 data.postValue(docRepository.getData());
+                saveHis(docRepository.getData());
             }
 
             @Override
@@ -113,7 +110,13 @@ public class DocViewModel extends BaseViewModel {
         return reply2Data;
     }
 
-    public MutableLiveData<List<Reply>> getReplyData(final int id, boolean resetPage) {
+
+    public void resetReply(){
+        isLoading=false;
+        pn =1;
+        replyData.clear();
+    }
+    public void doNetReply(final int id, boolean resetPage) {
         if(resetPage){
             isLoading=false;
             pn =1;
@@ -122,14 +125,11 @@ public class DocViewModel extends BaseViewModel {
         if(liveReplyData ==null){
             liveReplyData =new MutableLiveData<>();
         }
-        if(isLoading)
-            return liveReplyData;
         if(pn!=-1)//-1 代表评论已经全部加载完成
         retrofitRepository.getDocReply(pn,id).subscribe(new Observer<ReplyRepository>() {
             @Override
             public void onSubscribe(Disposable d) {
                 isLoading=true;
-//                Logger.d("正在加载第"+pn+"页评论！");
             }
 
             @Override
@@ -139,13 +139,11 @@ public class DocViewModel extends BaseViewModel {
                     return;
                 }
                 replyData.addAll(list);
-                liveReplyData.postValue(replyData);
+                liveReplyData.postValue(list);
                 if(replyRepository.getData().getPage().getCount()%20==0)
                     maxpn=replyRepository.getData().getPage().getCount()/20;
                 else
                     maxpn=(replyRepository.getData().getPage().getCount()/20)+1;
-
-
             }
 
             @Override
@@ -156,17 +154,12 @@ public class DocViewModel extends BaseViewModel {
             @Override
             public void onComplete() {
                 isLoading=false;
-                //Logger.d("第"+pn+"页评论完成加载！"+"共"+replyData.size()+"条评论！");
                 if(pn!=maxpn){
                     pn++;
-                    //getReplyData(id,false);
                 }else {
                     pn=-1;
-                    //liveReplyData.postValue(replyData);
-//                    Logger.d("共"+maxpn+"页，加载评论完成！");
                 }
             }
         });
-        return liveReplyData;
     }
 }

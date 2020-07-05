@@ -126,6 +126,7 @@ class UpLoadPhotoActivity : AppCompatActivity() {
         }
 
         viewModel.createLiveData.observe(this, Observer {
+            Toast.makeText(this, "发布成功！", Toast.LENGTH_SHORT).show()
             finish()
         })
     }

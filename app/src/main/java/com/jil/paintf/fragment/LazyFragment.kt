@@ -13,22 +13,20 @@ abstract class LazyFragment : Fragment(){
     var rootView:View? =null
     override fun onResume() {
         super.onResume()
-        if (!isLoaded) {
-            isLoaded = true
+        if (!isLoaded.also { isLoaded = true }) {
             loadAndObserveData()
         }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
-        if (rootView !=null ) {
-            if(rootView!!.parent!=null){
-                (rootView!!.parent as ViewGroup).removeView(rootView)
-            }
-        }
+//        if (rootView !=null ) {
+//            if(rootView!!.parent!=null){
+//                (rootView!!.parent as ViewGroup).removeView(rootView)
+//            }
+//        }
 //        Logger.d(arguments?.getInt("param1").toString()+"onDestroyView()")
     }
-
 
     protected abstract fun loadAndObserveData()
 
