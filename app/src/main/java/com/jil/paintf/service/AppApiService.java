@@ -262,4 +262,55 @@ public interface AppApiService {
      */
     @GET("https://api.vc.bilibili.com/user_plus/v1/Fav/getMyFav")
     Observable<CollectionResult> getMCollection(@Query("biz_type")int biz_type,@Query("page")int page,@Query("pagesize")int pagesize);
+
+    /**
+     * 评论点赞
+     * oid: 842217
+     * type: 11
+     * rpid: 468257951
+     * action: 1   点赞/ 0   取消点赞
+     * jsonp: jsonp
+     * csrf: f4137821b428fbaa33de8efbe83381a3
+     *
+     * @return  {"code":0,"message":"0","ttl":1}
+     */
+    @FormUrlEncoded
+    @POST("/x/v2/reply/action")
+    Observable<UserOperateResult> postOperateVoteReply(@Field("oid")long oid,@Field("type")int type,@Field("rpid")long rpid
+                                    ,@Field("action")int action,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
+
+
+    /**
+     * 评论
+     * oid: 915467
+     * type: 11
+     * root: 597810098
+     * parent: 597810098
+     * message: 哈哈，我也是[呲牙]
+     * plat: 1
+     * jsonp: jsonp
+     * csrf: f4137821b428fbaa33de8efbe83381a3
+     * {"code":0,"message":"0","ttl":1,"data":{"success_action":0,"success_toast":"发送成功","need_captcha":false,"url":"","rpid":3145948149,"rpid_str":"3145948149","dialog":3145948149,"dialog_str":"3145948149","root":597810098,"root_str":"597810098","parent":597810098,"parent_str":"597810098","emote":{"[呲牙]":{"id":1902,"package_id":1,"state":0,"type":1,"attr":0,"text":"[呲牙]","url":"http://i0.hdslb.com/bfs/emote/b5a5898491944a4268360f2e7a84623149672eb6.png","meta":{"size":1},"mtime":1594022109}},"reply":{"rpid":3145948149,"oid":915467,"type":11,"mid":75965179,"root":597810098,"parent":597810098,"dialog":3145948149,"count":0,"rcount":0,"state":0,"fansgrade":0,"attr":0,"ctime":1594169030,"rpid_str":"3145948149","root_str":"597810098","parent_str":"597810098","like":0,"action":0,"member":{"mid":"75965179","uname":"JIL丷","sex":"保密","sign":"未来，永远，笑颜，希望","avatar":"http://i0.hdslb.com/bfs/face/b6e645970e5b8417bcd671753e2d4a0021671cb6.jpg","rank":"10000","DisplayRank":"0","level_info":{"current_level":5,"current_min":0,"current_exp":0,"next_exp":0},"pendant":{"pid":0,"name":"","image":"","expire":0,"image_enhance":""},"nameplate":{"nid":70,"name":"风纪精英","image":"http://i0.hdslb.com/bfs/face/cb3889a15126ed1a1aac024102e3f828ebd8926a.png","image_small":"http://i2.hdslb.com/bfs/face/86ad99140085962e0df02d08794b1de56b0f54f4.png","level":"普通勋章","condition":"风纪委员连任期数 \u003e= 3"},"official_verify":{"type":-1,"desc":""},"vip":{"vipType":1,"vipDueDate":1585065600000,"dueRemark":"","accessStatus":0,"vipStatus":0,"vipStatusWarn":"","themeType":0,"label":{"path":"","text":"","label_theme":""}},"fans_detail":null,"following":0,"is_followed":0,"user_sailing":{"pendant":null,"cardbg":null,"cardbg_with_focus":null}},"content":{"message":"哈哈，我也是[呲牙]","plat":1,"device":"","members":[],"emote":{"[呲牙]":{"id":1902,"package_id":1,"state":0,"type":1,"attr":0,"text":"[呲牙]","url":"http://i0.hdslb.com/bfs/emote/b5a5898491944a4268360f2e7a84623149672eb6.png","meta":{"size":1},"mtime":1594022109}},"jump_url":{},"max_line":999},"replies":null,"assist":0,"folder":{"has_folded":false,"is_folded":false,"rule":""},"up_action":{"like":false,"reply":false},"show_follow":false}}}
+     */
+    @FormUrlEncoded
+    @POST("https://api.bilibili.com/x/v2/reply/add")
+    Observable<AfterReplyResult> postReply(@Field("oid")int oid,@Field("type")int type,@Field("root")long root
+            ,@Field("parent")long parent,@Field("message")String message,@Field("plat")int plat
+            ,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
+
+    /**
+     * 回复作品
+     * @param oid
+     * @param type
+     * @param message
+     * @param plat
+     * @param jsonp
+     * @param csrf
+     * @return
+     */
+    @FormUrlEncoded
+    @POST("/x/v2/reply/add")
+    Observable<AfterReplyResult> postReplyArt(@Field("oid")int oid,@Field("type")int type
+            ,@Field("message")String message,@Field("plat")int plat
+            ,@Field("jsonp")String jsonp,@Field("csrf")String csrf);
 }

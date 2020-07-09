@@ -2,25 +2,23 @@ package com.jil.paintf.activity
 
 import android.content.Intent
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
-import com.bumptech.glide.Glide
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.HisItem
 import com.jil.paintf.viewmodel.HistoryViewModel
 import kotlinx.android.synthetic.main.activity_location_history.*
-import java.util.ArrayList
+import java.util.*
 
 class LocationHistoryActivity : AppCompatActivity() {
     var adapter:SuperRecyclerAdapter<HisItem>?=null

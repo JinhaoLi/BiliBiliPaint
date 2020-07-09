@@ -48,8 +48,23 @@ class SettingFragment :LazyFragment(){
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         settingList.clear()
+        val animator =object :SettingItem("界面动画",if (AppPaintF.instance.enableAnimator)"启用" else "禁用",AppPaintF.instance.enableAnimator,4){
+            override fun click(v: View?) {
+                if(v is Switch){
+                    isSwitchOpen=v.isChecked
+                    if(v.isChecked){
+                        description="启用"
+                    }else{
+                        description="禁用"
+                    }
+                    AppPaintF.instance.enableAnimator =v.isChecked
+                    PreferenceManager.getDefaultSharedPreferences(v.context).edit().putBoolean("EnableAnimator", v.isChecked).apply()
+                    adapter!!.notifyDataSetChanged()
 
+                }
+            }
 
+        }
         val loadLevel =object:SettingItem("图片质量",picDescription(),2){
             override fun click(v: View?) {
                 val checkItem=when(AppPaintF.LoadLevel){
@@ -127,6 +142,7 @@ class SettingFragment :LazyFragment(){
 
         settingList.add(loadLevel)
         settingList.add(selectDir)
+        settingList.add(animator)
     }
 
     private fun checkReadWrite(): Boolean {

@@ -32,6 +32,7 @@ public class ImageSlideTransformer implements ViewPager.PageTransformer {
         } else if (position >= 1) {//position大于等于1的时候，代表page已经位于中心item的最右边
             page.setScaleX(scaleFactor);
             page.setScaleY(scaleFactor);
+//            page.setRotationX();
             page.setRotationY(rotate);
         }
     }

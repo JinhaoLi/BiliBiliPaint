@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">画友</string>
+    <string name="app_name">bixiv</string>
     <string name="change_theme">更换主题</string>
     <string name="apply">应用</string>
     <string name="title_activity_user">UserActivity</string>

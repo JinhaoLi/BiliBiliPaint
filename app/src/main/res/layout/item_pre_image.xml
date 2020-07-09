@@ -3,6 +3,7 @@
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:scaleType="fitStart"
+           android:transitionName="mainimage"
            android:src="@mipmap/ic_launcher"
            android:adjustViewBounds="true"
            android:id="@+id/imageView4">

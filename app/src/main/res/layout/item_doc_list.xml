@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
                                    xmlns:app="http://schemas.android.com/apk/res-auto"
-                                   xmlns:tools="http://schemas.android.com/tools"
                                    android:orientation="vertical"
                                    android:layout_width="wrap_content"
                                    android:layout_marginTop="5dp"
@@ -19,7 +18,7 @@
         <ImageView
                 android:layout_width="200dp"
                 android:adjustViewBounds="true"
-                android:transitionName="shareElement"
+                android:transitionName="mainimage"
                 android:layout_height="200dp" app:srcCompat="@drawable/empty_hint" android:id="@+id/imageView"
                 android:scaleType="centerCrop" app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"

@@ -133,7 +133,7 @@ data class UserSailing(
 )
 
 data class Reply(
-    val action: Int,
+    var action: Int,
     val assist: Int,
     val attr: Int,
     val content: Content,

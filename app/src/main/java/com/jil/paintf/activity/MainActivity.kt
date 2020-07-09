@@ -2,7 +2,6 @@ package com.jil.paintf.activity
 
 import android.app.Activity
 import android.content.Intent
-import android.content.res.Configuration
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -24,7 +23,6 @@ import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
 import com.bumptech.glide.Glide
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
-import com.jil.dialog.BaseDialog
 import com.jil.dialog.TextShowDialog
 import com.jil.paintf.R
 import com.jil.paintf.adapter.MainPagerAdapter
@@ -182,7 +180,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 )
                 MaterialDialog(this, BottomSheet(LayoutMode.WRAP_CONTENT)).show {
                     var action: (() -> Unit)? = null
-
                     title(R.string.change_theme)
                     gridItems(items) { _, index, item ->
                         //it.summary = item.title

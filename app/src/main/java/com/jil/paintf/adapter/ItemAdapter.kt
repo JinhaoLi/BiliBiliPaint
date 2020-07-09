@@ -6,9 +6,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -114,8 +116,6 @@ class ItemAdapter(private val mContext: Context
             holder.image.setOnClickListener { v ->
                 if(itemOnClickListener!=null)
                     itemOnClickListener!!.onItemClick(null,v,position,position.toLong())
-
-                //startDocDetailActivity(v.context,intArray,data[position].item.doc_id)
             }
 
             holder.ico.setOnClickListener{

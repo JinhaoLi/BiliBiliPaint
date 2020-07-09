@@ -10,6 +10,7 @@ import androidx.annotation.NonNull;
 import com.bumptech.glide.load.engine.bitmap_recycle.BitmapPool;
 import com.bumptech.glide.load.resource.bitmap.BitmapTransformation;
 import com.bumptech.glide.request.BaseRequestOptions;
+import org.jetbrains.annotations.NotNull;
 
 import java.security.MessageDigest;
 
@@ -31,7 +32,7 @@ public class GlideCircleWithBorder extends BitmapTransformation {
         mBorderPaint.setStrokeWidth(mBorderWidth);
     }
 
-    protected Bitmap transform(BitmapPool pool, Bitmap toTransform, int outWidth, int outHeight) {
+    protected Bitmap transform(@NotNull BitmapPool pool, @NotNull Bitmap toTransform, int outWidth, int outHeight) {
         return circleCrop(pool, toTransform);
     }
 
@@ -44,9 +45,6 @@ public class GlideCircleWithBorder extends BitmapTransformation {
         int y = (source.getHeight() - size) / 2;
         Bitmap squared = Bitmap.createBitmap(source, x, y, size, size);
         Bitmap result = pool.get(size, size, Bitmap.Config.ARGB_8888);
-        if (result == null) {
-            result = Bitmap.createBitmap(size, size, Bitmap.Config.ARGB_8888);
-        }
         //创建画笔 画布 手动描绘边框
         Canvas canvas = new Canvas(result);
         Paint paint = new Paint();

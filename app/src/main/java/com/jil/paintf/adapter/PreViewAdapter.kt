@@ -2,8 +2,12 @@ package com.jil.paintf.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.drawable.Drawable
+import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -24,8 +28,16 @@ import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.service.AppPaintF.Companion.LoadLevel
+import com.jil.paintf.service.AppPaintF.Companion.save_dir_path
 import com.jil.paintf.viewmodel.DocViewModel
-import java.lang.Exception
+import io.reactivex.Observable
+import io.reactivex.ObservableSource
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import okhttp3.*
+import java.io.*
+import java.net.MalformedURLException
+import java.net.URL
 
 /**==============================
  *===============================
@@ -35,15 +47,49 @@ import java.lang.Exception
  *===============================
  **/
 class PreViewAdapter(
-    val docData: DocData,
+    var docData: DocData,
     val viewModel: DocViewModel,
-    val viewLifecycleOwner: LifecycleOwner,
-    val recyclerPage: RecyclerView
+    val viewLifecycleOwner: LifecycleOwner
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var loadLevel:String = when (LoadLevel) {
         1080 -> "@1080w_1e.webp"
         5000 -> ""
         else -> "@720w_1e.webp"
+    }
+
+    lateinit var mOperateVote: (view:View ) -> Unit
+    fun setOperateVote(listener:(view:View) -> Unit ){
+        mOperateVote =listener
+    }
+
+    lateinit var mOperateCollect:(view:View ) ->Unit
+    fun setOperateCollect(listener:(view:View)->Unit){
+        mOperateCollect =listener
+    }
+
+    lateinit var mOperateShare:() ->Unit
+    fun setOperateShare(listener:()->Unit){
+        mOperateShare =listener
+    }
+
+    lateinit var mOperateDownload:(position:Int) ->Unit
+    fun setOperateDownload(listener:(position:Int)->Unit){
+        mOperateDownload =listener
+    }
+
+    lateinit var mOperateArtWork:(view:View ) ->Unit
+    fun setOperateArtWork(listener:(view:View)->Unit){
+        mOperateArtWork =listener
+    }
+
+    lateinit var mOperateVoteReply:(reply:Reply,position:Int) -> Unit
+    fun setOprateVoteReply(listener: (reply:Reply,position:Int) -> Unit){
+        mOperateVoteReply=listener
+    }
+
+    lateinit var mOperateReplyArt:(view:View) ->Unit
+    fun setOperateReplyArt(listener:(view:View)->Unit){
+        mOperateReplyArt=listener
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
@@ -101,36 +147,62 @@ class PreViewAdapter(
         animator.start()
     }
 
+    var pic: File? = null
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is PreImageItem){
             val image_url =docData.item.pictures[position-1].img_src
             holder.image.visibility=View.INVISIBLE
-            Glide.with(holder.itemView.context).load(image_url+loadLevel).placeholder(R.color.white).into(object :CustomTarget<Drawable>(){
+            Glide.with(holder.itemView.context).asFile().load(image_url+loadLevel).placeholder(R.color.white).into(object :CustomTarget<File>(){
                 override fun onLoadCleared(placeholder: Drawable?) {
                 }
-                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
-                    holder.image.setImageDrawable(resource)
+
+                override fun onResourceReady(resource: File, transition: Transition<in File>?) {
+                    holder.image.setImageURI(Uri.fromFile(resource))
                     holder.image.visibility=View.VISIBLE
                     alpView(holder.image)
-
+                    pic = resource
                 }
+
             })
+            holder.itemView.setOnLongClickListener {
+                mOperateDownload.invoke(position-1)
+                return@setOnLongClickListener false
+            }
         }
         if(holder is PreHeaderItem){
             docData.let {
+                holder.share!!.setOnClickListener{
+                    mOperateShare.invoke()
+                }
+                holder.ico.setOnClickListener(mOperateArtWork)
                 holder.artical_name.text =it.user.name
                 holder.title.text =it.item.title
                 holder.upload_date.text =it.item.upload_time_text
-                Glide.with(holder.itemView.context).load(it.user.head_url).into(holder.ico)
-                holder.download.setOnClickListener{
-                    /*下载*/
-                }
-                holder.share.setOnClickListener {
-                    /*分享*/
-                }
+                Glide.with(holder.itemView.context).load(it.user.head_url)
+                    .transform(GlideCircleWithBorder(2,ThemeUtil.getColorAccent(holder.itemView.context))).into(holder.ico)
             }
         }
         if(holder is PreBottomInfo){
+            //点赞
+            holder.vote!!.setOnClickListener {
+                mOperateVote.invoke(it)
+            }
+
+            //收藏
+            holder.collect.setOnClickListener {
+                mOperateCollect.invoke(it)
+            }
+            if(docData.item.already_voted==1){
+                holder.itemView.findViewById<ImageView>(R.id.imageView8).setImageResource(R.drawable.ic_like)
+            }else{
+                holder.itemView.findViewById<ImageView>(R.id.imageView8).setImageResource(R.drawable.ic_no_vote_big)
+            }
+
+            if(docData.item.already_collected==1){
+                holder.itemView.findViewById<ImageView>(R.id.imageView9).setImageResource(R.drawable.ic_star)
+            }else{
+                holder.itemView.findViewById<ImageView>(R.id.imageView9).setImageResource(R.drawable.ic_no_star)
+            }
             docData.let {
                 holder.see_count.text =it.item.view_count.toString()
                 holder.collect_count.text =it.item.collect_count.toString()
@@ -161,33 +233,36 @@ class PreViewAdapter(
             }
         }
         if(holder is PreShowReply){
-            recyclerPage.addOnScrollListener(object : RecyclerView.OnScrollListener(){
-                override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
-                    super.onScrollStateChanged(recyclerView, newState)
-                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                        if(!recyclerView.canScrollVertically(1)){
-                            replyInit()
-                        }
-                    }
-                }
-            })
-            holder.reply.setOnClickListener {
+            if(reply_list.isEmpty()){
                 replyInit()
             }
+            holder.reply.setOnClickListener (mOperateReplyArt)
         }
         if(holder is PreReplyItem){
             val rela =position-(docData.item.pictures.size+2)
-            Glide.with(holder.itemView.context).load(reply_list[rela].member.avatar).into(holder.reply_ico)
-            holder.reply_text.text =reply_list[rela].content.message
-            holder.reply_user.text =reply_list[rela].member.uname
-            if(reply_list[rela].replies.isNullOrEmpty()){
+            val reply =reply_list[rela]
+            holder.vote_reply.apply {
+                if(reply.action==1)
+                    setImageResource(R.drawable.ic_already_voted)
+                else
+                    setImageResource(R.drawable.ic_no_voted)
+            }.setOnClickListener{
+                reply.let {
+                    mOperateVoteReply.invoke(it,position)
+                }
+            }
+            Glide.with(holder.itemView.context).load(reply.member.avatar)
+                .transform(GlideCircleWithBorder(1,ThemeUtil.getColorAccent(holder.itemView.context))).into(holder.reply_ico)
+            holder.reply_text.text =reply.content.message
+            holder.reply_user.text =reply.member.uname
+            if(reply.replies.isNullOrEmpty()){
                 holder.show_reply.visibility=View.GONE
                 return
             }
             holder.show_reply.visibility=View.VISIBLE
             holder.show_reply.text = "查看"+reply_list[rela].replies.size+"条评论"
             holder.show_reply.setOnClickListener {
-                val listPopupWindow =ListPopupWindow(it.context)
+                val listPopupWindow=ListPopupWindow(it.context)
                 listPopupWindow.setAdapter(object :ArrayAdapter<Reply>(it.context,R.layout.item_reply_layout,reply_list[rela].replies){
                     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
                         val layout =LayoutInflater.from(context).inflate(R.layout.item_reply_layout,null)
@@ -207,7 +282,6 @@ class PreViewAdapter(
                         return layout
                     }
                 })
-
                 listPopupWindow.setOnItemClickListener { _, _, _, id ->
                     listPopupWindow.dismiss()
                 }
@@ -216,17 +290,14 @@ class PreViewAdapter(
                 listPopupWindow.show()
             }
         }
-
-
     }
 
-    val replyObserver  = Observer<List<Reply>> {
+    private val replyObserver  = Observer<List<Reply>> {
         if(it.isNullOrEmpty()){
             notifyDataSetChanged()
            return@Observer
         }
         if(it[0].oid!=docData.item.doc_id){
-//            notifyDataSetChanged()
             return@Observer
         }
         val oldCount =reply_list.size
@@ -236,17 +307,156 @@ class PreViewAdapter(
         }
         viewModel.liveReplyData.removeObservers(viewLifecycleOwner)
         reply_list.addAll(it as ArrayList<Reply>)
-        Log.d("Paint","oldCount =$oldCount \t add_count =$add")
-        notifyItemRangeInserted(1+docData.item.pictures.size+1+oldCount,add)
-        notifyItemChanged(itemCount-1)
-//        notifyDataSetChanged()
+        try {
+            notifyItemRangeInserted(1+docData.item.pictures.size+1+oldCount,add)
+            notifyItemChanged(itemCount-1)
+        }catch (e:java.lang.Exception){
+            e.printStackTrace()
+        }
 
+    }
+
+    fun addReply(reply: Reply){
+        reply_list.add(reply)
+        notifyItemInserted(itemCount-2)
+    }
+
+    fun refresh(docData: DocData){
+        this.docData=docData
+        notifyItemRangeChanged(0,itemCount)
     }
     fun replyInit(){
         viewModel.liveReplyData.observe(viewLifecycleOwner,replyObserver)
         viewModel.doNetReply(docData.item.doc_id,false)
     }
 
+    fun download(position: Int, context: Context) {
+        AlertDialog.Builder(context).setTitle("下载图片?")
+            .setNegativeButton("保存预览") { dialog, which ->
+                try {
+                    pic?.let { downLoadPic(docData.item.pictures[position].img_src , it) }
+                    Toast.makeText(context, "已保存！", Toast.LENGTH_SHORT).show()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    Toast.makeText(context, "保存失败！", Toast.LENGTH_SHORT).show()
+                }
+            }.setPositiveButton("保存原图") { dialog, which ->
+                if (loadLevel == "") {
+                    try {
+                        pic?.let { downLoadPic(docData.item.pictures[position].img_src, it) }
+                        Toast.makeText(context, "已保存！", Toast.LENGTH_SHORT).show()
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                        Toast.makeText(context, "保存失败！", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    downLoadPic(docData.item.pictures[position].img_src, context)
+                }
+            }.create().show()
+    }
+
+    @Throws(IOException::class)
+    private fun downLoadPic(urlStr: String, into: File) {
+        val f = File(save_dir_path)
+        if (!f.exists()) if (!f.mkdir()) {
+            throw FileNotFoundException("创建文件夹失败")
+        }
+        val strs = urlStr.split("/".toRegex()).toTypedArray()
+        val pic = File(f, strs[strs.size - 1])
+        val fi = FileInputStream(into)
+        val fo = FileOutputStream(pic)
+        val fic = fi.channel
+        val foc = fo.channel
+        foc.transferFrom(fic, 0, fic.size())
+        fo.close()
+        fi.close()
+        fic.close()
+        foc.close()
+    }
+
+    @SuppressLint("CheckResult")
+    private fun downLoadPic(urlStr: String, context: Context) {
+        val pd1 = ProgressDialog(context)
+        var picSize = 0L
+        Observable.just(urlStr).flatMap{
+            ObservableSource<Bundle> {
+                var url: URL? = null
+                try {
+                    url = URL(urlStr)
+                } catch (e: MalformedURLException) {
+                    e.printStackTrace()
+                }
+                if (url == null) {
+                    return@ObservableSource
+                }
+                val f = File(save_dir_path)
+                if (!f.exists()) f.mkdir()
+                val strs = urlStr.split("/".toRegex()).toTypedArray()
+                val pic = File(f, strs[strs.size - 1])
+                if (pic.exists()) {
+                    it.onError(Throwable("图片已存在！"))
+                    return@ObservableSource
+                }
+                val builder = OkHttpClient.Builder()
+                val rq = Request.Builder().url(urlStr)
+                val call = builder.build().newCall(rq.build())
+                call.enqueue(object : Callback {
+                    var bundle = Bundle()
+                    override fun onFailure(call: Call, e: IOException) {}
+
+                    @Throws(IOException::class)
+                    override fun onResponse(call: Call, response: Response) {
+                        if (response.code == 200) {
+                            val inputStream = response.body!!.byteStream()
+                            val fileOutputStream = FileOutputStream(pic)
+                            val bytes = ByteArray(1024)
+                            var len = 0
+                            var all_size: Long = 0
+                            bundle.putLong("pic_size", response.body!!.contentLength() / 1024)
+                            bundle.putLong("loaded", 0)
+                            it.onNext(bundle)
+                            while (inputStream.read(bytes).also { len = it } != -1) {
+                                all_size += len.toLong()
+                                fileOutputStream.write(bytes, 0, len)
+                                fileOutputStream.flush()
+                                bundle.putLong("loaded", all_size / 1024)
+                                it.onNext(bundle)
+                            }
+                            inputStream.close()
+                            fileOutputStream.close()
+                            it.onComplete()
+                        } else {
+                            //                            Logger.d(response);
+                        }
+                    }
+                })
+            }
+        }.subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).subscribe({
+            if (picSize == 0L) picSize = it.getLong("pic_size")
+            val isLoad = it.getLong("loaded")
+            val percentage = (isLoad * 100 / picSize).toInt()
+            pd1.progress = percentage
+            pd1.setMessage(picSize.toString() + "/" + isLoad + "Kb")
+        },{
+            pd1.setTitle("错误")
+            pd1.progress = 100
+            pd1.setMessage(it.message)
+        },{
+            pd1.setTitle("下载成功")
+            pd1.progress = 100
+            pd1.setMessage("原图已下载(共" + picSize + "Kb)")
+        },{
+            //依次设置标题,内容,是否用取消按钮关闭,是否显示进度
+            pd1.setTitle("图片下载中")
+            pd1.setMessage("图片正在下载中,请稍后...")
+            pd1.setCancelable(true)
+            //这里是设置进度条的风格,HORIZONTAL是水平进度条,SPINNER是圆形进度条
+            pd1.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL)
+            //调用show()方法将ProgressDialog显示出来
+            pd1.show()
+        })
+
+    }
 
     class PreImageItem(itemView: View): RecyclerView.ViewHolder(itemView){
         val image =itemView.findViewById<ImageView>(R.id.imageView4)
@@ -264,7 +474,9 @@ class PreViewAdapter(
     class PreBottomInfo(itemView: View): RecyclerView.ViewHolder(itemView){
         val see_count =itemView.findViewById<TextView>(R.id.textView7)
         val vote_count =itemView.findViewById<TextView>(R.id.textView8)
+        val vote =itemView.findViewById<ImageView>(R.id.imageView8)
         val collect_count =itemView.findViewById<TextView>(R.id.textView9)
+        val collect =itemView.findViewById<ImageView>(R.id.imageView9)
         val resolving =itemView.findViewById<TextView>(R.id.textView10)
         val describe =itemView.findViewById<TextView>(R.id.textView12)
         val tags =itemView.findViewById<RecyclerView>(R.id.tags)
@@ -280,7 +492,9 @@ class PreViewAdapter(
         val reply_user =itemView.findViewById<TextView>(R.id.textView22)
         val reply_text =itemView.findViewById<TextView>(R.id.textView20)
         val show_reply =itemView.findViewById<TextView>(R.id.textView21)
+        val vote_reply =itemView.findViewById<ImageView>(R.id.imageView12)
     }
 
 
 }
+

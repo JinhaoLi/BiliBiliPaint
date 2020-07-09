@@ -30,6 +30,8 @@ class AppPaintF : Application() {
         var isDebug=true
     }
     private val Activity.simpleName get() = javaClass.simpleName
+    var enableAnimator =false
+    var csrf:String? =null
     var FirstEntry = false
     val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null
     else DataRoomService.getDatabase().cookieDao.loadAll()[0]
@@ -39,6 +41,7 @@ class AppPaintF : Application() {
         isDebug =isDebugState()
         Logger.addLogAdapter(AndroidLogAdapter())
         FirstEntry =PreferenceManager.getDefaultSharedPreferences(this).getBoolean("FirstEntry", true)
+        enableAnimator=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("EnableAnimator", false)
         save_dir_path = PreferenceManager.getDefaultSharedPreferences(this).getString(SAVE_DIR, save_dir_path)!!
         LoadLevel =PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {

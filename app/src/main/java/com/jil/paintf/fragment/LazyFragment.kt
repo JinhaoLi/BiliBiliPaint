@@ -6,6 +6,7 @@ import androidx.fragment.app.Fragment
 
 import com.jil.paintf.R
 import com.orhanobut.logger.Logger
+import kotlin.concurrent.thread
 
 abstract class LazyFragment : Fragment(){
     private var isLoaded = false
@@ -13,7 +14,8 @@ abstract class LazyFragment : Fragment(){
     var rootView:View? =null
     override fun onResume() {
         super.onResume()
-        if (!isLoaded.also { isLoaded = true }) {
+        if (!isLoaded.also {
+                isLoaded = true }) {
             loadAndObserveData()
         }
     }
@@ -38,6 +40,7 @@ abstract class LazyFragment : Fragment(){
             isRecovery = true
         }
         return rootView
+
     }
 
 

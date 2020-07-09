@@ -22,4 +22,6 @@ class ExampleInstrumentedTest {
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
         assertEquals("com.jil.paintf", appContext.packageName)
     }
+
+
 }
