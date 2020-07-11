@@ -21,11 +21,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
+import com.jil.paintf.activity.ReplyViewActivity
 import com.jil.paintf.activity.SearchActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
+import com.jil.paintf.repository.ReplyRepository
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.service.AppPaintF.Companion.LoadLevel
 import com.jil.paintf.service.AppPaintF.Companion.save_dir_path
@@ -87,6 +89,11 @@ class PreViewAdapter(
         mOperateVoteReply=listener
     }
 
+    lateinit var mOperateReply2:(reply:Reply,position:Int,view:View) -> Unit
+    fun setOprateReply2(listener: (reply:Reply,position:Int,view:View) -> Unit){
+        mOperateReply2=listener
+    }
+
     lateinit var mOperateReplyArt:(view:View) ->Unit
     fun setOperateReplyArt(listener:(view:View)->Unit){
         mOperateReplyArt=listener
@@ -104,7 +111,7 @@ class PreViewAdapter(
                 PreBottomInfo(LayoutInflater.from(parent.context).inflate(R.layout.item_pre_bottom,parent,false))
             }
             VIEW_TYPE.reply.ordinal->{
-                PreReplyItem(LayoutInflater.from(parent.context).inflate(R.layout.item_pre_reply,parent,false))
+                PreReplyItem(LayoutInflater.from(parent.context).inflate(R.layout.item_reply_layout,parent,false))
             }
             VIEW_TYPE.show_reply.ordinal->{
                 PreShowReply(LayoutInflater.from(parent.context).inflate(R.layout.item_pre_show_reply,parent,false))
@@ -233,7 +240,9 @@ class PreViewAdapter(
             }
         }
         if(holder is PreShowReply){
-            if(reply_list.isEmpty()){
+            if(reply_list.isEmpty()&&isFirstLoadReply){
+                isFirstLoadReply=false
+                viewModel.liveReplyData.observeForever(replyObserver)
                 replyInit()
             }
             holder.reply.setOnClickListener (mOperateReplyArt)
@@ -251,62 +260,53 @@ class PreViewAdapter(
                     mOperateVoteReply.invoke(it,position)
                 }
             }
+            holder.reply_this.setOnClickListener{
+                reply.let {
+                    mOperateReply2.invoke(it,position,holder.itemView)
+                }
+            }
+
             Glide.with(holder.itemView.context).load(reply.member.avatar)
                 .transform(GlideCircleWithBorder(1,ThemeUtil.getColorAccent(holder.itemView.context))).into(holder.reply_ico)
             holder.reply_text.text =reply.content.message
             holder.reply_user.text =reply.member.uname
+            holder.itemView.setOnClickListener{
+                if(reply.replies.isNullOrEmpty())
+                    return@setOnClickListener
+                ReplyViewActivity.startActivity(it.context,reply.oid,reply.rpid)
+            }
             if(reply.replies.isNullOrEmpty()){
+                holder.reply_start.visibility=View.GONE
                 holder.show_reply.visibility=View.GONE
                 return
             }
+            holder.reply_start.visibility=View.VISIBLE
             holder.show_reply.visibility=View.VISIBLE
-            holder.show_reply.text = "查看"+reply_list[rela].replies.size+"条评论"
-            holder.show_reply.setOnClickListener {
-                val listPopupWindow=ListPopupWindow(it.context)
-                listPopupWindow.setAdapter(object :ArrayAdapter<Reply>(it.context,R.layout.item_reply_layout,reply_list[rela].replies){
-                    override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                        val layout =LayoutInflater.from(context).inflate(R.layout.item_reply_layout,null)
-                        val data =getItem(position)
-
-                        val nameTextView =layout.findViewById<TextView>(R.id.textView22)
-                        nameTextView.text = data!!.member.uname
-
-                        val headerIcon=layout.findViewById<ImageView>(R.id.icon)
-                        Glide.with(parent.context).load(data.member.avatar)
-                            .transform(GlideCircleWithBorder(1, ThemeUtil.getColorAccent(headerIcon.context)))
-                            .into(headerIcon)
-
-                        val content =layout.findViewById<TextView>(R.id.textView20)
-                        content.text = data.content.message
-
-                        return layout
-                    }
-                })
-                listPopupWindow.setOnItemClickListener { _, _, _, id ->
-                    listPopupWindow.dismiss()
-                }
-                listPopupWindow.anchorView =it
-                listPopupWindow.width=-1
-                listPopupWindow.show()
+            holder.show_reply.text = "共"+reply_list[rela].rcount+"条评论"
+            holder.reply_start.removeAllViews()
+            reply_list[rela].replies.map {
+                val _tempReply =LayoutInflater.from(holder.reply_start.context).inflate(R.layout.item_simple_reply,null)
+                _tempReply.findViewById<TextView>(R.id.textView17).text =it.member.uname+":"
+                _tempReply.findViewById<TextView>(R.id.textView30).text =it.content.message
+                holder.reply_start.addView(_tempReply)
             }
         }
     }
 
-    private val replyObserver  = Observer<List<Reply>> {
-        if(it.isNullOrEmpty()){
-            notifyDataSetChanged()
+    var isFirstLoadReply =true
+
+    private val replyObserver  = Observer<ReplyRepository> {
+        if(it.data.replies.isNullOrEmpty()){
            return@Observer
         }
-        if(it[0].oid!=docData.item.doc_id){
+        if(it.data.replies[0].oid!=docData.item.doc_id){
             return@Observer
         }
         val oldCount =reply_list.size
-        val add =it.size
-        if(reply_list.contains(it[0])){
-            return@Observer
-        }
-        viewModel.liveReplyData.removeObservers(viewLifecycleOwner)
-        reply_list.addAll(it as ArrayList<Reply>)
+        val add =it.data.replies.size
+        Log.d("PaintF","接收到ReplyReponsitory\told_count =$oldCount" +
+                "\tadd=$add")
+        reply_list.addAll(it.data.replies as ArrayList<Reply>)
         try {
             notifyItemRangeInserted(1+docData.item.pictures.size+1+oldCount,add)
             notifyItemChanged(itemCount-1)
@@ -326,8 +326,7 @@ class PreViewAdapter(
         notifyItemRangeChanged(0,itemCount)
     }
     fun replyInit(){
-        viewModel.liveReplyData.observe(viewLifecycleOwner,replyObserver)
-        viewModel.doNetReply(docData.item.doc_id,false)
+        viewModel.doNetReply(docData.item.doc_id)
     }
 
     fun download(position: Int, context: Context) {
@@ -493,6 +492,8 @@ class PreViewAdapter(
         val reply_text =itemView.findViewById<TextView>(R.id.textView20)
         val show_reply =itemView.findViewById<TextView>(R.id.textView21)
         val vote_reply =itemView.findViewById<ImageView>(R.id.imageView12)
+        val reply_this =itemView.findViewById<ImageView>(R.id.imageView13)
+        val reply_start =itemView.findViewById<ViewGroup>(R.id.start_reply)
     }
 
 

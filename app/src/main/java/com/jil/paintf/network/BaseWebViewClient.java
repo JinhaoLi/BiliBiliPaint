@@ -39,7 +39,7 @@ public class BaseWebViewClient extends WebViewClient {
         super.onPageStarted(view, url, favicon);
         Log.i("onPageStarted->",url);
 
-        if(AppPaintF.instance.getCookie()!=null){
+        if(AppPaintF.instance.getCsrf() != null){
             CookieManager cookieManager =CookieManager.getInstance();
             cookieManager.setCookie(url, AppPaintF.instance.getCookie().toString());
         }
@@ -56,6 +56,7 @@ public class BaseWebViewClient extends WebViewClient {
             CookieManager cookieManager =CookieManager.getInstance();
             String cookieStr =cookieManager.getCookie(url);
             NetCookie netCookie= new NetCookie(cookieStr);
+            AppPaintF.instance.setCsrf(netCookie.bili_jct);
             DataRoomService.getDatabase().getCookieDao().insert(netCookie);
             view.loadUrl("https://m.bilibili.com/space/");
             if(stateChange!=null)
@@ -68,6 +69,7 @@ public class BaseWebViewClient extends WebViewClient {
         if(url.equals("https://passport.bilibili.com/login?act=exit")){
             /**退出登录**/
             DataRoomService.getDatabase().getCookieDao().deleteAll();
+            AppPaintF.instance.setCsrf(null);
             view.loadUrl("https://passport.bilibili.com/login");
             if(stateChange!=null)
                 stateChange.loginExit();

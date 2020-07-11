@@ -1,11 +1,9 @@
 package com.jil.paintf.network;
 
-import android.os.Build;
 import android.util.Log;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.jil.paintf.service.AppPaintF;
-import com.orhanobut.logger.Logger;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -38,18 +36,18 @@ public class BaseNetClient {
             };
             HttpLoggingInterceptor loggingInterceptor =new HttpLoggingInterceptor(logger);
 
-//            if(AppPaintF.isDebug()){
-                loggingInterceptor.level(HttpLoggingInterceptor.Level.BASIC);
-//            }else {
-//                loggingInterceptor.level(HttpLoggingInterceptor.Level.NONE);
-//            }
-
+            if(AppPaintF.isDebug()){
+                loggingInterceptor.level(HttpLoggingInterceptor.Level.BODY);
+            }else {
+                loggingInterceptor.level(HttpLoggingInterceptor.Level.NONE);
+            }
+//
             OkHttpClient.Builder builder =new OkHttpClient.Builder().addNetworkInterceptor(new Interceptor() {
                 @NotNull
                 @Override
                 public Response intercept(@NotNull Chain chain) throws IOException {
                     /**@changeRequest(Chain)**/
-                    if(AppPaintF.instance.getCookie()==null)
+                    if(AppPaintF.instance.getCsrf()==null)
                         return chain.proceed(chain.request());
                     else
                         return chain.proceed(chain.request().newBuilder()
@@ -78,7 +76,7 @@ public class BaseNetClient {
         String ra =encode(code);
         String cookie="";
         if(!ra.equals(""))
-            cookie = AppPaintF.instance.getCookie().toString();
+            cookie = AppPaintF.instance.getCsrf();
         Request newRequest =request.newBuilder()
                 .removeHeader("User-Agent")
                 .addHeader("User-Agent",

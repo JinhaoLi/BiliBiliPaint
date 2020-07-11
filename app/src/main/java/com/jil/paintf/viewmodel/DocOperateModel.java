@@ -36,15 +36,14 @@ public class DocOperateModel extends BaseViewModel {
     }
 
     public void doNetVoteReply(long oid, final int type,long rpid,int action){
-        if(AppPaintF.instance.getCookie()==null)
+        if(AppPaintF.instance.getCsrf()==null)
             return;
-        add(retrofitRepository.voteReply(oid,type,rpid,action,AppPaintF.instance.getCookie().bili_jct).subscribe(new Consumer<UserOperateResult>() {
+        add(retrofitRepository.voteReply(oid,type,rpid,action,AppPaintF.instance.getCsrf()).subscribe(new Consumer<UserOperateResult>() {
             @Override
             public void accept(UserOperateResult userOperateResult) {
                 voteReplyLive.postValue(userOperateResult);
             }
         }));
-
     }
 
     public void doNetVote(int id , int type){
@@ -73,7 +72,7 @@ public class DocOperateModel extends BaseViewModel {
     }
 
     public void doNetAddFav(int id){
-        if(AppPaintF.instance.getCookie()==null){
+        if(AppPaintF.instance.getCsrf()==null){
             favResult.postValue(new FavOperateResult(-1,null,"没有登录","没有登录"));
             return;
         }
@@ -91,7 +90,7 @@ public class DocOperateModel extends BaseViewModel {
     }
 
     public void doNetDeleteFav(int id){
-        if(AppPaintF.instance.getCookie()==null){
+        if(AppPaintF.instance.getCsrf()==null){
             removeFavResult.postValue(new FavOperateResult(-1,null,"没有登录","没有登录"));
             return;
         }

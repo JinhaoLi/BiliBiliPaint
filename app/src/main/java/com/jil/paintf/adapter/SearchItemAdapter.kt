@@ -19,7 +19,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
-import com.jil.paintf.activity.DocDetailActivity.Companion.startDocDetailActivity
+import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Result
 
@@ -75,7 +75,7 @@ class SearchItemAdapter(private val mContext: Context
                 for (index in 0 until data.size){
                     intArray[index] =data[index].id
                 }
-                startDocDetailActivity(v.context,intArray,data[position].id)
+                PreViewActivity.startDocDetailActivity(v.context,intArray,data[position].id)
             }
         }
 

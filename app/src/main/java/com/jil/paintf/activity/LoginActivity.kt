@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
         })
         web_view.webViewClient =client
         web_view.settings.javaScriptEnabled =true
-        if(AppPaintF.instance.cookie==null){
+        if(AppPaintF.instance.csrf==null){
             web_view.loadUrl("https://passport.bilibili.com/login")
         }else{
             isLogin=true
@@ -50,7 +50,7 @@ class LoginActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if(AppPaintF.instance.cookie!= null)
+        if(AppPaintF.instance.csrf!= null)
             menu?.add(1,1,1,"退出登录")
         return super.onCreateOptionsMenu(menu)
     }

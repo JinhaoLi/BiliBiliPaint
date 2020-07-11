@@ -62,14 +62,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             changHeaderView(it.data.face, it.data.uname)
         })
 
-        if (AppPaintF.instance.cookie != null) {
+        if (AppPaintF.instance.csrf != null) {
             viewModel.doNetMyInfo()
         } else {
             changHeaderView()
         }
 
         ico.setOnClickListener {
-            if (AppPaintF.instance.cookie == null) {
+            if (AppPaintF.instance.csrf == null) {
                 startActivityForResult(Intent(this, LoginActivity::class.java), 3)
                 return@setOnClickListener
             }

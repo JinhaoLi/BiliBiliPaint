@@ -33,12 +33,13 @@ class AppPaintF : Application() {
     var enableAnimator =false
     var csrf:String? =null
     var FirstEntry = false
-    val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null
-    else DataRoomService.getDatabase().cookieDao.loadAll()[0]
+    val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null else DataRoomService.getDatabase().cookieDao.loadAll()[0]
     override fun onCreate() {
+        //
         super.onCreate()
         instance=this
         isDebug =isDebugState()
+        csrf = cookie?.bili_jct
         Logger.addLogAdapter(AndroidLogAdapter())
         FirstEntry =PreferenceManager.getDefaultSharedPreferences(this).getBoolean("FirstEntry", true)
         enableAnimator=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("EnableAnimator", false)
@@ -105,7 +106,7 @@ class AppPaintF : Application() {
         var isdebug =true
         try {
             val info=instance.applicationContext.applicationInfo
-            val isdebug =info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
+            isdebug =info.flags and ApplicationInfo.FLAG_DEBUGGABLE != 0
         }catch (e:Exception){
 
             val clipboard = instance.getSystemService(Application.CLIPBOARD_SERVICE) as ClipboardManager

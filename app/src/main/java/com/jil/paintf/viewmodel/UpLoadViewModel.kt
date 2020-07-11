@@ -15,14 +15,14 @@ class UpLoadViewModel : BaseViewModel() {
     val createLiveData =MutableLiveData<ResponseBody>()
 
     fun doNetUpLoad(byteArray: ByteArray,fileName:String,category:String){
-        if(AppPaintF.instance.cookie==null){
+        if(AppPaintF.instance.csrf==null){
             //mutableLiveData.postValue(UpLoadResult(-1, DataXX(0,"还没登录",0)))
             return
         }
         val requestFile: RequestBody = byteArray.toRequestBody("image/*".toMediaTypeOrNull())
         val part = MultipartBody.Part.createFormData("file_up",fileName,requestFile)
         val part1 = MultipartBody.Part.createFormData("category",category)
-        val part2 = MultipartBody.Part.createFormData("csrf_token", AppPaintF.instance.cookie!!.bili_jct)
+        val part2 = MultipartBody.Part.createFormData("csrf_token", AppPaintF.instance.csrf!!)
         val postList  = arrayListOf<MultipartBody.Part>()
         postList.add(part)
         postList.add(part1)
@@ -44,22 +44,22 @@ class UpLoadViewModel : BaseViewModel() {
 
     fun doNetCreateDoc(biz: Int, category: Int, type: Int, title: String?, description: String?, copy_forbidden: Int
                        , tags: Map<String?, String?>?, imgs:Map<String, String>){
-        if(AppPaintF.instance.cookie==null){
+        if(AppPaintF.instance.csrf==null){
             return
         }
         RetrofitRepository.getInstance().createDoc(biz,category,type,title,description,copy_forbidden
-                            ,AppPaintF.instance.cookie!!.bili_jct,tags,imgs).subscribe(Consumer {
+                            ,AppPaintF.instance.csrf!!,tags,imgs).subscribe(Consumer {
             createLiveData.postValue(it)
         }).add()
     }
 
     fun doNetCreatePhotoDoc(biz: Int, category: Int, title: String?, description: String?, copy_forbidden: Int
                        , tags: Map<String?, String?>?, imgs:Map<String, String>){
-        if(AppPaintF.instance.cookie==null){
+        if(AppPaintF.instance.csrf==null){
             return
         }
         RetrofitRepository.getInstance().createPhotoDoc(biz,category,title,description,copy_forbidden
-            ,AppPaintF.instance.cookie!!.bili_jct,tags,imgs).subscribe(Consumer {
+            ,AppPaintF.instance.csrf,tags,imgs).subscribe(Consumer {
             createLiveData.postValue(it)
         }).add()
     }

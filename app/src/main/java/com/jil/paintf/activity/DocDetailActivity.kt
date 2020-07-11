@@ -188,7 +188,7 @@ class DocDetailActivity : AppCompatActivity(),
             if(operateViewModel.voteResult.hasActiveObservers()){
                 return@setOnClickListener
             }
-            if(AppPaintF.instance.cookie==null){
+            if(AppPaintF.instance.csrf==null){
                 Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -226,7 +226,7 @@ class DocDetailActivity : AppCompatActivity(),
             if(operateViewModel.removeFavResult.hasActiveObservers()){
                 return@setOnClickListener
             }
-            if(AppPaintF.instance.cookie==null){
+            if(AppPaintF.instance.csrf==null){
                 Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
@@ -339,11 +339,12 @@ class DocDetailActivity : AppCompatActivity(),
                         if(replyAdapter!=null&&replyAdapter!!.data.size>600){
                             replyAdapter!!.data.removeAll(replyAdapter!!.data.subList(0,200))
                         }
-                        viewModel!!.doNetReply(idArray!![current],false)
+//                        viewModel!!.doNetReply(idArray!![current],false)
                     }
                 }
             }
         })
+        /*
         viewModel!!.liveReplyData.observe(this, Observer<List<Reply>> { replyData ->
             if(replyData.isEmpty())
                 return@Observer
@@ -407,8 +408,8 @@ class DocDetailActivity : AppCompatActivity(),
                 replyAdapter!!.data=replyData as ArrayList<Reply>
                 replyAdapter!!.notifyItemInserted(oldSize-20)
             }
-        })
-        viewModel!!.doNetReply(idArray!![current],true)
+        })*/
+//        viewModel!!.doNetReply(idArray!![current],true)
 
         imageView10!!.setOnClickListener {
             if(replyAdapter==null||replyAdapter!!.data==null||replyAdapter!!.data.isEmpty()){

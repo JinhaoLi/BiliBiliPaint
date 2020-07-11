@@ -126,11 +126,11 @@ public class RetrofitRepository {
      * @param root
      * @return
      */
-    public Observable<ReplyRepository> getDocNextReply(final int oid, final long root) {
-        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyRepository>>() {
+    public Observable<ReplyNextRespository> getDocNextReply(final int oid, final long root,final int pn) {
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ReplyNextRespository>>() {
             @Override
-            public ObservableSource<ReplyRepository> apply(Integer integer) throws Exception {
-                return ApiBiliService.getDoc2Reply(oid, root);
+            public ObservableSource<ReplyNextRespository> apply(Integer integer) throws Exception {
+                return ApiBiliService.getDoc2Reply(oid, root,pn);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
@@ -205,8 +205,8 @@ public class RetrofitRepository {
         return Observable.just(1).flatMap(new Function<Integer, ObservableSource<OperateResult>>() {
             @Override
             public ObservableSource<OperateResult> apply(Integer integer) throws Exception {
-                assert AppPaintF.instance.getCookie() != null;
-                return ApiVcBiliService.postVoteDoc(id, AppPaintF.instance.getCookie().bili_jct, type);
+                assert AppPaintF.instance.getCsrf()!= null;
+                return ApiVcBiliService.postVoteDoc(id, AppPaintF.instance.getCsrf(), type);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
@@ -221,8 +221,8 @@ public class RetrofitRepository {
         return Observable.just(id).flatMap(new Function<Integer, ObservableSource<FavOperateResult>>() {
             @Override
             public ObservableSource<FavOperateResult> apply(Integer integer) throws Exception {
-                assert AppPaintF.instance.getCookie() != null;
-                return ApiVcBiliService.postFavAddDoc(2, integer, AppPaintF.instance.getCookie().bili_jct);
+                assert AppPaintF.instance.getCsrf() != null;
+                return ApiVcBiliService.postFavAddDoc(2, integer, AppPaintF.instance.getCsrf());
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
@@ -237,8 +237,8 @@ public class RetrofitRepository {
         return Observable.just(id).flatMap(new Function<Integer, ObservableSource<FavOperateResult>>() {
             @Override
             public ObservableSource<FavOperateResult> apply(Integer integer) throws Exception {
-                assert AppPaintF.instance.getCookie() != null;
-                return ApiVcBiliService.postFavDeleteDoc(2, integer, AppPaintF.instance.getCookie().bili_jct);
+                assert AppPaintF.instance.getCsrf() != null;
+                return ApiVcBiliService.postFavDeleteDoc(2, integer, AppPaintF.instance.getCsrf());
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
@@ -261,9 +261,9 @@ public class RetrofitRepository {
         return Observable.just(uid).flatMap(new Function<Integer, ObservableSource<UserOperateResult>>() {
             @Override
             public ObservableSource<UserOperateResult> apply(Integer integer) throws Exception {
-                assert AppPaintF.instance.getCookie() != null;
+                assert AppPaintF.instance.getCsrf()!= null;
                 return ApiBiliService.postUserOperate(integer, act,
-                        11, JSONP_STR, AppPaintF.instance.getCookie().bili_jct);
+                        11, JSONP_STR, AppPaintF.instance.getCsrf());
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread()).retry(2);
     }
@@ -331,7 +331,7 @@ public class RetrofitRepository {
         return Observable.just(sign).flatMap(new Function<String, ObservableSource<UserOperateResult>>() {
             @Override
             public ObservableSource<UserOperateResult> apply(String s) throws Exception {
-                return ApiBiliService.updateSign(s, "json", AppPaintF.instance.getCookie().bili_jct);
+                return ApiBiliService.updateSign(s, "json", AppPaintF.instance.getCsrf());
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
@@ -374,7 +374,7 @@ public class RetrofitRepository {
             , final String message, final int plat, final String csrf) {
         return Observable.just(oid).flatMap(new Function<Integer, ObservableSource<AfterReplyResult>>() {
             @Override
-            public ObservableSource<AfterReplyResult> apply(Integer integer) throws Exception {
+            public ObservableSource<AfterReplyResult> apply(Integer integer) {
 
                 return ApiBiliService.postReplyArt(integer, type, message, plat, JSONP_STR, csrf);
             }

@@ -27,7 +27,7 @@ class CollectionViewModel:BaseViewModel() {
     }
     var removeFavResult = MutableLiveData<FavOperateResult>()
     fun doNetDeleteFav(id: Int) {
-        if (AppPaintF.instance.cookie == null) {
+        if (AppPaintF.instance.csrf == null) {
             removeFavResult.postValue(FavOperateResult(-1, arrayListOf(), "没有登录", "没有登录"))
             return
         }

@@ -88,7 +88,7 @@ class MySelfActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        if(AppPaintF.instance.cookie!=null){//没有登录的话就不显示菜单
+        if(AppPaintF.instance.csrf!=null){//没有登录的话就不显示菜单
             menu!!.add(1,1,1,"退出登录")
             this.menu=menu
         }

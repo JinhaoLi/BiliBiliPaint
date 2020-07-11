@@ -132,7 +132,7 @@ class UpLoadPhotoActivity : AppCompatActivity() {
     }
 
     private fun checkParam(): Boolean {
-        if(AppPaintF.instance.cookie==null){
+        if(AppPaintF.instance.csrf==null){
             Toast.makeText(this, "你还没登录", Toast.LENGTH_SHORT).show()
             floatingActionButton2.isClickable=true
             return false

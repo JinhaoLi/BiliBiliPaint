@@ -23,12 +23,14 @@ import com.jil.paintf.R
 import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.adapter.PreViewAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
+import com.jil.paintf.custom.NestedPopupListDialog
 import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
 import com.jil.paintf.viewmodel.DocViewModel
+import kotlinx.android.synthetic.main.activity_up_load.*
 import kotlinx.android.synthetic.main.fragment_pre_view.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
 import kotlinx.android.synthetic.main.item_pre_header.*
@@ -116,7 +118,7 @@ class PreViewFragment : LazyFragment() {
                 it.setOperateVote {
                     shakeView(it)
                     if (!operateViewModel.voteResult.hasActiveObservers()) {
-                        if (AppPaintF.instance.cookie == null) {
+                        if (AppPaintF.instance.csrf == null) {
                             Toast.makeText(requireContext(), "你还没有登录！", Toast.LENGTH_SHORT).show()
                         } else {
                             var type = 1
@@ -153,7 +155,7 @@ class PreViewFragment : LazyFragment() {
                 it.setOperateCollect {
                     shakeView(it)
                     if (!operateViewModel.removeFavResult.hasActiveObservers()) {
-                        if (AppPaintF.instance.cookie == null) {
+                        if (AppPaintF.instance.csrf == null) {
                             Toast.makeText(requireContext(), "你还没有登录！", Toast.LENGTH_SHORT).show()
                         } else {
                             var isCollection = false
@@ -213,7 +215,7 @@ class PreViewFragment : LazyFragment() {
                     UserActivity.startUserActivity(requireContext(), docData.user.uid)
                 }
                 it.setOprateVoteReply { reply, position ->
-                    if (AppPaintF.instance.cookie == null) {
+                    if (AppPaintF.instance.csrf == null) {
                         Toast.makeText(requireContext(), "你还没有登录！", Toast.LENGTH_SHORT).show()
                         return@setOprateVoteReply
                     }
@@ -226,32 +228,30 @@ class PreViewFragment : LazyFragment() {
                     operateViewModel.doNetVoteReply(reply.oid.toLong(), reply.type, reply.rpid, action)
                 }
                 it.setOperateReplyArt {
-                    if (AppPaintF.instance.cookie == null) {
-                        Toast.makeText(requireContext(), "请登录之后再进行操作", Toast.LENGTH_SHORT).show()
-                        return@setOperateReplyArt
+                    if (AppPaintF.instance.csrf == null) {
+                    Toast.makeText(requireContext(), "请登录之后再进行操作", Toast.LENGTH_SHORT).show()
+                    return@setOperateReplyArt
+                }
+                    AppPaintF.instance.csrf?.let { it1 ->
+                        reply(docData.item.doc_id, 11
+                            ,-1L,0L,1, it1
+                        )
                     }
-                    BottomInputDialog(requireContext()).apply {
-                        setClickListener { view, input ->
-                            operateViewModel.postReplyResult.observe(viewLifecycleOwner, Observer {
-                                //Key: 'AddReplyReq.ReplyCommonReq.Type' Error:Field validation for 'Type' failed on the 'required' tag
-                                if (it.code == 0) {
-                                    preAdapter?.addReply(it.data.reply)
-                                } else {
-                                    Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
-                                }
-                                operateViewModel.postReplyResult.removeObservers(viewLifecycleOwner)
-
-                            })
-                            operateViewModel.doNetPostReplyArt(
-                                docData.item.doc_id, 11
-                                , input, 1, AppPaintF.instance.cookie?.bili_jct
-                            )
-                            dismiss()
-                        }
-                        setTitle("请输入评论")
-                        setIcon(R.drawable.ic_folder_black_24dp)
-                    }.show()
-
+                }
+                it.setOprateReply2 { reply, position, view ->
+                    if (AppPaintF.instance.csrf == null) {
+                        Toast.makeText(requireContext(), "请登录之后再进行操作", Toast.LENGTH_SHORT).show()
+                        return@setOprateReply2
+                    }
+                    reply(reply.oid,11,reply.root,reply.rpid,1, AppPaintF.instance.csrf!!)
+//                    val operate: NestedPopupListDialog.NestedPopupItem = object : NestedPopupListDialog.NestedPopupItem("回复") {
+//                        override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
+//                            super.doAction(nestedPopupListDialog)
+//
+//                            nestedPopupListDialog.dismiss()
+//                        }
+//                    }
+//                    NestedPopupListDialog(requireContext(), view, listOf(operate)).show()
                 }
             }
             recycler_page.adapter = preAdapter
@@ -262,7 +262,6 @@ class PreViewFragment : LazyFragment() {
                     }
                 }
             }
-
             recycler_page.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
@@ -347,6 +346,38 @@ class PreViewFragment : LazyFragment() {
     override fun loadAndObserveData() {
         viewModel.data.observe(viewLifecycleOwner, docDataObserver)
         viewModel.doNetGetDoc(docId)
+    }
+
+    fun reply(oid:Int ,type: Int , root:Long
+              , parent:Long , plat:Int , csrf:String ){
+        BottomInputDialog(requireContext()).apply {
+            setClickListener { view, input ->
+                operateViewModel.postReplyResult.observe(viewLifecycleOwner, Observer {
+                    //Key: 'AddReplyReq.ReplyCommonReq.Type' Error:Field validation for 'Type' failed on the 'required' tag
+                    if (it.code == 0) {
+                        preAdapter?.addReply(it.data.reply)
+                    } else {
+                        Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
+                    }
+                    operateViewModel.postReplyResult.removeObservers(viewLifecycleOwner)
+                })
+
+                if(root ==-1L){
+                    operateViewModel.doNetPostReplyArt(
+                        oid, type
+                        , input, plat, csrf
+                    )
+                }else{
+                    operateViewModel.doNetPostReply(
+                        oid, type, root,parent,input, plat, csrf
+                    )
+                }
+
+                dismiss()
+            }
+            setTitle("请输入评论")
+            setIcon(R.drawable.ic_folder_black_24dp)
+        }.show()
     }
 
     override fun onDestroy() {

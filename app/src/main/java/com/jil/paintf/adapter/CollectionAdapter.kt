@@ -25,6 +25,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.DocDetailActivity
+import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.custom.NestedPopupListDialog
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.CollectItem
@@ -80,7 +81,7 @@ class CollectionAdapter(val mContext: Context) : RecyclerView.Adapter<RecyclerVi
                 for (index in 0 until data.size){
                     intArray[index] =data[index].content.item.doc_id
                 }
-                DocDetailActivity.startDocDetailActivity(v.context, intArray, data[position].content.item.doc_id)
+                PreViewActivity.startDocDetailActivity(v.context, intArray, data[position].content.item.doc_id)
             }
 
             holder.itemView.setOnLongClickListener {

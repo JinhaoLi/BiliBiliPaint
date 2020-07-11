@@ -207,7 +207,7 @@ public class UserViewModel extends ViewModel {
     }
 
     public void updateSign(String sign){
-        if(AppPaintF.instance.getCookie()!=null)
+        if(AppPaintF.instance.getCsrf()!=null)
             subscribe(retrofitRepository.updateSign(sign));
     }
 

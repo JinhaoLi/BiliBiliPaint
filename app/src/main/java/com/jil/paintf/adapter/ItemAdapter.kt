@@ -78,7 +78,7 @@ class ItemAdapter(private val mContext: Context
             }
 
             holder.voteIco.setOnClickListener {
-                if(AppPaintF.instance.cookie==null){
+                if(AppPaintF.instance.csrf==null){
                     Toast.makeText(mContext, "你还没有登录！", Toast.LENGTH_SHORT).show()
                     return@setOnClickListener
                 }

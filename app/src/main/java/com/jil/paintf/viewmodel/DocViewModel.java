@@ -20,10 +20,7 @@ public class DocViewModel extends BaseViewModel {
     private MutableLiveData<DocData> data;
 
     //==================================评论相关数据
-    private MutableLiveData<ReplyData> reply2Data;
-    public MutableLiveData<List<Reply>> liveReplyData;
-    private List<Reply> replyData =new ArrayList<>();
-    boolean isLoading =false;
+    public MutableLiveData<ReplyRepository> liveReplyData;
     int pn=1;
     int maxpn=2;
 
@@ -82,64 +79,19 @@ public class DocViewModel extends BaseViewModel {
 
     }
 
-    public MutableLiveData<ReplyData> getReply2Data(int oid,long root) {
-        if(reply2Data==null){
-            reply2Data =new MutableLiveData<>();
-        }
-        retrofitRepository.getDocNextReply(oid,root).subscribe(new Observer<ReplyRepository>() {
-            @Override
-            public void onSubscribe(Disposable d) {
-
-            }
-
-            @Override
-            public void onNext(ReplyRepository replyRepository) {
-                reply2Data.postValue(replyRepository.getData());
-            }
-
-            @Override
-            public void onError(Throwable e) {
-
-            }
-
-            @Override
-            public void onComplete() {
-
-            }
-        });
-        return reply2Data;
-    }
-
-
     public void resetReply(){
-        isLoading=false;
         pn =1;
-        replyData.clear();
     }
-    public void doNetReply(final int id, boolean resetPage) {
-        if(resetPage){
-            isLoading=false;
-            pn =1;
-            replyData.clear();
-        }
-        if(liveReplyData ==null){
-            liveReplyData =new MutableLiveData<>();
-        }
+    public void doNetReply(final int id) {
         if(pn!=-1)//-1 代表评论已经全部加载完成
         retrofitRepository.getDocReply(pn,id).subscribe(new Observer<ReplyRepository>() {
             @Override
             public void onSubscribe(Disposable d) {
-                isLoading=true;
             }
 
             @Override
             public void onNext(ReplyRepository replyRepository) {
-                List<Reply> list =replyRepository.getData().getReplies();
-                if(list==null){
-                    return;
-                }
-                replyData.addAll(list);
-                liveReplyData.postValue(list);
+                liveReplyData.postValue(replyRepository);
                 if(replyRepository.getData().getPage().getCount()%20==0)
                     maxpn=replyRepository.getData().getPage().getCount()/20;
                 else
@@ -153,8 +105,7 @@ public class DocViewModel extends BaseViewModel {
 
             @Override
             public void onComplete() {
-                isLoading=false;
-                if(pn!=maxpn){
+                if(pn<maxpn){
                     pn++;
                 }else {
                     pn=-1;
