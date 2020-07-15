@@ -60,8 +60,8 @@ class BottomInputDialog(context: Context) : BottomSheetDialog(context,R.style.Bo
     }
 
     private fun getWindowHeight(): Int {
-        val res: Resources = context.getResources()
-        val displayMetrics: DisplayMetrics = res.getDisplayMetrics()
+        val res: Resources = context.resources
+        val displayMetrics: DisplayMetrics = res.displayMetrics
         return displayMetrics.heightPixels
     }
 

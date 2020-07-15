@@ -12,7 +12,6 @@ import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
 import android.widget.Toast
-import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,14 +22,12 @@ import com.jil.paintf.R
 import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.adapter.PreViewAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
-import com.jil.paintf.custom.NestedPopupListDialog
 import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
 import com.jil.paintf.viewmodel.DocViewModel
-import kotlinx.android.synthetic.main.activity_up_load.*
 import kotlinx.android.synthetic.main.fragment_pre_view.*
 import kotlinx.android.synthetic.main.item_doc_detail.*
 import kotlinx.android.synthetic.main.item_pre_header.*
@@ -233,9 +230,7 @@ class PreViewFragment : LazyFragment() {
                     return@setOperateReplyArt
                 }
                     AppPaintF.instance.csrf?.let { it1 ->
-                        reply(docData.item.doc_id, 11
-                            ,-1L,0L,1, it1
-                        )
+                        reply(docData.item.doc_id, 11,-1L,0L,1, it1,"(作者)"+docData.user.name)
                     }
                 }
                 it.setOprateReply2 { reply, position, view ->
@@ -243,15 +238,7 @@ class PreViewFragment : LazyFragment() {
                         Toast.makeText(requireContext(), "请登录之后再进行操作", Toast.LENGTH_SHORT).show()
                         return@setOprateReply2
                     }
-                    reply(reply.oid,11,reply.root,reply.rpid,1, AppPaintF.instance.csrf!!)
-//                    val operate: NestedPopupListDialog.NestedPopupItem = object : NestedPopupListDialog.NestedPopupItem("回复") {
-//                        override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
-//                            super.doAction(nestedPopupListDialog)
-//
-//                            nestedPopupListDialog.dismiss()
-//                        }
-//                    }
-//                    NestedPopupListDialog(requireContext(), view, listOf(operate)).show()
+                    reply(reply.oid,11,reply.root,reply.rpid,1, AppPaintF.instance.csrf!!,reply.member.uname)
                 }
             }
             recycler_page.adapter = preAdapter
@@ -349,7 +336,7 @@ class PreViewFragment : LazyFragment() {
     }
 
     fun reply(oid:Int ,type: Int , root:Long
-              , parent:Long , plat:Int , csrf:String ){
+              , parent:Long , plat:Int , csrf:String ,uname:String){
         BottomInputDialog(requireContext()).apply {
             setClickListener { view, input ->
                 operateViewModel.postReplyResult.observe(viewLifecycleOwner, Observer {
@@ -375,8 +362,9 @@ class PreViewFragment : LazyFragment() {
 
                 dismiss()
             }
-            setTitle("请输入评论")
-            setIcon(R.drawable.ic_folder_black_24dp)
+            setTitle("回复 $uname")
+            setIcon(R.drawable.ic_message_white
+            )
         }.show()
     }
 

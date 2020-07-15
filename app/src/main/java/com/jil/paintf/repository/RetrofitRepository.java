@@ -391,4 +391,12 @@ public class RetrofitRepository {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
+    public Observable<EmoteData> getEmoteMap() {
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<EmoteData>>() {
+            @Override
+            public ObservableSource<EmoteData> apply(Integer integer) throws Exception {
+                return ApiBiliService.getEmoteList();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
 }

@@ -57,6 +57,7 @@
             app:layout_constraintTop_toBottomOf="@+id/textView20" android:layout_marginStart="8dp"/>
     <LinearLayout
             android:orientation="vertical"
+            android:background="@drawable/background_rip"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             app:layout_constraintTop_toBottomOf="@+id/imageView13"

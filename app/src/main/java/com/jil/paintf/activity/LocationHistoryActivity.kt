@@ -16,6 +16,7 @@ import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.HisItem
+import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.HistoryViewModel
 import kotlinx.android.synthetic.main.activity_location_history.*
 import java.util.*
@@ -38,7 +39,7 @@ class LocationHistoryActivity : AppCompatActivity() {
                         holder.setText(data[position].title,R.id.textView)
                         holder.itemView.setOnClickListener {
                             val bundle = Bundle()
-                            val intent = Intent(this@LocationHistoryActivity, DocDetailActivity::class.java)
+                            val intent = Intent(this@LocationHistoryActivity, PreViewActivity::class.java)
 
                             val intArray =IntArray(data.size)
                             for (index in 0 until data.size){
@@ -47,12 +48,12 @@ class LocationHistoryActivity : AppCompatActivity() {
                             bundle.putInt("doc_id",data[position].docId)
                             bundle.putIntArray("intArray",intArray)
                             intent.putExtra("param1",bundle)
-                            val options1 = ActivityOptionsCompat.makeScaleUpAnimation(
-                                holder.itemView, holder.itemView.x.toInt(), holder.itemView.y.toInt(),
-                                holder.itemView.width,holder.itemView.height
-                            )
-
-                            ActivityCompat.startActivity(this@LocationHistoryActivity, intent, options1.toBundle())
+                            if (AppPaintF.instance.enableAnimator){
+                                val options1 =ActivityOptionsCompat.makeSceneTransitionAnimation(this@LocationHistoryActivity,holder.itemView,"mainimage")
+                                ActivityCompat.startActivity(this@LocationHistoryActivity, intent, options1.toBundle())
+                            }else{
+                                PreViewActivity.startDocDetailActivity(this@LocationHistoryActivity,intArray,data[position].docId)
+                            }
                         }
                         if(data[position].pageCount!=1)
                             holder.setText(data[position].pageCount.toString(),R.id.textView2)
@@ -90,5 +91,9 @@ class LocationHistoryActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+
     }
 }

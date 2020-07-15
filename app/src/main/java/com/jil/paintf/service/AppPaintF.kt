@@ -5,6 +5,7 @@ import android.app.Application
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.pm.ApplicationInfo
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.os.Debug
 import android.os.Environment
@@ -29,13 +30,13 @@ class AppPaintF : Application() {
         @JvmStatic
         var isDebug=true
     }
+    val emoteMap =HashMap<String,Drawable>()
     private val Activity.simpleName get() = javaClass.simpleName
     var enableAnimator =false
     var csrf:String? =null
     var FirstEntry = false
     val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null else DataRoomService.getDatabase().cookieDao.loadAll()[0]
     override fun onCreate() {
-        //
         super.onCreate()
         instance=this
         isDebug =isDebugState()

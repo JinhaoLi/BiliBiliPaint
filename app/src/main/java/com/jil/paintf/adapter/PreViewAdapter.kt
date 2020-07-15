@@ -7,12 +7,16 @@ import android.app.ProgressDialog
 import android.content.Context
 import android.graphics.drawable.Drawable
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.ImageView
+import android.widget.TextView
+import android.widget.Toast
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -23,7 +27,9 @@ import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.ReplyViewActivity
 import com.jil.paintf.activity.SearchActivity
+import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
+import com.jil.paintf.custom.OnDoubleClickListener
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.DocData
 import com.jil.paintf.repository.Reply
@@ -31,6 +37,7 @@ import com.jil.paintf.repository.ReplyRepository
 import com.jil.paintf.repository.Tag
 import com.jil.paintf.service.AppPaintF.Companion.LoadLevel
 import com.jil.paintf.service.AppPaintF.Companion.save_dir_path
+import com.jil.paintf.service.CorrespondingValue.getHtmlFormte
 import com.jil.paintf.viewmodel.DocViewModel
 import io.reactivex.Observable
 import io.reactivex.ObservableSource
@@ -155,6 +162,7 @@ class PreViewAdapter(
     }
 
     var pic: File? = null
+    @SuppressLint("ClickableViewAccessibility")
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if(holder is PreImageItem){
             val image_url =docData.item.pictures[position-1].img_src
@@ -232,7 +240,6 @@ class PreViewAdapter(
                     override fun setLayout(viewType: Int): Int {
                         return R.layout.item_tag
                     }
-
                 }
                 layoutManager.orientation= RecyclerView.HORIZONTAL
                 holder.tags.layoutManager=layoutManager
@@ -265,29 +272,54 @@ class PreViewAdapter(
                     mOperateReply2.invoke(it,position,holder.itemView)
                 }
             }
-
+            holder.reply_ico.setOnClickListener {
+                UserActivity.startUserActivity(it.context,reply.mid)
+            }
             Glide.with(holder.itemView.context).load(reply.member.avatar)
                 .transform(GlideCircleWithBorder(1,ThemeUtil.getColorAccent(holder.itemView.context))).into(holder.reply_ico)
-            holder.reply_text.text =reply.content.message
-            holder.reply_user.text =reply.member.uname
-            holder.itemView.setOnClickListener{
-                if(reply.replies.isNullOrEmpty())
-                    return@setOnClickListener
-                ReplyViewActivity.startActivity(it.context,reply.oid,reply.rpid)
+            holder.itemView.setOnClickListener {  }
+            holder.reply_text.setOnTouchListener(OnDoubleClickListener(object : OnDoubleClickListener.DoubleClickCallback {
+                override fun onLongClick(): Boolean {
+                    return true
+                }
+
+                override fun onDoubleClick(view: View) {
+                    reply.let {
+                        mOperateVoteReply.invoke(reply,position)
+                    }
+                }
+            }))
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                holder.reply_text.text = getHtmlFormte(reply.content.message)
+            }else{
+                holder.reply_text.text =reply.content.message
             }
+            holder.reply_text.movementMethod = LinkMovementMethod.getInstance()
+            holder.reply_user.text =reply.member.uname
+
             if(reply.replies.isNullOrEmpty()){
                 holder.reply_start.visibility=View.GONE
                 holder.show_reply.visibility=View.GONE
                 return
             }
+
             holder.reply_start.visibility=View.VISIBLE
             holder.show_reply.visibility=View.VISIBLE
             holder.show_reply.text = "共"+reply_list[rela].rcount+"条评论"
             holder.reply_start.removeAllViews()
+            holder.reply_start.setOnClickListener{
+                if(reply.replies.isNullOrEmpty())
+                    return@setOnClickListener
+                ReplyViewActivity.startActivity(it.context,reply.oid,reply.rpid)
+            }
             reply_list[rela].replies.map {
                 val _tempReply =LayoutInflater.from(holder.reply_start.context).inflate(R.layout.item_simple_reply,null)
                 _tempReply.findViewById<TextView>(R.id.textView17).text =it.member.uname+":"
-                _tempReply.findViewById<TextView>(R.id.textView30).text =it.content.message
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    _tempReply.findViewById<TextView>(R.id.textView30).text = getHtmlFormte(it.content.message)
+                }else{
+                    _tempReply.findViewById<TextView>(R.id.textView30).text = it.content.message
+                }
                 holder.reply_start.addView(_tempReply)
             }
         }

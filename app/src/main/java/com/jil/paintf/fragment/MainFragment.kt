@@ -7,7 +7,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.AdapterView
-import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
@@ -15,7 +14,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jil.paintf.R
-import com.jil.paintf.activity.DocDetailActivity
 import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.adapter.ItemAdapter
 import com.jil.paintf.repository.Item
@@ -27,7 +25,6 @@ import com.jil.paintf.viewmodel.MainViewModel.Companion.NC
 import com.jil.paintf.viewmodel.MainViewModel.Companion.NI
 import com.jil.paintf.viewmodel.MainViewModel.Companion.RC
 import com.jil.paintf.viewmodel.MainViewModel.Companion.RI
-import com.orhanobut.logger.Logger
 import kotlinx.android.synthetic.main.fragment_main.*
 
 private const val ARG_PARAM1 = "param1"

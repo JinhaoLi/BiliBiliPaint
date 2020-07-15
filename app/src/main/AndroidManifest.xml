@@ -19,7 +19,9 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="n">
-        <activity android:name=".activity.ReplyViewActivity">
+        <activity
+                android:configChanges="orientation"
+                android:name=".activity.ReplyViewActivity">
         </activity>
         <activity android:name=".activity.PreViewActivity">
         </activity>

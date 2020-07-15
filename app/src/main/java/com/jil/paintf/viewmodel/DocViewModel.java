@@ -1,7 +1,16 @@
 package com.jil.paintf.viewmodel;
 
+import android.graphics.drawable.Drawable;
+import android.util.Log;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.lifecycle.MutableLiveData;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.jil.paintf.repository.*;
+import com.jil.paintf.repository.Package;
+import com.jil.paintf.service.AppPaintF;
 import com.jil.paintf.service.DataRoomService;
 import io.reactivex.Observable;
 import io.reactivex.ObservableEmitter;
@@ -12,7 +21,6 @@ import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class DocViewModel extends BaseViewModel {
@@ -27,6 +35,39 @@ public class DocViewModel extends BaseViewModel {
     public DocViewModel() {
         liveReplyData =new MutableLiveData<>();
         data=new MutableLiveData<>();
+        if(AppPaintF.instance.getEmoteMap().size()==0){
+            //获取表情map
+            doNetGetEmote();
+        }
+    }
+
+    private void doNetGetEmote(){
+        add(retrofitRepository.getEmoteMap().subscribe(new Consumer<EmoteData>() {
+            @Override
+            public void accept(EmoteData emoteData) {
+                List<Package> packages =emoteData.getData().getPackages();
+                for (Package p : packages) {
+                    List<Emote> emotes =p.getEmote();
+                    for (final Emote emote:emotes) {
+                        Glide.with(AppPaintF.instance.getApplicationContext()).asDrawable()
+                                .load(emote.getUrl()+"@64w_64h.webp").into(new CustomTarget<Drawable>() {
+                            @Override
+                            public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                                resource.setBounds(0, 0, resource.getIntrinsicWidth(), resource.getIntrinsicHeight());
+                                String key =emote.getText();
+                                AppPaintF.instance.getEmoteMap().put(key,resource);
+                            }
+
+                            @Override
+                            public void onLoadCleared(@Nullable Drawable placeholder) {
+
+                            }
+                        });
+
+                    }
+                }
+            }
+        }));
     }
 
     public MutableLiveData<DocData> getData(){

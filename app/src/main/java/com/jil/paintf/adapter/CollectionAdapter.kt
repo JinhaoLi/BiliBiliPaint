@@ -2,12 +2,10 @@ package com.jil.paintf.adapter
 
 import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.text.Html
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,7 +22,6 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
-import com.jil.paintf.activity.DocDetailActivity
 import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.custom.NestedPopupListDialog
 import com.jil.paintf.custom.ThemeUtil
