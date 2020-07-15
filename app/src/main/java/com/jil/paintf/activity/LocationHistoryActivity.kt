@@ -11,7 +11,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SuperRecyclerAdapter
 import com.jil.paintf.custom.ThemeUtil
@@ -20,6 +20,7 @@ import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.HistoryViewModel
 import kotlinx.android.synthetic.main.activity_location_history.*
 import java.util.*
+
 
 class LocationHistoryActivity : AppCompatActivity() {
     var adapter:SuperRecyclerAdapter<HisItem>?=null
@@ -35,6 +36,9 @@ class LocationHistoryActivity : AppCompatActivity() {
             if(adapter==null){
                 adapter =object :SuperRecyclerAdapter<HisItem>(it as ArrayList<HisItem>){
                     override fun bindData(holder: SuperVHolder, position: Int) {
+//                        val params: ViewGroup.LayoutParams = holder.itemView.getLayoutParams()
+//                        params.height = params.height + Random().nextInt(300)
+//                        holder.itemView.setLayoutParams(params)
                         holder.setImage(data[position].image+"@512w_384h_1e.webp",R.id.imageView)
                         holder.setText(data[position].title,R.id.textView)
                         holder.itemView.setOnClickListener {
@@ -62,12 +66,18 @@ class LocationHistoryActivity : AppCompatActivity() {
                     }
 
                     override fun setLayout(viewType: Int): Int {
-                        return R.layout.item_doc_list_no_header_ico
+                        return if(AppPaintF.instance.stagger){
+                            R.layout.staggered_item_doc_list_no_header_ico
+                        }else{
+                            R.layout.item_doc_list_no_header_ico
+                        }
+
                     }
                 }
                 val cfg = resources.configuration
                 val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
-                recycleview.layoutManager=GridLayoutManager(this,spanCount)
+//                recycleview.layoutManager= GridLayoutManager(this,spanCount)
+                recycleview.layoutManager = StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
                 recycleview.adapter=adapter
             }else{
                 adapter!!.data=it as ArrayList<HisItem>

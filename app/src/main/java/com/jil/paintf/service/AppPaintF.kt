@@ -7,14 +7,12 @@ import android.content.ClipboardManager
 import android.content.pm.ApplicationInfo
 import android.graphics.drawable.Drawable
 import android.os.Bundle
-import android.os.Debug
 import android.os.Environment
 import androidx.preference.PreferenceManager
 import com.jil.paintf.network.NetCookie
 import com.orhanobut.logger.AndroidLogAdapter
 import com.orhanobut.logger.Logger
 import java.io.File
-import java.lang.Exception
 
 
 class AppPaintF : Application() {
@@ -33,6 +31,7 @@ class AppPaintF : Application() {
     val emoteMap =HashMap<String,Drawable>()
     private val Activity.simpleName get() = javaClass.simpleName
     var enableAnimator =false
+    var stagger =false
     var csrf:String? =null
     var FirstEntry = false
     val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null else DataRoomService.getDatabase().cookieDao.loadAll()[0]
@@ -44,6 +43,7 @@ class AppPaintF : Application() {
         Logger.addLogAdapter(AndroidLogAdapter())
         FirstEntry =PreferenceManager.getDefaultSharedPreferences(this).getBoolean("FirstEntry", true)
         enableAnimator=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("EnableAnimator", false)
+        stagger=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("Stagger", false)
         save_dir_path = PreferenceManager.getDefaultSharedPreferences(this).getString(SAVE_DIR, save_dir_path)!!
         LoadLevel =PreferenceManager.getDefaultSharedPreferences(this).getInt("LOAD_LEVEL",720)
         registerActivityLifecycleCallbacks(object: ActivityLifecycleCallbacks {

@@ -20,7 +20,7 @@ import com.jil.paintf.custom.SettingItem
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.service.AppPaintF.Companion.save_dir_path
-import kotlinx.android.synthetic.main.fragment_setting.recyclerview
+import kotlinx.android.synthetic.main.fragment_setting.*
 
 
 class SettingFragment :LazyFragment(){
@@ -139,10 +139,29 @@ class SettingFragment :LazyFragment(){
                 }
             }
         }
+        val staggered =object:SettingItem("布局",if (AppPaintF.instance.stagger)"瀑布流布局" else "表格布局",AppPaintF.instance
+            .stagger,5){
+            override fun click(v: View?) {
+                if(v is Switch){
+                    isSwitchOpen=v.isChecked
+                    if(v.isChecked){
+                        description="瀑布流布局"
+                    }else{
+                        description="表格布局"
+                    }
+                    AppPaintF.instance.stagger =v.isChecked
+                    PreferenceManager.getDefaultSharedPreferences(v.context).edit().putBoolean("Stagger", v.isChecked).apply()
+                    adapter!!.notifyDataSetChanged()
+
+                }
+            }
+
+        }
 
         settingList.add(loadLevel)
         settingList.add(selectDir)
         settingList.add(animator)
+        settingList.add(staggered)
     }
 
     private fun checkReadWrite(): Boolean {

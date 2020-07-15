@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+                                   xmlns:app="http://schemas.android.com/apk/res-auto"
+                                   android:orientation="vertical"
+                                   android:layout_width="wrap_content"
+                                   android:layout_marginTop="5dp"
+                                   android:layout_marginBottom="5dp"
+                                   android:layout_marginEnd="5dp"
+                                   android:layout_marginStart="5dp"
+                                   app:cardCornerRadius="5dp"
+                                   app:cardElevation="10dp"
+                                   android:layout_height="wrap_content">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+        <ImageView
+                android:layout_width="200dp"
+                android:adjustViewBounds="true"
+                android:transitionName="mainimage"
+                android:layout_height="wrap_content" app:srcCompat="@drawable/empty_hint" android:id="@+id/imageView"
+                android:scaleType="centerCrop" app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"/>
+        <ImageView
+                android:layout_width="40dp"
+                android:paddingTop="3dp"
+                android:paddingStart="3dp"
+                android:paddingBottom="3dp"
+                android:layout_height="40dp" app:srcCompat="@mipmap/ic_launcher" android:id="@+id/imageView2"
+                app:layout_constraintBottom_toTopOf="@+id/textView"
+                app:layout_constraintTop_toBottomOf="@+id/imageView" app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"/>
+        <TextView
+                android:text="TextView"
+                android:layout_width="0dp"
+                android:gravity="center"
+                android:maxLines="2"
+                android:textSize="14sp"
+                android:textColor="@android:color/black"
+                android:layout_height="40dp" android:id="@+id/textView"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView"
+                app:layout_constraintVertical_bias="0.0"
+                app:layout_constraintStart_toEndOf="@+id/imageView2"
+                app:layout_constraintEnd_toStartOf="@+id/vote_ico"/>
+        <TextView
+                android:text="10P"
+                android:padding="2dp"
+                android:background="@drawable/pic_count_tag_bg"
+                android:textColor="@android:color/white"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" android:id="@+id/textView2"
+                app:layout_constraintEnd_toEndOf="parent" app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginTop="8dp" android:layout_marginEnd="8dp"/>
+        <ImageView
+                android:layout_width="40dp"
+                android:src="@drawable/ic_no_voted"
+                android:layout_height="40dp" android:id="@+id/vote_ico"
+                app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintEnd_toEndOf="parent"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.cardview.widget.CardView>

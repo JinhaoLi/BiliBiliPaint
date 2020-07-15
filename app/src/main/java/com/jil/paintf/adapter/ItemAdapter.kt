@@ -6,11 +6,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.animation.LinearInterpolator
 import android.widget.*
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -27,7 +25,6 @@ import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Item
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
-import com.orhanobut.logger.Logger
 
 class ItemAdapter(private val mContext: Context
 ) : RecyclerView.Adapter<RecyclerView.ViewHolder>(){
@@ -39,7 +36,7 @@ class ItemAdapter(private val mContext: Context
         return when(viewType){
             ITEM_TYPE.ITEM_TYPE_DATA.ordinal->ItemVHolder(
                 LayoutInflater.from(mContext).inflate(
-                    R.layout.item_doc_list,
+                    if(AppPaintF.instance.stagger) R.layout.staggered_item_doc_list else R.layout.item_doc_list,
                     parent,
                     false
                 )
