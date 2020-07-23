@@ -19,9 +19,11 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="n">
+        <activity android:name=".activity.BlackListActivity">
+        </activity>
         <activity
-                android:configChanges="orientation"
-                android:name=".activity.ReplyViewActivity">
+                android:name=".activity.ReplyViewActivity"
+                android:configChanges="orientation">
         </activity>
         <activity android:name=".activity.PreViewActivity">
         </activity>

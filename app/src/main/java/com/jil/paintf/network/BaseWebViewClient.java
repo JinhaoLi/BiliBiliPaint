@@ -57,6 +57,7 @@ public class BaseWebViewClient extends WebViewClient {
             String cookieStr =cookieManager.getCookie(url);
             NetCookie netCookie= new NetCookie(cookieStr);
             AppPaintF.instance.setCsrf(netCookie.bili_jct);
+            AppPaintF.instance.setLoginId(netCookie.DedeUserID);
             DataRoomService.getDatabase().getCookieDao().insert(netCookie);
             view.loadUrl("https://m.bilibili.com/space/");
             if(stateChange!=null)
@@ -70,6 +71,7 @@ public class BaseWebViewClient extends WebViewClient {
             /**退出登录**/
             DataRoomService.getDatabase().getCookieDao().deleteAll();
             AppPaintF.instance.setCsrf(null);
+            AppPaintF.instance.setLoginId(0);
             view.loadUrl("https://passport.bilibili.com/login");
             if(stateChange!=null)
                 stateChange.loginExit();

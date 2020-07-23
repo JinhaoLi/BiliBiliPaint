@@ -17,7 +17,6 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,8 +56,7 @@ import java.net.URL
  **/
 class PreViewAdapter(
     var docData: DocData,
-    val viewModel: DocViewModel,
-    val viewLifecycleOwner: LifecycleOwner
+    val viewModel: DocViewModel
 ): RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var loadLevel:String = when (LoadLevel) {
         1080 -> "@1080w_1e.webp"
@@ -249,6 +247,10 @@ class PreViewAdapter(
         if(holder is PreShowReply){
             if(reply_list.isEmpty()&&isFirstLoadReply){
                 isFirstLoadReply=false
+                viewModel.liveMyReply.observeForever {
+                    reply_list.add(0,it)
+                    notifyItemInserted(0)
+                }
                 viewModel.liveReplyData.observeForever(replyObserver)
                 replyInit()
             }

@@ -210,6 +210,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_collection -> {
                 startActivity(Intent(this, CollectionActivity::class.java))
             }
+            R.id.nav_black_uid->{
+                startActivity(Intent(this, BlackListActivity::class.java))
+            }
+
             else -> {
 
             }

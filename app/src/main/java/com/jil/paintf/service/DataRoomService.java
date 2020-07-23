@@ -6,13 +6,16 @@ import androidx.room.migration.Migration;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.jil.paintf.network.NetCookie;
 import com.jil.paintf.network.NetCookieDao;
+import com.jil.paintf.repository.BlackDao;
+import com.jil.paintf.repository.BlackUID;
 import com.jil.paintf.repository.HisItem;
 import com.jil.paintf.repository.HisItemDao;
 
-@Database(entities = {NetCookie.class, HisItem.class}, version = 1)
+@Database(entities = {NetCookie.class, HisItem.class, BlackUID.class}, version = 2)
 public abstract class DataRoomService extends RoomDatabase {
     public abstract NetCookieDao getCookieDao();
     public abstract HisItemDao getHisItemDao();
+    public abstract BlackDao getBlackDao();
 
     //单例
     public static DataRoomService getDatabase(){
@@ -22,8 +25,8 @@ public abstract class DataRoomService extends RoomDatabase {
     private static class Holder{
         private static final DataRoomService instance= Room.databaseBuilder(AppPaintF.instance, DataRoomService.class, "app_data")
                 .allowMainThreadQueries()   //设置允许在主线程进行数据库操作，默认不允许，建议都设置为默认
-                // .fallbackToDestructiveMigration()  //设置数据库升级的时候清除之前的所有数据
-//                .addMigrations(update1_2)
+//                 .fallbackToDestructiveMigration()  //设置数据库升级的时候清除之前的所有数据
+                .addMigrations(update1_2)
                 .build();
     }
 
@@ -46,7 +49,7 @@ public abstract class DataRoomService extends RoomDatabase {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
 //            database.execSQL("ALTER TABLE users " + " ADD COLUMN last_update INTEGER");
-            database.execSQL("");
+            database.execSQL("create table BlackUID(uid INTEGER PRIMARY KEY);");
         }
     };
 

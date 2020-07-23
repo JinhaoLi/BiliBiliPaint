@@ -33,13 +33,18 @@ class AppPaintF : Application() {
     var enableAnimator =false
     var stagger =false
     var csrf:String? =null
+    var loginId:Int =0
     var FirstEntry = false
     val cookie: NetCookie? get() = if(DataRoomService.getDatabase().cookieDao.loadAll().size==0) null else DataRoomService.getDatabase().cookieDao.loadAll()[0]
     override fun onCreate() {
         super.onCreate()
         instance=this
         isDebug =isDebugState()
-        csrf = cookie?.bili_jct
+        cookie?.let {
+            csrf = it.bili_jct
+            loginId =it.DedeUserID
+        }
+
         Logger.addLogAdapter(AndroidLogAdapter())
         FirstEntry =PreferenceManager.getDefaultSharedPreferences(this).getBoolean("FirstEntry", true)
         enableAnimator=PreferenceManager.getDefaultSharedPreferences(this).getBoolean("EnableAnimator", false)

@@ -22,6 +22,11 @@
                 android:id="@+id/nav_collection"
                 android:icon="@drawable/ic_star"
                 android:title="@string/my_collection" />
+
+        <item
+                android:id="@+id/nav_black_uid"
+                android:icon="@drawable/ic_block_black_24dp"
+                android:title="@string/block" />
     </group>
 
 

@@ -111,7 +111,7 @@ class PreViewFragment : LazyFragment() {
         if (swiperefresh.isRefreshing)
             swiperefresh.isRefreshing = false
         if (preAdapter == null) {
-            preAdapter = PreViewAdapter(docData, viewModel, viewLifecycleOwner).also {
+            preAdapter = PreViewAdapter(docData, viewModel).also {
                 it.setOperateVote {
                     shakeView(it)
                     if (!operateViewModel.voteResult.hasActiveObservers()) {
@@ -342,7 +342,7 @@ class PreViewFragment : LazyFragment() {
                 operateViewModel.postReplyResult.observe(viewLifecycleOwner, Observer {
                     //Key: 'AddReplyReq.ReplyCommonReq.Type' Error:Field validation for 'Type' failed on the 'required' tag
                     if (it.code == 0) {
-                        preAdapter?.addReply(it.data.reply)
+//                        preAdapter?.addReply(it.data.reply)
                     } else {
                         Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
                     }

@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel;
 import com.jil.paintf.repository.*;
 import com.jil.paintf.service.AppApiService;
 import com.jil.paintf.service.AppPaintF;
+import com.jil.paintf.service.DataRoomService;
 import io.reactivex.Observable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
@@ -191,10 +192,12 @@ public class UserViewModel extends ViewModel {
     }
 
     public void joinToBlackList(int uid){
+        DataRoomService.getDatabase().getBlackDao().insert(new BlackUID(uid));
         subscribe(retrofitRepository.userOperate(uid, AppApiService.JOIN_BLACK_LIST));
     }
 
     public void removeBlackList(int uid){
+        DataRoomService.getDatabase().getBlackDao().deleteByUid(uid);
         subscribe(retrofitRepository.userOperate(uid,AppApiService.REMOVE_BLACK_LIST));
     }
 
