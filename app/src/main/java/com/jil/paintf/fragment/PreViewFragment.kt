@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.animation.LinearInterpolator
 import android.widget.FrameLayout
+import android.widget.ImageView
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
@@ -43,6 +44,7 @@ class PreViewFragment : LazyFragment() {
     private var preAdapter: PreViewAdapter? = null
     private lateinit var viewModel: DocViewModel
     private lateinit var operateViewModel: DocOperateModel
+    private lateinit var layoutManager: GridLayoutManager
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -219,7 +221,14 @@ class PreViewFragment : LazyFragment() {
                     val action = if (reply.action == 1) 0 else 1
                     operateViewModel.voteReplyLive.observe(viewLifecycleOwner, Observer {
                         reply.action = action
-                        preAdapter!!.notifyItemChanged(position)
+                        val item =layoutManager.findViewByPosition(position) as ViewGroup
+                        val vote_view =item.findViewById<ImageView>(R.id.imageView12)
+
+                        if(reply.action==1)
+                            vote_view?.setImageResource(R.drawable.ic_already_voted)
+                        else
+                            vote_view?.setImageResource(R.drawable.ic_no_voted)
+                        
                         operateViewModel.voteReplyLive.removeObservers(viewLifecycleOwner)
                     })
                     operateViewModel.doNetVoteReply(reply.oid.toLong(), reply.type, reply.rpid, action)
@@ -242,13 +251,14 @@ class PreViewFragment : LazyFragment() {
                 }
             }
             recycler_page.adapter = preAdapter
-            recycler_page.layoutManager = GridLayoutManager(requireContext(), 3).apply {
+            layoutManager = GridLayoutManager(requireContext(), 3).apply {
                 spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
                     override fun getSpanSize(position: Int): Int {
                         return spanCount
                     }
                 }
             }
+            recycler_page.layoutManager=layoutManager
             recycler_page.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)
