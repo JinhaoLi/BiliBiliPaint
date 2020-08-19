@@ -3,30 +3,41 @@ package com.jil.paintf.custom
 import android.content.Context
 import android.graphics.Color
 import android.util.DisplayMetrics
-import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import android.widget.*
-import java.util.*
-import kotlin.collections.ArrayList
 
 /***
  *  多层不遮挡ListPopupWindow
  */
-class NestedPopupListDialog(context: Context, val arch: View,var list:List<NestedPopupItem>, val parent: NestedPopupListDialog? =null): PopupWindow(context) {
+class NestedPopupListDialog(context: Context, val arch: View, val parent: NestedPopupListDialog? =null): PopupWindow(context) {
     var mScreenWidth:Int=0
     var mScreenHeight:Int=0
     private lateinit var lv:ListView
     var xoff:Int=0
     var yoff:Int=0
     var itemLayout:Int=android.R.layout.simple_list_item_1
+    var list:ArrayList<NestedPopupItem> = arrayListOf()
+    constructor(context: Context, arch: View,list:List<NestedPopupItem>,parent: NestedPopupListDialog? =null) : this(context,arch,parent) {
+        this.list = list as ArrayList<NestedPopupItem>
+        build(context)
+    }
+
+    constructor(context: Context, arch: View,list:Array<*>,parent: NestedPopupListDialog? =null):this(context,arch,parent){
+        this.list = arrayListOf()
+        list.map {
+            this.list.add(it as NestedPopupItem)
+        }
+        build(context)
+    }
 
     //用于确定子view
     var nxoff:Int=0
     var nyoff:Int=0
 
     var flag: Int=1
-    init {
+
+    private fun build(context: Context){
         val wm: WindowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         val outMetrics= DisplayMetrics()
         wm.defaultDisplay.getMetrics(outMetrics)
@@ -37,11 +48,6 @@ class NestedPopupListDialog(context: Context, val arch: View,var list:List<Neste
             xoff=parent.nxoff
             yoff=parent.nyoff
         }
-        build(context)
-
-    }
-
-    private fun build(context: Context){
         contentView= ListView(context)
         width=arch.width
         height= LinearLayout.LayoutParams.WRAP_CONTENT

@@ -69,7 +69,6 @@ class MainViewModel : BaseViewModel() {
         datas.map {
             if (blackUIDList.contains(it.user.uid)) {
                 removeList.add(it)
-
             }
         }
         if (datas is ArrayList) {

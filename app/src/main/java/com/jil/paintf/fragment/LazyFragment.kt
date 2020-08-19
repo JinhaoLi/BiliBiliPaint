@@ -1,12 +1,9 @@
 package com.jil.paintf.fragment
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-
-import com.jil.paintf.R
-import com.orhanobut.logger.Logger
-import kotlin.concurrent.thread
 
 abstract class LazyFragment : Fragment(){
     private var isLoaded = false
@@ -40,7 +37,8 @@ abstract class LazyFragment : Fragment(){
             isRecovery = true
         }
         return rootView
-
+        //这里不能这样，view会消失
+        //return inflater.inflate(layoutRes, container, false)
     }
 
 

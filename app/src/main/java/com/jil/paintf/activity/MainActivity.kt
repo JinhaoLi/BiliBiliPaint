@@ -49,25 +49,19 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
         adapter = MainPagerAdapter(supportFragmentManager, 0)
         viewpager!!.adapter = adapter
-
         adapter2 = MainPagerAdapter(supportFragmentManager, 1)
         viewpager2!!.adapter = adapter2
-
         tab_title!!.setupWithViewPager(viewpager)
-
         header = nav_view!!.getHeaderView(0)
         ico = header.findViewById(R.id.imageView3)
-
         viewModel.myInfoMutableLiveData.observe(this, Observer {
             changHeaderView(it.data.face, it.data.uname)
         })
-
         if (AppPaintF.instance.csrf != null) {
             viewModel.doNetMyInfo()
         } else {
             changHeaderView()
         }
-
         ico.setOnClickListener {
             if (AppPaintF.instance.csrf == null) {
                 startActivityForResult(Intent(this, LoginActivity::class.java), 3)
@@ -75,16 +69,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             MySelfActivity.startUserActivity(this, AppPaintF.instance.cookie!!.DedeUserID)
         }
-
         main_tabs!!.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
-            override fun onTabReselected(tab: TabLayout.Tab?) {
-
-            }
-
-            override fun onTabUnselected(tab: TabLayout.Tab?) {
-
-            }
-
+            override fun onTabReselected(tab: TabLayout.Tab?) {}
+            override fun onTabUnselected(tab: TabLayout.Tab?) {}
             override fun onTabSelected(tab: TabLayout.Tab?) {
                 if (main_tabs!!.selectedTabPosition == 0) {
                     viewpager!!.visibility = View.VISIBLE
@@ -98,14 +85,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
         })
-        if (savedInstanceState != null) {
-            main_tabs!!.selectTab(main_tabs!!.getTabAt(savedInstanceState.getInt("main_tabs", 0)))
-            viewpager!!.currentItem = savedInstanceState.getInt("pager_select", 0)
-            viewpager2!!.currentItem = savedInstanceState.getInt("pager2_select", 0)
-        }
-
         nav_view!!.setNavigationItemSelectedListener(this)
-
         val toggle = ActionBarDrawerToggle(
             this,
             drawer_layout,
@@ -113,7 +93,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.string.navigation_drawer_open,
             R.string.navigation_drawer_close
         )
-
         floatingActionButton.setOnClickListener {
             if (main_tabs.selectedTabPosition == 0) {
                 startActivity(Intent(this, UpLoadIllustActivity::class.java))
@@ -124,14 +103,15 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         }
         toggle.syncState()
         drawer_layout.addDrawerListener(toggle)
-
         if (AppPaintF.instance.FirstEntry) {
-            object : TextShowDialog(this, getString(R.string.first_info), getString(R.string.first_tips)) {
-
+            object : TextShowDialog(this, getString(R.string.first_info), getString(R.string.first_tips)){
+                override fun dismiss() {
+                    super.dismiss()
+                    AppPaintF.instance.FirstEntry=false
+                    PreferenceManager.getDefaultSharedPreferences(this@MainActivity).edit().putBoolean("FirstEntry", false).apply()
+                }
             }.setIcon(R.drawable.ic_info_outline_black_24dp).show()
-            PreferenceManager.getDefaultSharedPreferences(this).edit().putBoolean("FirstEntry", false).apply()
         }
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -162,6 +142,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         header.findViewById<TextView>(R.id.textView3).text = name
     }
 
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        main_tabs!!.selectTab(main_tabs!!.getTabAt(savedInstanceState.getInt("main_tabs", 0)))
+        viewpager!!.currentItem = savedInstanceState.getInt("pager_select", 0)
+        viewpager2!!.currentItem = savedInstanceState.getInt("pager2_select", 0)
+    }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         // Handle navigation view item clicks here.
@@ -196,7 +182,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                     positiveButton(R.string.apply)
                     lifecycleOwner(this@MainActivity)
                 }
-                //startActivity(Intent(this, ThemeActivity::class.java))
             }
 
             R.id.nav_setting -> {
@@ -213,10 +198,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             R.id.nav_black_uid->{
                 startActivity(Intent(this, BlackListActivity::class.java))
             }
-
-            else -> {
-
-            }
+            else -> {}
 
         }
         drawer_layout.closeDrawer(GravityCompat.START)
@@ -246,7 +228,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             else -> super.onOptionsItemSelected(item)
         }
-
     }
 }
 

@@ -4,22 +4,20 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
 import android.os.Bundle
+import android.view.Menu
 import android.view.MenuItem
-import android.view.View
-import android.widget.AdapterView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.jil.paintf.R
 import com.jil.paintf.adapter.SearchItemAdapter
-import com.jil.paintf.adapter.SuperRecyclerAdapter
+import com.jil.paintf.custom.NestedPopupListDialog
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Result
 import com.jil.paintf.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.activity_search.*
-import kotlinx.android.synthetic.main.fragment_user.*
-import java.util.ArrayList
+import java.util.*
 
 class SearchActivity :AppCompatActivity(){
 
@@ -52,11 +50,6 @@ class SearchActivity :AppCompatActivity(){
         viewModel!!.searchDatas.observeForever {
             refresh(it.data.result as ArrayList<Result>)
         }
-        intent.getStringExtra("param1")?.let {
-            keyword =it
-            search_edit!!.setText(it)
-            search()
-        }
         recycler_view!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
             override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                 super.onScrollStateChanged(recyclerView, newState)
@@ -72,6 +65,11 @@ class SearchActivity :AppCompatActivity(){
                 }
             }
         })
+        intent.getStringExtra("param1")?.let {
+            keyword =it
+            search_edit?.setText(it)
+            search(it)
+        }
 
         layoutManager.spanSizeLookup = object : GridLayoutManager.SpanSizeLookup() {
             override fun getSpanSize(position: Int): Int {
@@ -80,36 +78,41 @@ class SearchActivity :AppCompatActivity(){
                 else 1
             }
         }
-        search!!.setOnClickListener{
-            keyword =search_edit!!.text.toString()
-            search()
-        }
 
-        spinner!!.onItemSelectedListener =object : AdapterView.OnItemSelectedListener {
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-                spinner.setSelection(1,true)
-            }
-
-            override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long){
+        val illustsItem =object :NestedPopupListDialog.NestedPopupItem("插画"){
+            override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
+                super.doAction(nestedPopupListDialog)
                 pageCount=1
-                if(position==0){
-                    category=1
-                    categ!!.text ="插画"
-                }else{
-                    category=2
-                    categ!!.text ="摄影"
-                }
+                category=1
+                nestedPopupListDialog.dismiss()
+                categ!!.text ="插画"
+                search(search_edit?.text.toString())
             }
-
         }
-
+        val photoItem =object :NestedPopupListDialog.NestedPopupItem("摄影"){
+            override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
+                super.doAction(nestedPopupListDialog)
+                pageCount=1
+                category=2
+                nestedPopupListDialog.dismiss()
+                categ!!.text ="摄影"
+                search(search_edit?.text.toString())
+            }
+        }
+        categ.setOnClickListener {
+            showChoosePopupDialog(illustsItem,photoItem)
+        }
     }
 
-    private fun search(){
+    private fun showChoosePopupDialog(vararg item:NestedPopupListDialog.NestedPopupItem){
+        val dialog =NestedPopupListDialog(this,categ,item,null)
+        dialog.show()
+    }
+
+    private fun search(keyword:String){
         if(keyword.isEmpty()){
             return
         }
-        pageCount=1
         if(adapter!=null){
             adapter!!.data.clear()
             adapter!!.notifyDataSetChanged()
@@ -130,10 +133,18 @@ class SearchActivity :AppCompatActivity(){
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_search, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
             android.R.id.home->{
                 finish()
+            }
+            R.id.action_search -> {
+                search(search_edit.text.toString())
             }
         }
         return super.onOptionsItemSelected(item)

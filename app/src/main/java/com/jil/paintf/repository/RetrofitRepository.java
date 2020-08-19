@@ -1,5 +1,6 @@
 package com.jil.paintf.repository;
 
+import android.os.Bundle;
 import com.jil.paintf.network.BaseNetClient;
 import com.jil.paintf.service.AppApiService;
 import com.jil.paintf.service.AppPaintF;
@@ -12,6 +13,7 @@ import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Field;
 
+import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
@@ -66,6 +68,7 @@ public class RetrofitRepository {
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
+
 
     public Observable<DocListRepository> getHotIllusts(final int page, final int size) {
         return Observable.just(1).flatMap(new Function<Integer, Observable<DocListRepository>>() {

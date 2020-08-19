@@ -30,23 +30,20 @@ class LoginActivity : AppCompatActivity() {
                 setResult(-2,data)
                 finish()
             }
-
             override fun isLogin() {
                 val data =Intent()
                 setResult(Activity.RESULT_OK,data)
                 finish()
             }
-
         })
         web_view.webViewClient =client
         web_view.settings.javaScriptEnabled =true
-        if(AppPaintF.instance.csrf==null){
+        if(AppPaintF.instance.csrf==null) {
             web_view.loadUrl("https://passport.bilibili.com/login")
         }else{
             isLogin=true
             web_view.loadUrl("https://m.bilibili.com/space/")
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {

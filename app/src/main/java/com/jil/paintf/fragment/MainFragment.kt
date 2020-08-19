@@ -11,8 +11,8 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jil.paintf.R
 import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.adapter.ItemAdapter
@@ -87,8 +87,8 @@ class MainFragment: LazyFragment() {
             }
             val cfg = resources.configuration
             val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
-//            val manager = GridLayoutManager(context,spanCount)
-            val manager =StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
+            val manager = GridLayoutManager(context,spanCount)
+//            val manager =StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
             recyclerview!!.layoutManager=manager
             recyclerview!!.adapter =adapter
             swiperefresh!!.setOnRefreshListener {
@@ -179,8 +179,8 @@ class MainFragment: LazyFragment() {
         if(addAtStart) {
             adapter!!.data.addAll(0, list)
             adapter!!.notifyItemRangeInserted(0,list.size)
-            adapter!!.notifyItemRangeChanged(list.size,updataPosition)
-            recyclerview!!.scrollToPosition(list.size)
+//            adapter!!.notifyItemRangeChanged(list.size,6)
+//            recyclerview!!.layoutManager!!.scrollToPosition(list.size)
         }else{
             adapter!!.data.addAll(list)
             adapter!!.notifyItemInserted(updataPosition)
