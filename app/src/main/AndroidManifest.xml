@@ -19,6 +19,8 @@
             android:theme="@style/AppTheme"
             tools:ignore="GoogleAppIndexingWarning"
             tools:targetApi="n">
+        <activity android:name=".activity.ScaleImageActivity">
+        </activity>
         <activity android:name=".activity.BlackListActivity">
         </activity>
         <activity
@@ -56,7 +58,6 @@
                 android:label="@string/title_activity_user"
                 android:theme="@style/AppTheme.NoActionBar">
         </activity>
-        <activity android:name=".activity.DocDetailActivity"/>
         <activity
                 android:name=".activity.MainActivity"
                 android:launchMode="singleTask">

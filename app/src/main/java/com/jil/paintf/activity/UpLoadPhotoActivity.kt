@@ -2,11 +2,11 @@ package com.jil.paintf.activity
 
 import android.app.Activity
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.widget.RadioGroup
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -126,8 +126,14 @@ class UpLoadPhotoActivity : AppCompatActivity() {
         }
 
         viewModel.createLiveData.observe(this, Observer {
-            Toast.makeText(this, "发布成功！", Toast.LENGTH_SHORT).show()
-            finish()
+            if(it.code==0&&it.msg=="success"){
+                finish()
+                val docId =it.data.doc_id.toInt()
+                PreViewActivity.startDocDetailActivity(this, intArrayOf(docId),docId)
+            }else{
+                Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+            }
+
         })
     }
 

@@ -19,7 +19,6 @@ import com.jil.paintf.repository.HisItem
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.HistoryViewModel
 import kotlinx.android.synthetic.main.activity_location_history.*
-import java.util.*
 
 
 class LocationHistoryActivity : AppCompatActivity() {
@@ -34,7 +33,7 @@ class LocationHistoryActivity : AppCompatActivity() {
         val viewModel =ViewModelProvider(this).get(HistoryViewModel::class.java)
         viewModel.mutableLiveData.observe(this, Observer {
             if(adapter==null){
-                adapter =object :SuperRecyclerAdapter<HisItem>(it as ArrayList<HisItem>){
+                adapter =object :SuperRecyclerAdapter<HisItem>(it){
                     override fun bindData(holder: SuperVHolder, position: Int) {
 //                        val params: ViewGroup.LayoutParams = holder.itemView.getLayoutParams()
 //                        params.height = params.height + Random().nextInt(300)
@@ -80,7 +79,7 @@ class LocationHistoryActivity : AppCompatActivity() {
                 recycleview.layoutManager = StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
                 recycleview.adapter=adapter
             }else{
-                adapter!!.data=it as ArrayList<HisItem>
+                adapter!!.data=it
                 adapter!!.notifyDataSetChanged()
             }
 

@@ -28,4 +28,5 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="block">uid黑名单</string>
     <string name="illusts">插画</string>
+    <string name="preview">preview</string>
 </resources>

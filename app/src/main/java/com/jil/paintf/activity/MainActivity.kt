@@ -8,6 +8,7 @@ import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
@@ -193,7 +194,12 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
 
             R.id.nav_collection -> {
-                startActivity(Intent(this, CollectionActivity::class.java))
+                if(AppPaintF.instance.csrf.isNullOrEmpty()){
+                    Toast.makeText(this, "你还没有登录！", Toast.LENGTH_SHORT).show()
+                }else{
+                    startActivity(Intent(this, CollectionActivity::class.java))
+                }
+
             }
             R.id.nav_black_uid->{
                 startActivity(Intent(this, BlackListActivity::class.java))

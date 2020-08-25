@@ -11,7 +11,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.palette.graphics.Palette
 import androidx.recyclerview.widget.RecyclerView
@@ -124,7 +123,7 @@ class ItemAdapter(
                 if (data[position].item.already_voted == 1)
                     type = 2
 
-                viewModel.voteResult.observe(mContext as LifecycleOwner, Observer {
+                viewModel.voteResult.observe(mContext as LifecycleOwner, {
                     //点赞按钮
                     if (it.data.type == 1) {
                         data[position].item.already_voted = 1

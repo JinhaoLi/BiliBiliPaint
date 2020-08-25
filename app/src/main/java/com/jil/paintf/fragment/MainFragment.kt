@@ -13,6 +13,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jil.paintf.R
 import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.adapter.ItemAdapter
@@ -87,8 +88,8 @@ class MainFragment: LazyFragment() {
             }
             val cfg = resources.configuration
             val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
-            val manager = GridLayoutManager(context,spanCount)
-//            val manager =StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
+//            val manager = GridLayoutManager(context,spanCount)
+            val manager = StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
             recyclerview!!.layoutManager=manager
             recyclerview!!.adapter =adapter
             swiperefresh!!.setOnRefreshListener {

@@ -25,6 +25,7 @@ import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.ReplyViewActivity
+import com.jil.paintf.activity.ScaleImageActivity
 import com.jil.paintf.activity.SearchActivity
 import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
@@ -180,6 +181,13 @@ class PreViewAdapter(
             holder.itemView.setOnLongClickListener {
                 mOperateDownload.invoke(position-1)
                 return@setOnLongClickListener false
+            }
+            holder.itemView.setOnClickListener {
+                val picUrls = arrayListOf<String>()
+                docData.item.pictures.map {
+                    picUrls.add(it.img_src)
+                }
+                ScaleImageActivity.startActivity(it.context,picUrls)
             }
         }
         if(holder is PreHeaderItem){

@@ -65,7 +65,7 @@ public class BaseWebViewClient extends WebViewClient {
             return;
         }
         if(url.startsWith("https://m.bilibili.com/space/")){
-            Toast.makeText(view.getContext(), "可以点击->编辑资料->退出登录", Toast.LENGTH_SHORT).show();
+            
         }
         if(url.equals("https://passport.bilibili.com/login?act=exit")){
             /**退出登录**/

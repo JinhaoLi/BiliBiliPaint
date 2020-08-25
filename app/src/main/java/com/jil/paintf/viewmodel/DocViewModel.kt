@@ -16,7 +16,7 @@ import io.reactivex.schedulers.Schedulers
 
 class DocViewModel : BaseViewModel() {
     var retrofitRepository = RetrofitRepository.getInstance()
-    val data: MutableLiveData<DocData>
+    val data: MutableLiveData<DocRepository>
 
     //==================================评论相关数据
     var liveReplyData: MutableLiveData<ReplyRepository> = MutableLiveData()
@@ -51,8 +51,9 @@ class DocViewModel : BaseViewModel() {
         retrofitRepository.getDocDetail(id).subscribe(object : Observer<DocRepository> {
             override fun onSubscribe(d: Disposable) {}
             override fun onNext(docRepository: DocRepository) {
-                data.postValue(docRepository.data)
-                saveHis(docRepository.data)
+                data.postValue(docRepository)
+                if(docRepository.code==0)
+                    saveHis(docRepository.data)
             }
 
             override fun onError(e: Throwable) {

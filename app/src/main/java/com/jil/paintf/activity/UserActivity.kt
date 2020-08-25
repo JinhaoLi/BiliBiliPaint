@@ -43,13 +43,12 @@ class UserActivity : AppCompatActivity() {
         listener= CompoundButton.OnCheckedChangeListener { buttonView, isChecked ->
                 if(AppPaintF.instance.csrf==null){
                     Toast.makeText(this@UserActivity, "你还没有登录！", Toast.LENGTH_SHORT).show()
-                    return@OnCheckedChangeListener
-                }
-
-                if(isChecked){
-                    viewModel!!.joinAttentionList(uid)
                 }else{
-                    viewModel!!.removeAttentionList(uid)
+                    if(isChecked){
+                        viewModel!!.joinAttentionList(uid)
+                    }else{
+                        viewModel!!.removeAttentionList(uid)
+                    }
                 }
             }
         checkbox.setOnCheckedChangeListener (listener)
@@ -81,7 +80,7 @@ class UserActivity : AppCompatActivity() {
 
         //用户作品
         observer=Observer{
-            var intArray  =IntArray(3)
+            val intArray  =IntArray(3)
             intArray[0] =it.data.all_count
             intArray[1] =it.data.draw_count
             intArray[2] =it.data.photo_count

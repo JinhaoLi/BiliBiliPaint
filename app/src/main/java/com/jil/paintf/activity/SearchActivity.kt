@@ -17,6 +17,7 @@ import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Result
 import com.jil.paintf.viewmodel.SearchViewModel
 import kotlinx.android.synthetic.main.activity_search.*
+import kotlinx.android.synthetic.main.item_add_tag_layout.*
 import java.util.*
 
 class SearchActivity :AppCompatActivity(){
@@ -32,7 +33,6 @@ class SearchActivity :AppCompatActivity(){
     var viewModel :SearchViewModel?=null
     var pageCount =1
     var adapter: SearchItemAdapter?=null
-    var keyword =""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,13 +60,15 @@ class SearchActivity :AppCompatActivity(){
                         }
                         adapter!!.status="正在加载..."
                         pageCount++
-                        viewModel!!.nextPage(keyword,pageCount,category)
+                        editText!!.text.toString().let {
+                            if(it.isNotEmpty())
+                                viewModel!!.nextPage(it,pageCount,category)
+                        }
                     }
                 }
             }
         })
         intent.getStringExtra("param1")?.let {
-            keyword =it
             search_edit?.setText(it)
             search(it)
         }

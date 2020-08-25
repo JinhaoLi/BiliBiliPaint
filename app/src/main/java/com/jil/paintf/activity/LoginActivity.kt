@@ -24,15 +24,17 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
         setSupportActionBar(toolbar4)
         client=BaseWebViewClient(this)
-        client!!.setStateChange(object :BaseWebViewClient.StateChange{
+        client!!.setStateChange(object : BaseWebViewClient.StateChange {
             override fun loginExit() {
-                val data =Intent()
-                setResult(-2,data)
+                val data = Intent()
+                setResult(-2, data)
                 finish()
             }
+
             override fun isLogin() {
-                val data =Intent()
-                setResult(Activity.RESULT_OK,data)
+                val data = Intent()
+                setResult(Activity.RESULT_OK, data)
+                Toast.makeText(this@LoginActivity, "登录成功！", Toast.LENGTH_SHORT).show()
                 finish()
             }
         })
@@ -48,15 +50,16 @@ class LoginActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         if(AppPaintF.instance.csrf!= null)
-            menu?.add(1,1,1,"退出登录")
+            menu?.add(1, 1, 1, "退出登录")
         return super.onCreateOptionsMenu(menu)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when(item.itemId){
-            1->{
+            1 -> {
                 /**此处可以获取id */
                 Toast.makeText(this, "可以点击->编辑资料->退出登录", Toast.LENGTH_SHORT).show()
+
             }
         }
         return super.onOptionsItemSelected(item)

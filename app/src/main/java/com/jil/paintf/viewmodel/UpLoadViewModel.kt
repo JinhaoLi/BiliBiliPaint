@@ -1,18 +1,20 @@
 package com.jil.paintf.viewmodel
 
 import androidx.lifecycle.MutableLiveData
-import com.jil.paintf.repository.*
+import com.jil.paintf.repository.AfterPostDoc
+import com.jil.paintf.repository.DataXXX
+import com.jil.paintf.repository.RetrofitRepository
+import com.jil.paintf.repository.UpLoadResultLocation
 import com.jil.paintf.service.AppPaintF
 import io.reactivex.functions.Consumer
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import okhttp3.MultipartBody
 import okhttp3.RequestBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import okhttp3.ResponseBody
 
 class UpLoadViewModel : BaseViewModel() {
     val mutableLiveData = MutableLiveData<UpLoadResultLocation>()
-    val createLiveData =MutableLiveData<ResponseBody>()
+    val createLiveData =MutableLiveData<AfterPostDoc>()
 
     fun doNetUpLoad(byteArray: ByteArray,fileName:String,category:String){
         if(AppPaintF.instance.csrf==null){

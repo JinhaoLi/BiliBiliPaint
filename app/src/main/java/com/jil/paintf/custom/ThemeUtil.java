@@ -73,4 +73,39 @@ public class ThemeUtil {
                 return context.getColor(R.color.colorAccent);
         }
     }
+
+    public static int getColorPrimary(Context context){
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return 0xFFD81B60;
+        }
+        int themeIndex = PreferenceManager.getDefaultSharedPreferences(context).getInt("THEME",0);
+        if(themeIndex>THEME.length){
+            themeIndex=0;
+        }
+        switch(themeIndex){
+            case 1:
+                return context.getColor(R.color.pink);
+
+            case 2:
+                return context.getColor(R.color.green);
+
+            case 3:
+                return context.getColor(R.color.purple);
+
+            case 4:
+                return context.getColor(R.color.tea);
+
+            case 5:
+                return context.getColor(R.color.walnut);
+
+            case 6:
+                return context.getColor(R.color.seaPine_light);
+
+            case 7:
+                return context.getColor(R.color.seedling);
+
+            default:
+                return context.getColor(R.color.colorPrimary);
+        }
+    }
 }

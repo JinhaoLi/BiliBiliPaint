@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView
+<com.jil.paintf.custom.ShowProgressImageView
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:id="@+id/imageView"
@@ -7,6 +7,7 @@
         android:src="@mipmap/ic_launcher"
         android:layout_gravity="center"
         android:adjustViewBounds="true"
-        android:layout_height="match_parent" android:scaleType="centerCrop">
+        android:layout_height="match_parent"
+        android:scaleType="centerCrop">
 
-</com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView>
+</com.jil.paintf.custom.ShowProgressImageView>

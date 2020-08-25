@@ -26,3 +26,14 @@ data class FavOperateResult(
     val msg: String
 )
 
+
+data class AfterPostDoc(
+    val code: Int,
+    val `data`: XData,
+    val message: String,
+    val msg: String
+)
+
+data class XData(
+    val doc_id: String
+)

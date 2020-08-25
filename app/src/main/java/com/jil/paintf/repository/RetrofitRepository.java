@@ -298,12 +298,12 @@ public class RetrofitRepository {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> createDoc(final int biz, final int category, final int type
+    public Observable<AfterPostDoc> createDoc(final int biz, final int category, final int type
             , final String title, final String description, final int copy_forbidden
             , final String csrf_token, final Map<String, String> fields, final Map<String, String> imgs) {
-        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<AfterPostDoc>>() {
             @Override
-            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
+            public ObservableSource<AfterPostDoc> apply(Integer integer) throws Exception {
                 return ApiVcBiliService.createDoc(biz, category, type
                         , title, description, copy_forbidden
                         , csrf_token, fields, imgs);
@@ -311,12 +311,12 @@ public class RetrofitRepository {
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }
 
-    public Observable<ResponseBody> createPhotoDoc(final int biz, final int category
+    public Observable<AfterPostDoc> createPhotoDoc(final int biz, final int category
             , final String title, final String description, final int copy_forbidden
             , final String csrf_token, final Map<String, String> fields, final Map<String, String> imgs) {
-        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<ResponseBody>>() {
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<AfterPostDoc>>() {
             @Override
-            public ObservableSource<ResponseBody> apply(Integer integer) throws Exception {
+            public ObservableSource<AfterPostDoc> apply(Integer integer) throws Exception {
                 return ApiVcBiliService.createPhotoDoc(biz, category
                         , title, description, copy_forbidden
                         , csrf_token, fields, imgs);

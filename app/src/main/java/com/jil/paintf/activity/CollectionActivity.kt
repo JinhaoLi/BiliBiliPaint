@@ -1,8 +1,8 @@
 package com.jil.paintf.activity
 
 import android.content.res.Configuration
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -10,11 +10,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.jil.paintf.R
 import com.jil.paintf.adapter.CollectionAdapter
 import com.jil.paintf.custom.ThemeUtil
-import com.jil.paintf.repository.CollectItem
 import com.jil.paintf.viewmodel.CollectionViewModel
 import kotlinx.android.synthetic.main.activity_collection.*
-import kotlinx.android.synthetic.main.activity_collection.recycler_view
-import kotlinx.android.synthetic.main.activity_search.*
 
 class CollectionActivity : AppCompatActivity() {
     private lateinit var adapter: CollectionAdapter
@@ -74,8 +71,6 @@ class CollectionActivity : AppCompatActivity() {
                 else 1
             }
         }
-
         viewModel.doNetMCollection(pageCount)
-
     }
 }

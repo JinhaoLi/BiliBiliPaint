@@ -25,7 +25,7 @@ import com.jil.paintf.adapter.PreViewAdapter
 import com.jil.paintf.custom.GlideCircleWithBorder
 import com.jil.paintf.custom.RecycleItemDecoration
 import com.jil.paintf.custom.ThemeUtil
-import com.jil.paintf.repository.DocData
+import com.jil.paintf.repository.DocRepository
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.DocOperateModel
 import com.jil.paintf.viewmodel.DocViewModel
@@ -106,14 +106,18 @@ class PreViewFragment : LazyFragment() {
     }
 
     private var willDownload = -1
-    val docDataObserver = Observer<DocData> { docData ->
-        if (docData.item.doc_id != docId) {
+    val docDataObserver = Observer<DocRepository> { docRepository ->
+        if(docRepository.code!=0){
+            Toast.makeText(requireContext(), docRepository.message, Toast.LENGTH_SHORT).show()
+            return@Observer
+        }
+        if (docRepository.data.item.doc_id != docId) {
             return@Observer
         }
         if (swiperefresh.isRefreshing)
             swiperefresh.isRefreshing = false
         if (preAdapter == null) {
-            preAdapter = PreViewAdapter(docData, viewModel).also {
+            preAdapter = PreViewAdapter(docRepository.data, viewModel).also {
                 it.setOperateVote {
                     shakeView(it)
                     if (!operateViewModel.voteResult.hasActiveObservers()) {
@@ -121,15 +125,15 @@ class PreViewFragment : LazyFragment() {
                             Toast.makeText(requireContext(), "你还没有登录！", Toast.LENGTH_SHORT).show()
                         } else {
                             var type = 1
-                            if (docData.item.already_voted == 1)
+                            if (docRepository.data.item.already_voted == 1)
                                 type = 2
                             operateViewModel.voteResult.observe(this, Observer {
                                 //点赞按钮
                                 if (it.data.type == 1) {
-                                    docData!!.item.already_voted = 1
+                                    docRepository!!.data.item.already_voted = 1
                                     imageView8.setImageResource(R.drawable.ic_like)
                                 } else if (it.data.type == 2) {
-                                    docData!!.item.already_voted = 0
+                                    docRepository!!.data.item.already_voted = 0
                                     imageView8.setImageResource(R.drawable.ic_no_vote_big)
                                 } else {
                                     Toast.makeText(requireContext(), it.message, Toast.LENGTH_SHORT).show()
@@ -158,12 +162,12 @@ class PreViewFragment : LazyFragment() {
                             Toast.makeText(requireContext(), "你还没有登录！", Toast.LENGTH_SHORT).show()
                         } else {
                             var isCollection = false
-                            if (docData!!.item.already_collected == 1)
+                            if (docRepository!!.data.item.already_collected == 1)
                                 isCollection = true
                             if (isCollection) {
                                 operateViewModel.removeFavResult.observe(this, Observer {
                                     if (it.code == 0) {
-                                        docData.item.already_collected = 0
+                                        docRepository.data.item.already_collected = 0
                                         imageView9.setImageResource(R.drawable.ic_no_star)
                                         operateViewModel.removeFavResult.removeObservers(this)
                                     } else {
@@ -174,7 +178,7 @@ class PreViewFragment : LazyFragment() {
                             } else {
                                 operateViewModel.favResult.observe(this, Observer {
                                     if (it.code == 0) {
-                                        docData.item.already_collected = 1
+                                        docRepository.data.item.already_collected = 1
                                         imageView9.setImageResource(R.drawable.ic_star)
                                         operateViewModel.favResult.removeObservers(this)
                                     } else {
@@ -211,7 +215,7 @@ class PreViewFragment : LazyFragment() {
 
                 }
                 it.setOperateArtWork {
-                    UserActivity.startUserActivity(requireContext(), docData.user.uid)
+                    UserActivity.startUserActivity(requireContext(), docRepository.data.user.uid)
                 }
                 it.setOprateVoteReply { reply, position ->
                     if (AppPaintF.instance.csrf == null) {
@@ -239,7 +243,7 @@ class PreViewFragment : LazyFragment() {
                     return@setOperateReplyArt
                 }
                     AppPaintF.instance.csrf?.let { it1 ->
-                        reply(docData.item.doc_id, 11,-1L,0L,1, it1,"(作者)"+docData.user.name)
+                        reply(docRepository.data.item.doc_id, 11,-1L,0L,1, it1,"(作者)"+docRepository.data.user.name)
                     }
                 }
                 it.setOprateReply2 { reply, position, view ->
@@ -295,7 +299,7 @@ class PreViewFragment : LazyFragment() {
                         floatingActionButton3.getLayoutParams() as FrameLayout.LayoutParams
                     val hideDistance = layoutParams.rightMargin + floatingActionButton3.width
 
-                    if (first_position > docData.item.pictures.size + 1) {
+                    if (first_position > docRepository.data.item.pictures.size + 1) {
                         floatingActionButton3.animate().translationX(0f).setInterpolator(LinearInterpolator()).start()
                     } else {
                         floatingActionButton3.animate().translationX(hideDistance.toFloat())
@@ -305,10 +309,10 @@ class PreViewFragment : LazyFragment() {
             })
             recycler_page.addItemDecoration(RecycleItemDecoration(requireContext(), 1))
         } else {
-            preAdapter!!.refresh(docData)
+            preAdapter!!.refresh(docRepository.data)
         }
 
-        docData.let {
+        docRepository.data.let {
             textView5.text = it.user.name
             textView4.text = it.item.title
             textView6.text = it.item.upload_time_text

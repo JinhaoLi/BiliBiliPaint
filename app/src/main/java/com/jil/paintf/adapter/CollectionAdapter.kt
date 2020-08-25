@@ -31,6 +31,7 @@ import com.jil.paintf.viewmodel.CollectionViewModel
 class CollectionAdapter(val mContext: Context) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     var data=arrayListOf<CollectItem>()
     var status =""
+    var viewModel:CollectionViewModel = ViewModelProvider(mContext as AppCompatActivity).get(CollectionViewModel::class.java)
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when(viewType){
             ITEM_TYPE.ITEM_TYPE_DATA.ordinal->ItemVHolder(
@@ -58,19 +59,20 @@ class CollectionAdapter(val mContext: Context) : RecyclerView.Adapter<RecyclerVi
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is ItemVHolder) {
-            holder.imageUrl=data[position].content.item.pictures[0].img_src + "@512w_384h_1e.webp"
+            val collectItem =data[position]
+            holder.imageUrl=collectItem.content.item.pictures[0].img_src + "@512w_384h_1e.webp"
             holder.displayImage()
             if(data[position].content.item.title =="")
                 holder.title.text = "无题"
             else{
-                holder.title.text = data[position].content.item.title
+                holder.title.text = collectItem.content.item.title
             }
 
             if(data[position].content.item.pictures.size==1){
                 holder.count.visibility=View.GONE
             }else{
                 holder.count.visibility=View.VISIBLE
-                holder.count.text = data[position].content.item.pictures.size.toString()
+                holder.count.text = collectItem.content.item.pictures.size.toString()
             }
 
             holder.image.setOnClickListener { v ->
@@ -78,35 +80,33 @@ class CollectionAdapter(val mContext: Context) : RecyclerView.Adapter<RecyclerVi
                 for (index in 0 until data.size){
                     intArray[index] =data[index].content.item.doc_id
                 }
-                PreViewActivity.startDocDetailActivity(v.context, intArray, data[position].content.item.doc_id)
+                PreViewActivity.startDocDetailActivity(v.context, intArray,collectItem.content.item.doc_id)
+            }
+            val item = object :NestedPopupListDialog.NestedPopupItem("取消收藏"){
+                override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
+                    viewModel.removeFavResult.observe(mContext as AppCompatActivity, Observer {
+                        if(it.code==0){
+                            data.remove(collectItem)
+                            notifyItemRemoved(position)
+                            if(position!=data.size-1)
+                                notifyItemRangeChanged(position,data.size-position-1)
+                            viewModel.removeFavResult.removeObservers(mContext)
+                        }else
+                            Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
+
+                    })
+                    viewModel.doNetDeleteFav(collectItem.fav_id)
+                    nestedPopupListDialog.dismiss()
+                }
             }
 
             holder.itemView.setOnLongClickListener {
-                val item = object :NestedPopupListDialog.NestedPopupItem("取消收藏"){
-                    override fun doAction(nestedPopupListDialog: NestedPopupListDialog) {
-//                        Toast.makeText(mContext, "取消收藏", Toast.LENGTH_SHORT).show()
-                        val viewModel =ViewModelProvider(mContext as AppCompatActivity).get(CollectionViewModel::class.java)
-                        viewModel.removeFavResult.observe(mContext, Observer {
-                            if(it.code==0){
-                                data.removeAt(position)
-                                notifyItemRemoved(position)
-                                viewModel.removeFavResult.removeObservers(mContext)
-                            }else
-                                Toast.makeText(mContext, it.message, Toast.LENGTH_SHORT).show()
-
-                        })
-                        viewModel.doNetDeleteFav(data[position].fav_id)
-                        nestedPopupListDialog.dismiss()
-                    }
-                }
                 val list = arrayListOf<NestedPopupListDialog.NestedPopupItem>()
                 list.add(item)
                 val nestedPopupListDialog =NestedPopupListDialog(mContext,holder.title, list)
                 nestedPopupListDialog.show()
                 false
             }
-
-
         }
 
         if(holder is BottomViewHolder){

@@ -262,7 +262,7 @@ public interface AppApiService {
      */
     @FormUrlEncoded
     @POST("https://api.vc.bilibili.com/link_draw/v1/doc/create")
-    Observable<ResponseBody> createDoc(@Field("biz")int biz,@Field("category")int category,@Field("type")int type
+    Observable<AfterPostDoc> createDoc(@Field("biz")int biz,@Field("category")int category,@Field("type")int type
                                        ,@Field("title")String title,@Field("description")String description,@Field("setting[copy_forbidden]")int copy_forbidden
                                        ,@Field("csrf_token")String csrf_token,@FieldMap() Map<String, String> tags,@FieldMap() Map<String, String> imgs);
 
@@ -280,7 +280,7 @@ public interface AppApiService {
      */
     @FormUrlEncoded
     @POST("https://api.vc.bilibili.com/link_draw/v1/doc/create")
-    Observable<ResponseBody> createPhotoDoc(@Field("biz")int biz,@Field("category")int category
+    Observable<AfterPostDoc> createPhotoDoc(@Field("biz")int biz,@Field("category")int category
             ,@Field("title")String title,@Field("description")String description,@Field("setting[copy_forbidden]")int copy_forbidden
             ,@Field("csrf_token")String csrf_token,@FieldMap() Map<String, String> tags,@FieldMap() Map<String, String> imgs);
 

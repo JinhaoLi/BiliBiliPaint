@@ -13,15 +13,20 @@ import com.jil.paintf.custom.GlideCircleWithBorder;
 import com.jil.paintf.custom.ThemeUtil;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public abstract class SuperRecyclerAdapter<T> extends RecyclerView.Adapter<SuperRecyclerAdapter.SuperVHolder> {
-    ArrayList<T> data;
+    List<T> data;
 
-    public ArrayList<T> getData() {
+    public List<T> getData() {
         return data;
     }
 
-    public SuperRecyclerAdapter(ArrayList<T> data) {
+    public void setData(List<T> data) {
+        this.data = data;
+    }
+
+    public SuperRecyclerAdapter(List<T> data) {
         this.data = data;
     }
 
