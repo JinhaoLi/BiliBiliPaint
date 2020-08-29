@@ -19,8 +19,10 @@ import androidx.annotation.Nullable;
 import androidx.viewpager.widget.PagerAdapter;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.CustomTarget;
+import com.bumptech.glide.request.transition.DrawableCrossFadeFactory;
 import com.bumptech.glide.request.transition.Transition;
 import com.davemorrissey.labs.subscaleview.ImageSource;
 import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
@@ -82,12 +84,7 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
         RoundedCorners roundedCorners= new RoundedCorners(10);
         final RequestOptions requestOptions =RequestOptions.bitmapTransform(roundedCorners);
         final String path =ts.get(position).toString();
-        ProgressInterceptor.addListener(path, new ProgressListener() {
-            @Override
-            public void onProgress(int progress) {
-                imageView.setProgress(progress);
-            }
-        });
+
         GlideApp.with(container.getContext()).asFile().load(ts.get(position)).apply(requestOptions)
                 .into(new CustomTarget<File>() {
 
@@ -100,8 +97,25 @@ public class ImagePagerAdapter<T> extends PagerAdapter {
                     }
 
                     @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                    public void onStart() {
+                        ProgressInterceptor.addListener(path, new ProgressListener() {
+                            @Override
+                            public void onProgress(int progress) {
+                                imageView.setProgress(progress);
+                            }
+                        });
+                        super.onStart();
+                    }
 
+                    @Override
+                    public void onLoadCleared(@Nullable Drawable placeholder) {
+                        ProgressInterceptor.removeListener(path);
+                    }
+
+                    @Override
+                    public void onStop() {
+                        super.onStop();
+                        ProgressInterceptor.removeListener(path);
                     }
 
                     @Override

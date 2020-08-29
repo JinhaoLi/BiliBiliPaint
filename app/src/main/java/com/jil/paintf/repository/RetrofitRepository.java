@@ -12,6 +12,7 @@ import io.reactivex.schedulers.Schedulers;
 import okhttp3.MultipartBody;
 import okhttp3.ResponseBody;
 import retrofit2.http.Field;
+import retrofit2.http.Query;
 
 import java.io.Serializable;
 import java.util.List;
@@ -399,6 +400,15 @@ public class RetrofitRepository {
             @Override
             public ObservableSource<EmoteData> apply(Integer integer) throws Exception {
                 return ApiBiliService.getEmoteList();
+            }
+        }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
+    }
+
+    public Observable<RankResult> getRankList(final int biz, final String category, final String rank_type, final String date){
+        return Observable.just(1).flatMap(new Function<Integer, ObservableSource<RankResult>>() {
+            @Override
+            public ObservableSource<RankResult> apply(Integer integer) {
+                return ApiVcBiliService.getRankList(biz,category,rank_type,date);
             }
         }).subscribeOn(Schedulers.io()).observeOn(AndroidSchedulers.mainThread());
     }

@@ -31,5 +31,6 @@
     <color name="seedling">#86c166</color>
     <color name="seedling_dark">#436033</color>
     <color name="black_alp">#6B000000</color>
+    <color name="light_gray">#575757</color>
 
 </resources>

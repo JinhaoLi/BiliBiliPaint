@@ -27,6 +27,7 @@ class AppPaintF : Application() {
         lateinit var instance: AppPaintF
         @JvmStatic
         var isDebug=true
+
     }
     val emoteMap =HashMap<String,Drawable>()
     private val Activity.simpleName get() = javaClass.simpleName

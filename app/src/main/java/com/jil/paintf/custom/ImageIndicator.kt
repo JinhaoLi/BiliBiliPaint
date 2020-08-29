@@ -59,6 +59,11 @@ class ImageIndicator(context: Context, attrs: AttributeSet?, defStyleAttr: Int) 
         return this
     }
 
+    fun initCurrentItem(current:Int):ImageIndicator{
+        this.selectPosition =current
+        return this
+    }
+
     /**
      *
      */

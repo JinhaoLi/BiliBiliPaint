@@ -158,6 +158,9 @@ class PreViewAdapter(
         val animator = ObjectAnimator.ofFloat(v,"alpha",0f,0.25f,0.75f,1f)
         animator.duration=700
         animator.start()
+        v.postDelayed({
+            animator.cancel()
+        },700)
     }
 
     var pic: File? = null
@@ -187,7 +190,7 @@ class PreViewAdapter(
                 docData.item.pictures.map {
                     picUrls.add(it.img_src)
                 }
-                ScaleImageActivity.startActivity(it.context,picUrls)
+                ScaleImageActivity.startActivity(it.context,picUrls,position-1)
             }
         }
         if(holder is PreHeaderItem){

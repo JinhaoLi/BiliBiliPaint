@@ -7,9 +7,10 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 import com.jil.paintf.fragment.MainFragment;
+import com.jil.paintf.fragment.RankFragment;
 
 public class MainPagerAdapter extends FragmentPagerAdapter {
-    private String[] title ={"推荐","最新","最热"};
+    private String[] title ={"推荐","最新","最热","榜单"};
     private int type;
 
     public MainPagerAdapter(@NonNull FragmentManager fm,int type) {
@@ -26,6 +27,9 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
     @NonNull
     @Override
     public Fragment getItem(int position) {
+        if(position==3){
+            return RankFragment.Companion.newInstance(type,"");
+        }
         if(type==0)
             return MainFragment.Companion.newInstance(position);
         else
@@ -34,6 +38,6 @@ public class MainPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public int getCount() {
-        return 3;
+        return title.length;
     }
 }

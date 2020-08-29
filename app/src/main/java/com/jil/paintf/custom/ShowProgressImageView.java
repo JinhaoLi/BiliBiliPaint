@@ -14,7 +14,9 @@ import com.davemorrissey.labs.subscaleview.SubsamplingScaleImageView;
  **/
 public class ShowProgressImageView extends SubsamplingScaleImageView {
     private int progress;
+    private int alp =255;
     private Paint paint =new Paint(Paint.ANTI_ALIAS_FLAG);
+
     public ShowProgressImageView(Context context, AttributeSet attr) {
         super(context, attr);
         paint.setColor(Color.GREEN);
@@ -33,11 +35,21 @@ public class ShowProgressImageView extends SubsamplingScaleImageView {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
-        if(progress<100){
-            canvas.drawRect(0f,(1f-progress/100f)*getHeight(),getWidth(),getHeight(),paint);
-            canvas.drawText("当前进度："+ progress +"%",0,(1f-progress/100f)*getHeight()-5f,paint);
+        if(progress==100&&alp>0){
+            if(alp-15<0)
+                alp=0;
+            else
+                alp-=15;
+            postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    invalidate();
+                }
+            },60);
         }
-
+        paint.setColor(Color.argb(alp,(int)((1f-progress/100f)*255),(int)(progress/100f*255),0));
+        canvas.drawRect(0f,(1f-progress/100f)*getHeight(),getWidth(),getHeight(),paint);
+        canvas.drawText("当前进度："+ progress +"%",0,(1f-progress/100f)*getHeight()-5f,paint);
     }
 
     public void setProgress(int progress){

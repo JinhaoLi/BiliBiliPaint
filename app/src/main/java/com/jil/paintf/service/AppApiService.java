@@ -315,6 +315,19 @@ public interface AppApiService {
     @GET("/x/emote/user/panel/web?business=reply")
     Observable<EmoteData> getEmoteList();
 
+    /**
+     * 获取排行榜
+     * @param biz 1 绘画 |2 摄影
+     * @param category ''|cos|sifu
+     * @param rank_type week|month|day
+     * @param date YYYY-MM-dd|YYYY-MM|''
+//     * @param page_num 0
+//     * @param page_size 50
+     * @return
+     */
+    @GET("https://api.vc.bilibili.com/link_draw/v2/Doc/ranklist?page_num=0&&page_size=50")
+    Observable<RankResult> getRankList(@Query("biz")int biz,@Query("category")String category,@Query("rank_type")String rank_type,
+                                       @Query("date")String date);
 
 
 
