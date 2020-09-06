@@ -11,12 +11,13 @@ import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityOptionsCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.GridLayoutManager
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.jil.paintf.R
 import com.jil.paintf.activity.PreViewActivity
 import com.jil.paintf.adapter.ItemAdapter
+import com.jil.paintf.custom.ItemTouchHelperCallback
 import com.jil.paintf.repository.Item
 import com.jil.paintf.service.AppPaintF
 import com.jil.paintf.viewmodel.MainViewModel
@@ -47,11 +48,11 @@ class MainFragment: LazyFragment() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        viewModel?.onSaveData(param1,adapter!!.data)
+        viewModel?.onSaveData(param1, adapter!!.data)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return initView(inflater,container,R.layout.fragment_main)
+        return initView(inflater, container, R.layout.fragment_main)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,42 +76,52 @@ class MainFragment: LazyFragment() {
                 for (index in 0 until adapter!!.data.size){
                     intArray[index] =adapter!!.data[index].item.doc_id
                 }
-                bundle.putInt("doc_id",adapter!!.data[position].item.doc_id)
-                bundle.putIntArray("intArray",intArray)
-                intent.putExtra("param1",bundle)
+                bundle.putInt("doc_id", adapter!!.data[position].item.doc_id)
+                bundle.putIntArray("intArray", intArray)
+                intent.putExtra("param1", bundle)
                 if (AppPaintF.instance.enableAnimator){
-                    val options1 =ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),view,"mainimage")
+                    val options1 =ActivityOptionsCompat.makeSceneTransitionAnimation(
+                        requireActivity(),
+                        view,
+                        "mainimage"
+                    )
                     ActivityCompat.startActivity(requireContext(), intent, options1.toBundle())
                 }else{
-                    PreViewActivity.startDocDetailActivity(requireContext(),intArray,adapter!!.data[position].item.doc_id)
+                    PreViewActivity.startDocDetailActivity(
+                        requireContext(),
+                        intArray,
+                        adapter!!.data[position].item.doc_id
+                    )
                 }
 
             }
             val cfg = resources.configuration
             val spanCount =if(cfg.orientation == Configuration.ORIENTATION_LANDSCAPE)4 else 2
 //            val manager = GridLayoutManager(context,spanCount)
-            val manager = StaggeredGridLayoutManager(spanCount,StaggeredGridLayoutManager.VERTICAL)
+            val manager = StaggeredGridLayoutManager(spanCount, StaggeredGridLayoutManager.VERTICAL)
             recyclerview!!.layoutManager=manager
             recyclerview!!.adapter =adapter
+            val touchHelper = ItemTouchHelper(ItemTouchHelperCallback(adapter))
+            touchHelper.attachToRecyclerView(recyclerview)
             swiperefresh!!.setOnRefreshListener {
 
                 addAtStart =true
 
                 if(adapter!=null&&adapter!!.data.size>600){
-                    adapter!!.data.removeAll(adapter!!.data.subList(400,600))
+                    adapter!!.data.removeAll(adapter!!.data.subList(400, 600))
                 }
                 viewModel?.refresh(param1)
             }
-            recyclerview!!.addOnScrollListener(object : RecyclerView.OnScrollListener(){
+            recyclerview!!.addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
                     super.onScrollStateChanged(recyclerView, newState)
-                    if(newState == RecyclerView.SCROLL_STATE_IDLE){
-                        if(!recyclerView.canScrollVertically(1)){
-                            addAtStart=false
-                            if(adapter!=null&&adapter!!.data.size>600){
-                                adapter!!.data.removeAll(adapter!!.data.subList(0,200))
+                    if (newState == RecyclerView.SCROLL_STATE_IDLE) {
+                        if (!recyclerView.canScrollVertically(1)) {
+                            addAtStart = false
+                            if (adapter != null && adapter!!.data.size > 600) {
+                                adapter!!.data.removeAll(adapter!!.data.subList(0, 200))
                             }
-                            adapter!!.status="正在加载..."
+                            adapter!!.status = "正在加载..."
                             viewModel?.refresh(param1)
                         }
                     }
@@ -151,8 +162,8 @@ class MainFragment: LazyFragment() {
 
     private fun recommendIllusts(){
         viewModel?.recommendIllustsList?.observe(this, Observer<List<Item>> {
-                refresh(it)
-            })
+            refresh(it)
+        })
     }
 
     private fun newIllusts(){
@@ -179,9 +190,8 @@ class MainFragment: LazyFragment() {
         val updataPosition=adapter!!.data.size
         if(addAtStart) {
             adapter!!.data.addAll(0, list)
-            adapter!!.notifyItemRangeInserted(0,list.size)
-//            adapter!!.notifyItemRangeChanged(list.size,6)
-//            recyclerview!!.layoutManager!!.scrollToPosition(list.size)
+            adapter!!.notifyDataSetChanged()
+            recyclerview!!.layoutManager!!.scrollToPosition(0)
         }else{
             adapter!!.data.addAll(list)
             adapter!!.notifyItemInserted(updataPosition)
@@ -191,12 +201,24 @@ class MainFragment: LazyFragment() {
 
     override fun loadAndObserveData() {
         when(param1){
-            RI->{ recommendIllusts() }
-            NI->{ newIllusts() }
-            HI->{ hotIllusts() }
-            RC->{ recommendCosplay() }
-            NC->{ newCosplay() }
-            HC->{ hotCosplay() }
+            RI -> {
+                recommendIllusts()
+            }
+            NI -> {
+                newIllusts()
+            }
+            HI -> {
+                hotIllusts()
+            }
+            RC -> {
+                recommendCosplay()
+            }
+            NC -> {
+                newCosplay()
+            }
+            HC -> {
+                hotCosplay()
+            }
         }
         if(saveList.isNullOrEmpty())
             viewModel?.refresh(param1)

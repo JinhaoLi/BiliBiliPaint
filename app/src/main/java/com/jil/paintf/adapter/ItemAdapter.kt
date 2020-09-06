@@ -20,6 +20,7 @@ import com.bumptech.glide.request.transition.Transition
 import com.jil.paintf.R
 import com.jil.paintf.activity.UserActivity
 import com.jil.paintf.custom.GlideCircleWithBorder
+import com.jil.paintf.custom.ItemTouchHelperAdapter
 import com.jil.paintf.custom.ThemeUtil
 import com.jil.paintf.repository.Item
 import com.jil.paintf.service.AppPaintF
@@ -27,7 +28,7 @@ import com.jil.paintf.viewmodel.DocOperateModel
 
 class ItemAdapter(
     private val mContext: Context
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),ItemTouchHelperAdapter {
     val data = arrayListOf<Item>()
     var itemOnClickListener: AdapterView.OnItemClickListener? = null
     var status = "正在加载..."
@@ -96,6 +97,7 @@ class ItemAdapter(
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 //        Logger.d(position.toString()+"onBindViewHolder->"+holder.toString())
         if (holder is ItemVHolder) {
+
             holder.imageUrl = data[position].item.pictures[0].img_src + "@512w_384h_1e.webp"
             holder.icoUrl = data[position].user.head_url + "@32w_32h.webp"
             holder.displayImage()
@@ -191,7 +193,7 @@ class ItemAdapter(
         ITEM_TYPE_LOAD,
     }
 
-    private class ItemVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+    public class ItemVHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var icoUrl: String? = null
         var imageUrl: String? = null
         var ico: ImageView = itemView.findViewById(R.id.imageView2)
@@ -247,6 +249,31 @@ class ItemAdapter(
 
             }
         }
+    }
+
+    override fun onItemMove(source: RecyclerView.ViewHolder?, target: RecyclerView.ViewHolder?) {
+        //拖动的 item 的下标
+        val fromPosition: Int = source!!.adapterPosition
+        //目标 item 的下标，目标 item 就是当拖曳过程中，不断和拖动的 item 做位置交换的条目。
+        val toPosition = target!!.adapterPosition
+        //交换数据
+//        Collections.swap(data, fromPosition, toPosition)
+        //交换位置index
+        notifyItemMoved(fromPosition, toPosition)
+    }
+
+    override fun onItemSwiped(source: RecyclerView.ViewHolder?) {
+        //TODO("Not yet implemented")
+    }
+
+    override fun onItemSelectedChanged(source: RecyclerView.ViewHolder?, actionState: Int) {
+
+    }
+
+    override fun onItemClear(source: RecyclerView.ViewHolder?) {
+        //给已经完成拖曳的 item 恢复开始的背景。
+        //这里我们设置的颜色尽量和你 item 在 xml 中设置的颜色保持一致
+
     }
 
 }

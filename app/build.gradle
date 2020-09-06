@@ -15,10 +15,37 @@ android {
         versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    signingConfigs{
+        release{
+            def prpe =new Properties()
+            def input =project.rootProject.file("local.properties").newInputStream()
+            prpe.load(input)
+            storeFile new File(prpe.getProperty("path.store.file"))
+            storePassword prpe.getProperty('path.store.password')
+            keyAlias prpe.getProperty('path.alias')
+            keyPassword prpe.getProperty('path.alias.password')
+        }
+
+        debug{
+            def prpe =new Properties()
+            def input =project.rootProject.file("local.properties").newInputStream()
+            prpe.load(input)
+            storeFile new File(prpe.getProperty("path.store.file"))
+            storePassword prpe.getProperty('path.store.password')
+            keyAlias prpe.getProperty('path.alias')
+            keyPassword prpe.getProperty('path.alias.password')
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
+        debug{
+            signingConfig signingConfigs.debug
         }
     }
 }
@@ -37,6 +64,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
     implementation 'androidx.recyclerview:recyclerview:1.1.0'
     implementation 'androidx.preference:preference:1.1.1'
+
     def room_version = "2.2.3"
     implementation "androidx.room:room-runtime:$room_version"
     kapt "androidx.room:room-compiler:$room_version"
@@ -80,7 +108,7 @@ dependencies {
     kapt 'com.github.bumptech.glide:compiler:4.11.0'
 
     //viewmodel
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'com.google.android.material:material:1.2.0'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
     implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
 
