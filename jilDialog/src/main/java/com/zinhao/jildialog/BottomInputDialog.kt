@@ -8,6 +8,9 @@ import android.view.View
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
+import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.zinhao.jildialog.R
 import kotlinx.android.synthetic.main.dialogpart_button_two_group.*
 
 
@@ -18,7 +21,7 @@ import kotlinx.android.synthetic.main.dialogpart_button_two_group.*
  *===============================
  *===============================
  **/
-class BottomInputDialog(context: Context) : BottomSheetDialog(context,R.style.BottomSheetStyle){
+class BottomInputDialog(context: Context) : BottomSheetDialog(context, R.style.BottomSheetStyle){
     var title:String ="无标题"
     private val rootView = LayoutInflater.from(context).inflate(R.layout.dialog_bottom_input,null)
     lateinit var mClickListener:(view:View,input:String)->Unit

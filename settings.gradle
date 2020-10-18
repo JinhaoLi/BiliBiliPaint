@@ -1,2 +1,3 @@
+include ':jilDialog'
 include ':app', ':dialog'
 rootProject.name='画友'
