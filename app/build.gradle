@@ -15,6 +15,9 @@ android {
         versionName "3.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
+    lintOptions{
+        abortOnError false
+    }
 
     signingConfigs{
         release{
