@@ -60,7 +60,7 @@ class SearchActivity :AppCompatActivity(){
                         }
                         adapter!!.status="正在加载..."
                         pageCount++
-                        editText!!.text.toString().let {
+                        search_edit!!.text.toString().let {
                             if(it.isNotEmpty())
                                 viewModel!!.nextPage(it,pageCount,category)
                         }
