@@ -1,5 +1,7 @@
 package com.jil.paintf.fragment
 
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -9,7 +11,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Switch
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jil.paintf.R
@@ -38,6 +42,7 @@ class AboutFragment :LazyFragment(){
             }
         }
         aboutList.add(version)
+        aboutList.add(qqGroup)
     }
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return initView(inflater,container,R.layout.fragment_setting)
@@ -111,7 +116,16 @@ class AboutFragment :LazyFragment(){
                 val intent = Intent(Intent.ACTION_VIEW, uri)
                 ActivityCompat.startActivity(v!!.context,intent,null)
             }
+        }
 
+        @JvmStatic
+        private val qqGroup =object :SettingItem("加入计算机柯学与忌术","494103622",3){
+            override fun click(v: View?) {
+                val groupNumber =ClipData.newPlainText(null,"494103622")?:return
+                val manager =getSystemService(v!!.context,ClipboardManager::class.java)?:return
+                manager.setPrimaryClip(groupNumber)
+                Toast.makeText(v.context, "群号已复制到粘贴板！", Toast.LENGTH_SHORT).show()
+            }
         }
 
         fun newInstance()= AboutFragment()
